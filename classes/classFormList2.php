@@ -1,0 +1,703 @@
+<?php
+class FormList
+{
+    private $config;
+
+    function __construct($params)
+    {
+        if ($params)
+            $this->config = $params;
+    }
+
+    private function var_error_log( $object=null,$text='')
+    {
+        ob_start();
+        var_dump( $object );
+        $contents = ob_get_contents();
+        ob_end_clean();
+        error_log( "{$text} {$contents}" );
+    }
+
+    private function isVariable($v)
+    {
+        $s = trim($v);
+        if (substr($s,0,1) == "{" && substr($s,strlen($s)-1,1) == "}")
+            return true;
+        return false;
+    }
+
+    private function getVariable($a,$v)
+    {
+        $s = trim($v);
+        $s = trim($s,"{");
+        $s = trim($s,"}");
+        $s = trim($s);
+        if (isset ($a[$s]))
+            return $a[$s];
+        return "";
+    }
+
+    static public function getField($f,$trimit=true)
+    {
+        $data = null;
+        if (isset($_POST[$f]))
+        {
+            $data = $_POST[$f];
+            if ($trimit)
+                $data = trim($data);
+            $data = stripslashes($data);
+            $data = strip_tags(htmlspecialchars_decode($data));
+        }
+        return $data;
+    }
+
+    static public function getCheckboxField($f)
+    {
+        if (isset($_POST[$f]))
+        {
+            if (strtoupper($_POST[$f]) == "ON")
+                return true;
+        }
+        return false;
+    }
+
+    public function value($f)
+    {
+        if (! $this->config)
+            throw new Exception(__FILE__ . "[" . __LINE__ ."] FormList has not been constructed with for parameters" );
+
+        if (! isset ($this->config['fields']) )
+            throw new Exception(__FILE__ . "[" . __LINE__ ."] No fields are sepcified in parameters" );
+
+        $fields = $this->config['fields'];
+        if (isset($fields[$f]) && isset($fields[$f] ['value']) )
+            return $fields[$f] ['value'];
+        return null;
+    }
+
+    public function haserror($f)
+    {
+        if (! $this->config)
+            throw new Exception(__FILE__ . "[" . __LINE__ ."] FormList has not been constructed with for parameters" );
+
+        if (! isset ($this->config['fields']) )
+            throw new Exception(__FILE__ . "[" . __LINE__ ."] No fields are sepcified in parameters" );
+
+        $fields = $this->config['fields'];
+        if (isset($fields[$f]) && isset($fields[$f] ['error']) )
+            return $fields[$f] ['error'];
+        return false;
+    }
+
+    public function setFieldError($f)
+    {
+        if (! $this->config)
+            throw new Exception(__FILE__ . "[" . __LINE__ ."] FormList has not been constructed with for parameters" );
+
+        if (! isset ($this->config['fields']) )
+            throw new Exception(__FILE__ . "[" . __LINE__ ."] No fields are sepcified in parameters" );
+
+        if (isset($this->config['fields'] [$f]) )
+            $this->config['fields'] [$f] ["error"] = true;
+    }
+
+    public function errormessage($f)
+    {
+        if (! $this->config)
+            throw new Exception(__FILE__ . "[" . __LINE__ ."] FormList has not been constructed with for parameters" );
+
+        if (! isset ($this->config['fields']) )
+            throw new Exception(__FILE__ . "[" . __LINE__ ."] No fields are sepcified in parameters" );
+
+        $fields = $this->config['fields'];
+        if (isset($fields[$f]) && isset($fields[$f] ['error_reason']) )
+            return $fields[$f] ['error_reason'];
+        return "";
+    }
+
+    public function fieldsWithError()
+    {
+        $ret = array();
+
+        if (! $this->config)
+            throw new Exception(__FILE__ . "[" . __LINE__ ."] FormList has not been constructed with for parameters" );
+
+        if (! isset ($this->config['fields']) )
+            throw new Exception(__FILE__ . "[" . __LINE__ ."] No fields are sepcified in parameters" );
+
+        $fields = $this->config['fields'];
+        foreach ($fields as $name => $field)
+        {
+            if (isset($field['error']) && $field['error'])
+            {
+                $strName = "";
+                if (isset($field['errname']) )
+                    $strName = $field['errname'];
+
+                $ret[$name] = array();
+                $ret[$name] ['name'] = $strName;
+                if ( isset($field['form']['errtext']) && strlen($field['form']['errtext']) > 0)
+                    $ret[$name] ['reason'] = $field['form'] ['errtext'];
+                else
+                    $ret[$name] ['reason'] = $field['error_reason'];
+            }
+        }
+        return $ret;
+    }
+
+    public function getFormInputFields()
+    {
+        $valid=true;
+
+        if (! $this->config)
+            throw new Exception(__FILE__ . "[" . __LINE__ ."] FormList has not been constructed with for parameters" );
+
+        if (! isset ($this->config['fields']) )
+            throw new Exception(__FILE__ . "[" . __LINE__ ."] No fields are sepcified in parameters" );
+
+        $fields = $this->config['fields'];
+        foreach($fields as $name => $field)
+        {
+            if (isset($field['form']) && isset($field['form'] ['display']) && $field['form'] ['display'] )
+            {
+                $trim = true;
+                if (isset($field ['form'] ['trim']) && ! $field ['form'] ['trim'])
+                    $trim = false;
+
+                switch ($this->config['fields'] [$name] ["type"])
+                {
+                    case "boolean":
+                        switch ($this->config['fields'] [$name] ["sub-tag"])
+                        {
+                            case "checkbox":
+                                $this->config['fields'] [$name] ["value"] = FormList::getCheckboxField($name . "_f");
+                                break;
+                        }
+                        break;
+                    case "choice":
+                        $this->config['fields'] [$name] ["value"] = FormList::getField($name . "_f",$trim);
+                        break;
+                    case "text":
+                       $this->config['fields'] [$name] ["value"] = FormList::getField($name . "_f",$trim);
+                       break;
+                    case "dropdown":
+                        $this->config['fields'] [$name] ["value"] = FormList::getField($name . "_f",$trim);
+                        break;
+
+                }
+
+                //Check required
+                if ( isset($field['form'] ['required']) && $field['form'] ['required'] )
+                {
+                    if (strlen($this->config['fields'] [$name] ["value"]) == 0)
+                    {
+                        $this->config['fields'] [$name] ["error"] = true;
+                        $errorText = '';
+                        if (isset($field['form'] ['formlabel']) && strlen($field['form'] ['formlabel'] ) > 0)
+                            $errorText = $field['form'] ['formlabel'] . ": ";
+                        $errorText .= "Entry is required";
+                        $this->config['fields'] [$name] ["error_reason"] = $errorText;
+                        $valid = false;
+                    }
+                }
+            }
+        }
+
+        return $valid;
+    }
+
+    private function buildTextField($n,$f,$data=null)
+    {
+        $fid = $n . "_id";
+        $divid = $n . "_divid";
+        $fname = $n ."_f";
+        $tag = 'input';
+
+        if (isset($this->config['form']))
+        {
+            $form = $this->config['form'];
+            if (isset($form['classes']))
+            {
+                $formclasses = $form['classes'];
+                if (isset($formclasses['div']))
+                    $formclassesdiv = $formclasses['div'];
+            }
+        }
+
+        if (isset($f['tag']))
+            $tag = $f['tag'];
+
+        echo "<div id='{$divid}'";
+        switch ($tag)
+        {
+            case "input":
+                $subtag = "text";
+                if (isset($f['sub-tag']))
+                    $subtag = $f['sub-tag'];
+
+                switch ($subtag)
+                {
+                    case "text";
+                        if ($formclassesdiv && isset($formclassesdiv['inputtext']))
+                            echo " class='{$formclassesdiv['inputtext']}'";
+                        break;
+                    case "email";
+                        if ($formclassesdiv && isset($formclassesdiv['emailtext']))
+                            echo " class='{$formclassesdiv['emailtext']}'";
+                        break;
+                    case "password";
+                        if ($formclassesdiv && isset($formclassesdiv['passwordtext']))
+                            echo " class='{$formclassesdiv['passwordtext']}'";
+                        break;
+                }
+                break;
+            case "textarea":
+                if ($formclassesdiv && isset($formclassesdiv['textarea']))
+                    echo " class='{$formclassesdiv['textarea']}'";
+                break;
+            default:
+                break;
+        }
+        echo ">";
+
+        $prefix = "";
+        if (isset($f ['form'] ['required']) && $f ['form'] ['required'])
+            $prefix="* ";
+        if (isset($f ['form'] ['formlabel']))
+            echo "<label for='{$fid}'>{$prefix}{$f ['form'] ['formlabel']}</label>";
+
+        //Default values
+        if (! isset ($f['value']))
+        {
+            if (isset($f['form'] ['default']))
+            {
+                if ($this->isVariable($f['form'] ['default']) )
+                {
+                    $f['value'] = $this->getVariable($data,$f['form'] ['default']);
+                }
+                else
+                    $f['value'] = $f['form'] ['default'];
+            }
+        }
+
+
+
+        switch ($tag)
+        {
+            case "input":
+                $subtag = "text";
+                if (isset($f['sub-tag']))
+                    $subtag = $f['sub-tag'];
+                echo "<input ";
+                if (isset($f['error']) && $f['error'])
+                {
+                    echo "class='err'";
+                }
+                echo "type='{$subtag}' id='{$fid}' name='{$fname}'";
+                if (isset ($f['value']))
+                {
+                    $v = htmlspecialchars($f['value']);
+                    echo "value='{$v}' ";
+                }
+                if (isset($f['size']))
+                    echo " size='{$f['size']}' ";
+                if (isset ($f['form'] ['title']) && strlen($f['form'] ['title'] ) > 0)
+                    echo "title='{$f['form'] ['title']}' ";
+                echo " />";
+                break;
+            case "textarea":
+                echo "<textarea id='{$fid}'";
+                if (isset($f['cols']))
+                    echo " cols='{$f['cols']}' ";
+                if (isset($f['rows']))
+                    echo " rows='{$f['rows']}' ";
+                if (isset ($f['form'] ['title']) && strlen($f['form'] ['title'] ) > 0)
+                    echo "title='{$f['form'] ['title']}' ";
+                echo " >";
+                if (isset ($f['value']))
+                {
+                    $v = htmlspecialchars($f['value']);
+                    echo $v;
+                }
+                echo "</textarea>";
+                break;
+        }
+
+        //Check for post text
+        if ( isset ($f['form'] ['posttext']) && strlen($f['form'] ['posttext']) > 0)
+        {
+            $v = $f['form'] ['posttext'];
+            if ($data && $this->isVariable($v))
+            {
+                $v = $this->getVariable($data,$v);
+            }
+            echo "<span>{$v}</span>";
+        }
+
+        echo "</div>";
+    }
+
+    private function buildBoolField($n,$f)
+    {
+        $fid = $n . "_id";
+        $divid = $n . "_divid";
+        $fname = $n ."_f";
+        $tag = 'input';
+
+        if (isset($this->config['form']))
+        {
+            $form = $this->config['form'];
+            if (isset($form['classes']))
+            {
+                $formclasses = $form['classes'];
+                if (isset($formclasses['div']))
+                    $formclassesdiv = $formclasses['div'];
+            }
+        }
+
+        if (isset($f['tag']))
+            $tag = $f['tag'];
+
+        echo "<div id='{$divid}'";
+        switch ($tag)
+        {
+            case "input":
+                $subtag = "checkbox";
+                if (isset($f['sub-tag']))
+                    $subtag = $f['sub-tag'];
+
+                switch ($subtag)
+                {
+                    case "checkbox";
+                        if ($formclassesdiv && isset($formclassesdiv['checkbox']))
+                            echo " class='{$formclassesdiv['checkbox']}'";
+                        break;
+                }
+                break;
+            default:
+                break;
+        }
+        echo ">";
+
+        switch ($tag)
+        {
+            case "input":
+                echo "<input ";
+                $subtag = "checkbox";
+                if (isset($f['sub-tag']))
+                    $subtag = $f['sub-tag'];
+                if (isset($f['error']) && $f['error'])
+                {
+                    echo "class='err' ";
+                }
+                echo "type='{$subtag}' id='{$fid}' name='{$fname}' ";
+                if (isset ($f['value']) && $f['value'])
+                {
+                    echo "checked ";
+                }
+                echo " />";
+                if (isset($f ['form'] ['formlabel']))
+                    echo "<span>{$f ['form'] ['formlabel']}</span>";
+                break;
+        }
+        echo "</div>";
+    }
+
+    private function buildChoiceField($n,$f,$data=null)
+    {
+        $fid = $n . "_id";
+        $divid = $n . "_divid";
+        $classid = $n ."_class";
+        $fname = $n ."_f";
+        $tag = 'radio';
+
+        if (isset($this->config['form']))
+        {
+            $form = $this->config['form'];
+            if (isset($form['classes']))
+            {
+                $formclasses = $form['classes'];
+                if (isset($formclasses['div']))
+                    $formclassesdiv = $formclasses['div'];
+            }
+        }
+
+        if (isset($f['tag']))
+            $tag = $f['tag'];
+
+        echo "<div id='{$divid}'";
+        switch ($tag)
+        {
+            case "input":
+                $subtag = "radio";
+                if (isset($f['sub-tag']))
+                    $subtag = $f['sub-tag'];
+
+                switch ($subtag)
+                {
+                    case "radio";
+                        if ($formclassesdiv && isset($formclassesdiv['choice']))
+                            echo " class='{$formclassesdiv['choice']}'";
+                        break;
+                }
+                break;
+            default:
+                break;
+        }
+        echo ">";
+
+        if (isset($f['form']))
+        {
+
+                $form = $f['form'];
+                if (isset($form['display']) && $form['display'] && isset($form['choice']))
+                {
+                    if (isset($form['formlabel']))
+                    {
+                        $strLabel = htmlspecialchars($form['formlabel']);
+                        if ($form['required'])
+                            $strLabel = "* " . $strLabel;
+                        echo "<label for='{$fid}'>{$strLabel}</label>";
+                    }
+
+                   $choice = $form['choice'];
+                   $cnt = 0;
+                   foreach ($choice as $radio)
+                   {
+                       echo "<input id='{$fid}_{$cnt}' class='{$classid}' type='radio' name='{$fname}' value='{$radio['value']}'";
+                       if (isset($radio['onselected']) && strlen($radio['onselected']) > 0)
+                       {
+                           echo " onchange='{$radio['onselected']}'";
+                       }
+                       if (! isset($f['value']) && $cnt == 0)
+                           echo " checked";
+                       if (isset ($f['value']) && $f['value'] == $radio['value'])
+                       {
+                           echo " checked";
+                       }
+                       echo " />";
+                       echo "<span>{$radio['text']}</span><br />";
+                       $cnt++;
+                   }
+                }
+        }
+        echo "</div>";
+    }
+
+    private function buildDropdownField($n,$f,$data=null)
+    {
+        $fid = $n . "_id";
+        $divid = $n . "_divid";
+        $classid = $n ."_class";
+        $fname = $n ."_f";
+
+        if (isset($this->config['form']))
+        {
+            $form = $this->config['form'];
+            if (isset($form['classes']))
+            {
+                $formclasses = $form['classes'];
+                if (isset($formclasses['div']))
+                    $formclassesdiv = $formclasses['div'];
+            }
+        }
+
+
+        echo "<div id='{$divid}'";
+        if ($formclassesdiv && isset($formclassesdiv['dropdown']))
+            echo " class='{$formclassesdiv['dropdown']}'";
+        echo " >";
+
+        if (isset($f['form']))
+        {
+
+            $form = $f['form'];
+            if (isset($form['display']) && $form['display'])
+            {
+                if (isset($form['formlabel']))
+                {
+                    $strLabel = htmlspecialchars($form['formlabel']);
+                    if ($form['required'])
+                        $strLabel = "* " . $strLabel;
+                    echo "<label for='{$fid}'>{$strLabel}</label>";
+                }
+
+                echo "<select id='{$fid}' class='{$classid}' name='{$fname}'>";
+                if (isset($f['dropdownvalues']))
+                {
+                    $drop_values = $f['dropdownvalues'];
+                    foreach ($drop_values as $dropv)
+                    {
+                        echo "<option value='{$dropv['value']}'>{$dropv['text']}</option>";
+                    }
+                }
+                echo "</select>";
+            }
+        }
+        echo "</div>";
+
+    }
+
+    public function buildFormFields($data=null)
+    {
+        $form = null;
+        $formclasses = null;
+        $formclassesdiv = null;
+
+
+        if (! $this->config)
+            throw new Exception(__FILE__ . "[" . __LINE__ ."] FormList has not been constructed with for parameters" );
+
+        if (! isset ($this->config['fields']) )
+            throw new Exception(__FILE__ . "[" . __LINE__ ."] No fields are sepcified in parameters" );
+
+        if (isset($this->config['form']))
+            $form = $this->config['form'];
+        if (isset($form['classes']))
+            $formclasses = $form['classes'];
+        if (isset($formclasses['div']))
+            $formclassesdiv = $formclasses['div'];
+
+        //Build the form heading
+        if ($form)
+        {
+            if (isset($form['heading']))
+            {
+                echo "<div id='formheading'>";
+                echo "<h1>".htmlspecialchars($form['heading'])."</h1>";
+                echo "</div>";
+            }
+
+            if (isset($form['introduction1']) && strlen($form['introduction1']) > 0)
+            {
+                echo "<div id='formheadingintroduction'>";
+                echo "<p>".htmlspecialchars($form['introduction1'])."</p>";
+                if (isset($form['introduction2']) && strlen($form['introduction2']) > 0)
+                {
+                    echo "<p>".htmlspecialchars($form['introduction2'])."</p>";
+                    if (isset($form['introduction3']) && strlen($form['introduction3']) > 0)
+                    {
+                        echo "<p>".htmlspecialchars($form['introduction3'])."</p>";
+                    }
+                }
+                echo "</div>";
+            }
+        }
+
+
+        $lastgroup = '';
+        $fields = $this->config['fields'];
+        foreach($fields as $name => $field)
+        {
+            if (isset($field['form']) && isset($field['form'] ['display']) && $field['form'] ['display'] )
+            {
+                if (! isset($field['type']) )
+                    throw new Exception(__FILE__ . "[" . __LINE__ ."] Field type not set for field {$name}" );
+
+                //Is this a new group
+                if (isset($field['form'] ['group']) && $form && isset($form['groups'] [$field['form'] ['group']] ))
+                {
+                    $groupname = $field['form'] ['group'];
+                    $group = $form ['groups'] [$groupname];
+                    if ($groupname != $lastgroup)
+                    {
+                        if (strlen($lastgroup) > 0)
+                            echo "</div>";
+                        echo "<div class='formgroup'>";
+
+                        if ( isset($group['heading']) && strlen($group['heading']) > 0 )
+                            echo "<p class='formgroupname'>{$group['heading']}</p>";
+                        if ( isset ($group['introduction']) && strlen($group['introduction']) > 0 )
+                        {
+                            $introtext = htmlspecialchars($group['introduction']);
+                            echo "<p class='formgroupintro'>{$introtext}</p>";
+                        }
+
+
+                        $lastgroup = $groupname;
+                    }
+                }
+
+
+
+                switch ($field['type'])
+                {
+                    case "boolean":
+                        $this->buildBoolField($name,$field);
+                        break;
+                    case "dropdown":
+                        $this->buildDropdownField($name,$field);
+                        break;
+                    case "choice":
+                        $this->buildChoiceField($name,$field,$data);
+                        break;
+                    case "text":
+                        $this->buildTextField($name,$field,$data);
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+
+        if (strlen($lastgroup) > 0)
+            echo "</div>";
+
+
+        //Build the form security token
+        echo "<input type='hidden' name='formtoken' value='{$_SESSION['csrf_key']}'>";
+    }
+
+    static public function encryptParam($v)
+    {
+        // Remove the base64 encoding from our key
+        if (isset($_SESSION['session_key']))
+        {
+            $flag = "FFFF";
+            $data = $flag . (string) $v;
+            $encryption_key = base64_decode($_SESSION['session_key']);
+
+            // Generate an initialization vector
+            $iv = openssl_random_pseudo_bytes(openssl_cipher_iv_length('aes-256-cbc'));
+            // Encrypt the data using AES 256 encryption in CBC mode using our encryption key and initialization vector.
+            $encrypted = openssl_encrypt($data, 'aes-256-cbc', $encryption_key, 0, $iv);
+            // The $iv is just as important as the key for decrypting, so save it with our encrypted data using a unique separator (::)
+            $result = base64_encode($encrypted . '::' . $iv);
+            return $result;
+        }
+        else
+            return null;
+    }
+
+    static public function decryptParamRaw($data)
+    {
+        $params = array();
+        $d = null;
+
+        if (isset($_SESSION['session_key']))
+        {
+            // Remove the base64 encoding from our key
+            $encryption_key = base64_decode($_SESSION['session_key']);
+            // To decrypt, split the encrypted data from our IV - our unique separator used was "::"
+            list($encrypted_data, $iv) = explode('::', base64_decode($data), 2);
+            $d =  openssl_decrypt($encrypted_data, 'aes-256-cbc', $encryption_key, 0, $iv);
+        }
+
+        if ($d)
+        {
+            if (strlen($d) >= 4)
+            {
+                if (substr($d,0,4) == 'FFFF')
+                {
+                    if (strlen($d) >= 4)
+                    {
+                        $param = substr($d,4,strlen($d)-4);
+                        parse_str(strtr($param, ":,", "=&"), $params);
+                    }
+                }
+            }
+        }
+        return $params;
+    }
+}
+?>
