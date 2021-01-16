@@ -1,0 +1,13 @@
+﻿#form {} 
+#form div.d_inputtext {margin-bottom: 10px;}
+#form div.d_emailtext {margin-bottom: 10px;}
+#form div.d_passwordtext {margin-bottom: 10px;}
+#form div.d_inputsubmit {}
+#form div.d_textarea {margin-bottom: 10px;}
+#form div.formgroup {border: solid 1px #888;padding: 20px;border-radius: 8px;margin-bottom: 20px;}
+#form input[type='text'] {}
+#form input[type='submit'] {}
+#form label {display: block;font-size: 9pt;}
+#formheading h1 {color: #777; font-size: 14pt;}
+#formheadingtext {background-color: #eeeeee;padding: 20px;margin-bottom: 20px;}
+#form p.formgroupname {display: inline-block;position: relative;margin: 0;top: -28px;background-color: #f8f8f8;color: #000000;}
