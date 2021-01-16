@@ -1,0 +1,15 @@
+﻿#form {margin-top: 14px;padding: 10px;padding-right: 0px;}
+#form table {width: 100%}
+#form td {font-size: 12pt; color: #666}
+#form input {font-size: 12pt;}
+#form input[type='submit'] {margin-top: 12px;}
+#form img {position: relative;top: 6px;left:-26px; width: 24px;z-index: 10}
+#form p.errMsg {font-size: 10pt; color: red;}
+#form td.r {text-align: right;}
+
+@media only screen and (min-width: 800px) {
+#form {margin-top: 28px;padding: 20px;padding-right: 0px;}
+#form td {font-size: 14pt; color: #666}
+#form input {font-size: 14pt;}
+#form img {position: relative;top: 6px;left:-24px; width: 24px;z-index: 10}
+}
