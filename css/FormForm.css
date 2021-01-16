@@ -1,0 +1,7 @@
+﻿#classFormForm {padding: 10px;}
+#classFormForm p.phd1 {margin-bottom: 0;}
+#classFormForm input[type='text'] {padding-left: 4px; padding-right: 4px;}
+#classFormForm input[type='text'].req {border-color: #0a0; background-color: #f7f788;}
+#classFormForm input[type='text'].err {border-color: red;background-color: #f1c8c8;}
+#classFormForm input[type='text'].r {text-align: right;}
+#classFormForm input[type='date'].req {border-color: #0a0; background-color: #f7f788;}
