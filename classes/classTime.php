@@ -260,7 +260,6 @@ class classTimeHelpers
 
     public static function timeFormat($Time,$strFormat,$strTimeZone = null)
     {
-error_log("timeFormat inputs {$Time} and {$strFormat} and {$strTimeZone}");
         $date = null;
         if (gettype($Time) !== "string")
         {
@@ -278,7 +277,6 @@ error_log("timeFormat inputs {$Time} and {$strFormat} and {$strTimeZone}");
 
         if ($date)
         {
-error_log("timeFormat have date");
             if ($strTimeZone== NULL || strlen($strTimeZone)==0)
                 $strTimeZone = 'UTC';
             $date->setTimezone(new DateTimeZone($strTimeZone));
@@ -290,33 +288,32 @@ error_log("timeFormat have date");
 
     public static function timeFormatDB($time,$strTimeZone=null)
     {
-        classTimeHelpers::timeFormat($time,"Y-m-d H:i:s",$strTimeZone);
+        return classTimeHelpers::timeFormat($time,"Y-m-d H:i:s",$strTimeZone);
     }
 
     public static function timeFormat24Hr($time,$strTimeZone=null)
     {
-        classTimeHelpers::timeFormat($time,"j/n/Y H:i:s",$strTimeZone);
+        return classTimeHelpers::timeFormat($time,"j/n/Y H:i:s",$strTimeZone);
     }
 
     public static function timeFormat24HrUS($time,$strTimeZone=null)
     {
-        classTimeHelpers::timeFormat($time,"n/j/Y H:i:s",$strTimeZone);
+        return classTimeHelpers::timeFormat($time,"n/j/Y H:i:s",$strTimeZone);
     }
 
     public static function timeFormat12Hr($time,$strTimeZone=null)
     {
-        classTimeHelpers::timeFormat($time,"j/n/Y h:ia",$strTimeZone);
+        return classTimeHelpers::timeFormat($time,"j/n/Y h:ia",$strTimeZone);
     }
 
     public static function timeFormat12HrUS($time,$strTimeZone=null)
     {
-        classTimeHelpers::timeFormat($time,"n/j/Y h:ia",$strTimeZone);
+        return classTimeHelpers::timeFormat($time,"n/j/Y h:ia",$strTimeZone);
     }
 
     public static function timeFormatnthDate($time,$strTimeZone=null)
     {
-error_log("installTestFiles.sh inputs {$time} and {$strTimeZone}");
-        classTimeHelpers::timeFormat($time,"jS M Y",$strTimeZone);
+        return classTimeHelpers::timeFormat($time,"jS M Y",$strTimeZone);
     }
 
     public static function smartTime($strTime,$strTimeZone=null)
