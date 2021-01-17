@@ -260,6 +260,7 @@ class classTimeHelpers
 
     public static function timeFormat($Time,$strFormat,$strTimeZone = null)
     {
+error_log("timeFormat inputs {$Time} and {$strFormat} and {$strTimeZone}");
         $date = null;
         if (gettype($Time) !== "string")
         {
@@ -277,6 +278,7 @@ class classTimeHelpers
 
         if ($date)
         {
+error_log("timeFormat have date");
             if ($strTimeZone== NULL || strlen($strTimeZone)==0)
                 $strTimeZone = 'UTC';
             $date->setTimezone(new DateTimeZone($strTimeZone));
@@ -313,6 +315,7 @@ class classTimeHelpers
 
     public static function timeFormatnthDate($time,$strTimeZone=null)
     {
+error_log("installTestFiles.sh inputs {$time} and {$strTimeZone}");
         classTimeHelpers::timeFormat($time,"jS M Y",$strTimeZone);
     }
 
