@@ -57,6 +57,7 @@ $formparams = [
             "list" => [
                 "display" => true | false,
                 "heading" => "<tabel heading name>",
+                "anchor" => true,  // This is the field that has a link to click of edit
                 "displayoption" => "tick | ",
             "secuity_view" => integer,
             "security_eidt" => integer
