@@ -689,7 +689,7 @@ class FormList
             $_SESSION["view_length"] = 50;
         }
 
-        $limit = "limit = {$_SESSION['start']}, {$_SESSION['view_length']}";
+        $limit = "limit {$_SESSION['start']}, {$_SESSION['view_length']}";
 
         //Build a heading
         if (isset($list['heading']) && strlen($list['heading']) > 0)
