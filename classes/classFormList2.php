@@ -760,7 +760,7 @@ class FormList
 
             while ($d = $r->fetch_array(MYSQLI_ASSOC))
             {
-                $recid = FormList::urlencode(encryptParam("table={$table}&id={$d[$global['primary_key']]}") );
+                $recid = urlencode(FormList::encryptParam("table={$table}&id={$d[$global['primary_key']]}") );
                 echo "<tr>";
                 if ($this->haveParameterText($list,'type') && $list['type'] == "checkbox")
                     echo "<td><input type='checkbox' value='{$recid}' /></td>";
