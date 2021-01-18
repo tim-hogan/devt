@@ -648,6 +648,91 @@ class FormList
         echo "<input type='hidden' name='formtoken' value='{$_SESSION['csrf_key']}'>";
     }
 
+    public function buildList($DB,$data=null)
+    {
+        if (! $this->config)
+            throw new Exception(__FILE__ . "[" . __LINE__ ."] FormList has not been constructed with lsit parameters" );
+
+        if (! isset ($this->config['fields']) )
+            throw new Exception(__FILE__ . "[" . __LINE__ ."] No fields are sepcified in parameters" );
+
+        if (!isset($this->config['global']))
+            throw new Exception(__FILE__ . "[" . __LINE__ ."] No globals sepcified in parameters" );
+
+        if (!isset($this->config['global'] ['table'] ))
+            throw new Exception(__FILE__ . "[" . __LINE__ ."] No table sepcified in global section of parameters" );
+
+        if (!isset($this->config['list']))
+            throw new Exception(__FILE__ . "[" . __LINE__ ."] No list section sepcified in parameters" );
+
+
+        $global = $this->config['form'];
+        $list = $this->config['list'];
+        $table = $this->config['global'] ['table'];
+        $fields = $this->config['fields'];
+
+
+        //Check number in records in table
+        $where = '';
+        $order = '';
+        if (isset($list['default_order']) && strlen($list['default_order']) > 0)
+            $order = $list['default_order'];
+        if (isset($list['default_where']) && strlen($list['default_where']) > 0)
+            $where = $list['default_where'];
+
+        //Check session list variables
+        if (! isset($_SESSION["liststate"]))
+        {
+            //Set up the defaults
+            $_SESSION["liststate"] = array();
+            $_SESSION["start"] = 0;
+            $_SESSION["view_length"] = 50;
+        }
+
+        $limit = "limit = {$_SESSION["start"]}, $_SESSION["view_length"]";
+
+        //Build a heading
+        if (isset($list['heading']) && strlen($list['heading']) > 0)
+        {
+            echo "<div id='_listHead'>";
+            $strText = htmlspecialchars($list['heading']);
+            echo "<h1>{$strText}</h1>";
+            echo "</div>";
+        }
+
+        $n = $DB->rows_in_table($table,$where);
+        if ($n == 0)
+        {
+            echo "<p class='norecord'>NO RECORDS</p>";
+        }
+        else
+        {
+            $r = $DB->allFromTable($table,$where,$order,$limit);
+            echo "<table>";
+            while ($d = $r->fetch_array(MYSQLI_ASSOC))
+            {
+                echo "<tr>";
+                foreach($fields as $name => $field)
+                {
+                    $list_attr = $field['list'];
+                    if ($list_attr['display'])
+                    {
+                        echo "<td>";
+                        $strData = '';
+                        if (isset($d[$name]))
+                            $strData = htmlspecialchars($d[$name]);
+                        echo $strData;
+                        echo "</td>";
+                    }
+                }
+                echo "</tr>";
+            }
+            echo "</table>";
+        }
+
+
+    }
+
     static public function encryptParam($v)
     {
         // Remove the base64 encoding from our key
