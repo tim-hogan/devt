@@ -691,10 +691,16 @@ class FormList
 
         $limit = "limit {$_SESSION["liststate"] ["start"]}, {$_SESSION["liststate"] ["view_length"]}";
 
+        //Start the export of the html
+        echo "<div class='list'>";
+
+
+
+
         //Build a heading
         if (isset($list['heading']) && strlen($list['heading']) > 0)
         {
-            echo "<div id='_listHead'>";
+            echo "<div class='_listHead'>";
             $strText = htmlspecialchars($list['heading']);
             echo "<h1>{$strText}</h1>";
             echo "</div>";
@@ -730,6 +736,7 @@ class FormList
             echo "</table>";
         }
 
+        echo "</div>";
 
     }
 
