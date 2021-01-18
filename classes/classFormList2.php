@@ -26,6 +26,13 @@ class FormList
         return false;
     }
 
+    private function haveParameterText($a,$v)
+    {
+        if (isset($a[$v]) && strlen($a[$v]) > 0)
+            return true;
+        return false;
+    }
+
     private function getVariable($a,$v)
     {
         $s = trim($v);
@@ -675,9 +682,9 @@ class FormList
         //Check number in records in table
         $where = '';
         $order = '';
-        if (isset($list['default_order']) && strlen($list['default_order']) > 0)
+        if ($this->haveParameterText($list,'default_order') )
             $order = $list['default_order'];
-        if (isset($list['default_where']) && strlen($list['default_where']) > 0)
+        if ($this->haveParameterText($list,'default_where') )
             $where = $list['default_where'];
 
         //Check session list variables
@@ -698,7 +705,7 @@ class FormList
 
 
         //Build a heading
-        if (isset($list['heading']) && strlen($list['heading']) > 0)
+        if ($this->haveParameterText($list,'heading') )
         {
             echo "<div class='_listHead'>";
             $strText = htmlspecialchars($list['heading']);
@@ -713,11 +720,22 @@ class FormList
         }
         else
         {
+            if ($list['type'] == "checkbox")
+            {
+                //We need to build a menu of actions
+                echo "<div class='listactions'>";
+                echo "<p>Delete</p>";
+                echo "</div>";
+            }
+
             $r = $DB->allFromTable($table,$where,$order,$limit);
             echo "<table>";
 
             //Create the tabel headings
             echo "<tr>";
+            if ($this->haveParameterText($list,'type') && $list['type'] == "checkbox")
+                echo "<th></th>";
+
             foreach($fields as $name => $field)
             {
                 $list_attr = $field['list'];
@@ -725,7 +743,7 @@ class FormList
                 {
                     echo "<th>";
                     $strData ='';
-                    if (isset($list_attr['heading']) && strlen($list_attr['heading']) > 0)
+                    if ($this->haveParameterText($list_attr,'heading') )
                         $strData = htmlspecialchars($list_attr['heading']);
                     echo $strData;
                     echo "</th>";
@@ -736,6 +754,9 @@ class FormList
             while ($d = $r->fetch_array(MYSQLI_ASSOC))
             {
                 echo "<tr>";
+                if ($this->haveParameterText($list,'type') && $list['type'] == "checkbox")
+                    echo "<td><input type='checkbox' value='{$d[$global['primary_key']]}' /></td>";
+
                 foreach($fields as $name => $field)
                 {
                     $list_attr = $field['list'];
