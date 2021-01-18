@@ -765,6 +765,7 @@ class FormList
                 {
                     error_log("Have primary key recordid");
                     $recid = urlencode(FormList::encryptParam("table={$table}&id={$d[$global['primary_key']]}") );
+                    error_log("recordid {$recid}");
                 }
                 else
                     error_log("No primary key recordid");
