@@ -24,6 +24,8 @@ $formparams = [
         ]
     ],
     "list" => [
+        "type" => "plain | checkbox",
+        "record_selector" => "true | false",
         "heading" => "<heading text>",
         "introduction" => "",
         "default_order" => "",
