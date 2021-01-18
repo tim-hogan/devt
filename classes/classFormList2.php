@@ -715,6 +715,24 @@ class FormList
         {
             $r = $DB->allFromTable($table,$where,$order,$limit);
             echo "<table>";
+
+            //Create the tabel headings
+            echo "<tr>";
+            foreach($fields as $name => $field)
+            {
+                $list_attr = $field['list'];
+                if ($list_attr['display'])
+                {
+                    echo "<th>";
+                    $strData ='';
+                    if (isset($list_attr['heading']) && strlen($list_attr['heading']) > 0)
+                        $strData = htmlspecialchars($list_attr['heading']);
+                    echo $strData;
+                    echo "</th>";
+                }
+            }
+            echo "</tr>";
+
             while ($d = $r->fetch_array(MYSQLI_ASSOC))
             {
                 echo "<tr>";
