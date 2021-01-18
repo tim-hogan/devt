@@ -684,7 +684,7 @@ class FormList
         $list = $this->config['list'];
         $table = $this->config['global'] ['table'];
         $fields = $this->config['fields'];
-
+        $selff = $_SERVER["PHP_SELF"];
 
         //Check number in records in table
         $where = '';
@@ -762,7 +762,13 @@ class FormList
             {
                 $recid="";
                 if (isset($d[$global['primary_key']]))
+                {
+                    error_log("Have primary key recordid");
                     $recid = urlencode(FormList::encryptParam("table={$table}&id={$d[$global['primary_key']]}") );
+                }
+                else
+                    error_log("No primary key recordid");
+
                 echo "<tr>";
                 if ($this->haveParameterText($list,'type') && $list['type'] == "checkbox")
                     echo "<td><input type='checkbox' value='{$recid}' /></td>";
