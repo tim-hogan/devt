@@ -54,7 +54,7 @@ $formparams = [
             ],
             "list" => [
                 "display" => true | false,
-            ],
+                "heading" => "<tabel heading name>",
             "secuity_view" => integer,
             "security_eidt" => integer
         ]
