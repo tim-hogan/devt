@@ -24,6 +24,10 @@ $formparams = [
         ]
     ],
     "list" => [
+        "heading" => "<heading text>",
+        "introduction" => "",
+        "default_order" => "",
+        "default_where" => "",
     ],
     "fields" => [
         "<field name>" => [
@@ -47,6 +51,9 @@ $formparams = [
                     ["text" => "Pay by credit card", "value" => 1,"selected" => "javascript()"],
                     ["text" => "Pay on account", "value" => 2, "selected" => "javascript()"],
                 ]
+            ],
+            "list" => [
+                "display" => true | false,
             ],
             "secuity_view" => integer,
             "security_eidt" => integer
