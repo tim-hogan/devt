@@ -33,6 +33,13 @@ class FormList
         return false;
     }
 
+    private function haveParameterBoolean($a,$v)
+    {
+        if (isset($a[$v]) && $a[$v] )
+            return true;
+        return false;
+    }
+
     private function getVariable($a,$v)
     {
         $s = trim($v);
@@ -673,7 +680,7 @@ class FormList
             throw new Exception(__FILE__ . "[" . __LINE__ ."] No list section sepcified in parameters" );
 
 
-        $global = $this->config['form'];
+        $global = $this->config['global'];
         $list = $this->config['list'];
         $table = $this->config['global'] ['table'];
         $fields = $this->config['fields'];
@@ -753,9 +760,10 @@ class FormList
 
             while ($d = $r->fetch_array(MYSQLI_ASSOC))
             {
+                $recid = urlencode(encryptParam("table={$table}&id={$d[$global['primary_key']]}") );
                 echo "<tr>";
                 if ($this->haveParameterText($list,'type') && $list['type'] == "checkbox")
-                    echo "<td><input type='checkbox' value='{$d[$global['primary_key']]}' /></td>";
+                    echo "<td><input type='checkbox' value='{$recid}' /></td>";
 
                 foreach($fields as $name => $field)
                 {
@@ -763,10 +771,23 @@ class FormList
                     if ($list_attr['display'])
                     {
                         echo "<td>";
+                        if ($this->haveParameterBoolean($list_attr,'anchor'))
+                        {
+                            echo "<a href='{$selff}?v={$recid}'>";
+                        }
+
                         $strData = '';
                         if (isset($d[$name]))
                             $strData = htmlspecialchars($d[$name]);
                         echo $strData;
+
+                        if ($this->haveParameterBoolean($list_attr,'anchor'))
+                        {
+                            echo "</a>";
+                        }
+
+
+
                         echo "</td>";
                     }
                 }
