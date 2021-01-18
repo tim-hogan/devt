@@ -216,9 +216,17 @@ class SQLPlus extends mysqli
         return $this->delete("delete from {$table} where {$key} = " . intval($id));
     }
 
-    public function allFromTable($table,$where='',$order='')
+    public function rows_in_table($table,$where='')
     {
-       $q = "select * from ".$table." " . $where . " " . $order;
+        $q = "select * from {$table} {$where}";
+        $r = $this->query($q);
+        if (!$r) {$this->sqlError($q); return null;}
+        return $r->num_rows;
+    }
+
+    public function allFromTable($table,$where='',$order='',$limit='')
+    {
+       $q = "select * from ".$table." " . $where . " " . $order . " " . $limit;
        $r = $this->query($q);
        if (!$r) {$this->sqlError($q); return null;}
        return $r;
