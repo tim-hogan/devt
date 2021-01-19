@@ -764,7 +764,7 @@ class FormList
                 if (isset($d[$global['primary_key']]))
                 {
                     error_log("Have primary key recordid");
-                    $recid = urlencode(FormList::encryptParam("table={$table}&id={$d[$global['primary_key']]}") );
+                    $recid = FormList::encryptParam("table={$table}&id={$d[$global['primary_key']]}");
                     error_log("recordid {$recid}");
                 }
                 else
@@ -782,7 +782,8 @@ class FormList
                         echo "<td>";
                         if ($this->haveParameterBoolean($list_attr,'anchor'))
                         {
-                            echo "<a href='https://{$selff}?v={$recid}'>";
+                            $url = urlencode("{$selff}?v={$recid}");
+                            echo "<a href='{$url}'>";
                         }
 
                         $strData = '';
