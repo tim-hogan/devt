@@ -727,13 +727,12 @@ class FormList
         }
         else
         {
-            if ($list['type'] == "checkbox")
-            {
-                //We need to build a menu of actions
-                echo "<div class='listactions'>";
-                echo "<p>Delete</p>";
-                echo "</div>";
-            }
+            //We need to build a menu of actions
+            echo "<div class='listactions'>";
+            $v = urlencode(FormList::encryptParam("table={$table}&action=create");
+            echo "<form method='GET' action='{$selff}?v={$v}'><button>CREATE</button></form>";
+            echo "<button>DELETE</button>";
+            echo "</div>";
 
             $r = $DB->allFromTable($table,$where,$order,$limit);
             echo "<table>";
@@ -763,7 +762,7 @@ class FormList
                 $recid="";
                 if (isset($d[$global['primary_key']]))
                 {
-                    $recid = FormList::encryptParam("table={$table}&id={$d[$global['primary_key']]}");
+                    $recid = FormList::encryptParam("table={$table}&id={$d[$global['primary_key']]}&action=edit");
                 }
 
                 echo "<tr>";
