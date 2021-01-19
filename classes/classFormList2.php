@@ -778,7 +778,8 @@ class FormList
                         echo "<td>";
                         if ($this->haveParameterBoolean($list_attr,'anchor'))
                         {
-                            $url = urlencode("{$selff}?v={$recid}");
+                            $v = urlencode($recid);
+                            $url = "{$selff}?v={$v}";
                             echo "<a href='{$url}'>";
                         }
 
