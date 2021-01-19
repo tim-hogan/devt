@@ -765,6 +765,7 @@ class FormList
                 {
                     $recid = FormList::encryptParam("table={$table}&id={$d[$global['primary_key']]}");
                 }
+
                 echo "<tr>";
                 if ($this->haveParameterText($list,'type') && $list['type'] == "checkbox")
                     echo "<td><input type='checkbox' value='{$recid}' /></td>";
