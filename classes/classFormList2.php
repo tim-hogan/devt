@@ -763,13 +763,8 @@ class FormList
                 $recid="";
                 if (isset($d[$global['primary_key']]))
                 {
-                    error_log("Have primary key recordid");
                     $recid = FormList::encryptParam("table={$table}&id={$d[$global['primary_key']]}");
-                    error_log("recordid {$recid}");
                 }
-                else
-                    error_log("No primary key recordid");
-
                 echo "<tr>";
                 if ($this->haveParameterText($list,'type') && $list['type'] == "checkbox")
                     echo "<td><input type='checkbox' value='{$recid}' /></td>";
