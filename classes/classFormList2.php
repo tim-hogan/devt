@@ -552,6 +552,29 @@ class FormList
 
     }
 
+    public function getTableData($DB,$recid)
+    {
+        if (! $this->config)
+            throw new Exception(__FILE__ . "[" . __LINE__ ."] FormList has not been constructed with for parameters" );
+
+        if (! isset ($this->config['fields']) )
+            throw new Exception(__FILE__ . "[" . __LINE__ ."] No fields are sepcified in parameters" );
+
+        $global = $this->config['global'];
+        $table = $global['table'];
+        $pk = $global['primary_key'];
+        $rec = $DB->getFromTable($table,$pk,$recid);
+
+        $fields = $this->config['fields'];
+        foreach($fields as $name => $field)
+        {
+            if (isset($rec[$name]))
+            {
+                $this->config['fields'] [$name] ['value'] = $rec[$name];
+            }
+        }
+    }
+
     public function buildFormFields($data=null)
     {
         $form = null;
@@ -768,7 +791,7 @@ class FormList
 
                 echo "<tr>";
                 if ($this->haveParameterText($list,'type') && $list['type'] == "checkbox")
-                    echo "<td><input type='checkbox' value='{$recid}' onchange='deleteButtonChange(this,\"del{$table}\")'/></td>";
+                    echo "<td><input type='checkbox' class='listcheck{$table}' value='{$recid}' onchange='deleteButtonChange(\"{$table}\")'/></td>";
 
                 foreach($fields as $name => $field)
                 {
