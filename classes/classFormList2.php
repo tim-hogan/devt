@@ -768,7 +768,7 @@ class FormList
 
                 echo "<tr>";
                 if ($this->haveParameterText($list,'type') && $list['type'] == "checkbox")
-                    echo "<td><input type='checkbox' value='{$recid}' onchange='deleteButtonChange(\"del{$table}\")'/></td>";
+                    echo "<td><input type='checkbox' value='{$recid}' onchange='deleteButtonChange(this,\"del{$table}\")'/></td>";
 
                 foreach($fields as $name => $field)
                 {
