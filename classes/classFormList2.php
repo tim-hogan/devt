@@ -684,7 +684,7 @@ class FormList
         $list = $this->config['list'];
         $table = $this->config['global'] ['table'];
         $fields = $this->config['fields'];
-        $selff = $_SERVER["PHP_SELF"];
+        $selff = trim($_SERVER["PHP_SELF"],"/");
 
         //Check number in records in table
         $where = '';
@@ -730,7 +730,8 @@ class FormList
             //We need to build a menu of actions
             echo "<div class='listactions'>";
             $v = urlencode(FormList::encryptParam("table={$table}&action=create"));
-            echo "<form method='GET' action='{$selff}?v={$v}'><button>CREATE</button></form>";
+            echo "<form method='GET' action='{$selff}><button>CREATE</button></form>";
+            echo "<input type='hidden name='v' value='{$v}'/>";
             echo "<button>DELETE</button>";
             echo "</div>";
 
