@@ -729,7 +729,7 @@ class FormList
         {
             //We need to build a menu of actions
             echo "<div class='listactions'>";
-            $v = urlencode(FormList::encryptParam("table={$table}&action=create"));
+            $v = FormList::encryptParam("table={$table}&action=create");
             echo "<form method='GET' action='{$selff}'><input type='hidden' name='v' value='{$v}'/><button>CREATE</button></form>";
             echo "<button>DELETE</button>";
             echo "</div>";
