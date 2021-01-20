@@ -208,7 +208,10 @@ class SQLPlus extends mysqli
 
     public function getFromTable($table,$key,$id)
     {
-        return $this->singlequery("select * from {$table} where {$key} = " . intval($id));
+        if ($key && strlen($key) > 0)
+            return p_singlequery("select * from {$table} where ? = ","i",$id);
+        else
+            return $this->singlequery("select * from {$table}");
     }
 
     public function deleteFromTable($table,$key,$id)
