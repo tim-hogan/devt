@@ -720,6 +720,13 @@ class FormList
             echo "</div>";
         }
 
+        //We need to build a menu of actions
+        echo "<div class='listactions'>";
+        $v = FormList::encryptParam("table={$table}&action=create");
+        echo "<form method='GET' action='{$selff}'><input type='hidden' name='v' value='{$v}'/><button>CREATE</button></form>";
+        echo "<button id='del{$table}' class='listDelete' disabled>DELETE</button>";
+        echo "</div>";
+
         $n = $DB->rows_in_table($table,$where);
         if ($n == 0)
         {
@@ -727,12 +734,6 @@ class FormList
         }
         else
         {
-            //We need to build a menu of actions
-            echo "<div class='listactions'>";
-            $v = FormList::encryptParam("table={$table}&action=create");
-            echo "<form method='GET' action='{$selff}'><input type='hidden' name='v' value='{$v}'/><button>CREATE</button></form>";
-            echo "<button>DELETE</button>";
-            echo "</div>";
 
             $r = $DB->allFromTable($table,$where,$order,$limit);
             echo "<table>";
@@ -767,7 +768,7 @@ class FormList
 
                 echo "<tr>";
                 if ($this->haveParameterText($list,'type') && $list['type'] == "checkbox")
-                    echo "<td><input type='checkbox' value='{$recid}' /></td>";
+                    echo "<td><input type='checkbox' value='{$recid}' onchange='deleteButtonChange(\"del{$table}\")'/></td>";
 
                 foreach($fields as $name => $field)
                 {
