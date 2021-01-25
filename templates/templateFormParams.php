@@ -36,6 +36,7 @@ $formparams = [
             "type" => "text | boolean | button | choice",
             "tag" => "input | textarea | checkbox",
             "sub-tag" => "text",
+            "dbfield" => true | false, //Assumed to be true of not specified
             "size" => "20",
             "maxlength" => "20",
             "errname" => "Prefix",
