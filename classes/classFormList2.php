@@ -220,6 +220,60 @@ class FormList
         return $valid;
     }
 
+    public function AddRecord($DB)
+    {
+        if (! $this->config)
+            throw new Exception(__FILE__ . "[" . __LINE__ ."] FormList has not been constructed with lsit parameters" );
+
+        if (! isset ($this->config['fields']) )
+            throw new Exception(__FILE__ . "[" . __LINE__ ."] No fields are sepcified in parameters" );
+
+        if (!isset($this->config['global']))
+            throw new Exception(__FILE__ . "[" . __LINE__ ."] No globals sepcified in parameters" );
+
+        if (!isset($this->config['global'] ['table'] ))
+            throw new Exception(__FILE__ . "[" . __LINE__ ."] No table sepcified in global section of parameters" );
+
+        $fields = $this->config['fields'];
+        $row = array();
+        foreach($fields as $name => $field)
+        {
+            if (! isset($field['dbfield']) || (isset($field['dbfield']) && $field['dbfield']) )
+            {
+                if (isset($field['value']))
+                    $row[$name] = $field['value'];
+            }
+        }
+        return $DB->p_create_from_array($this->config['global'] ['table'],$row);
+    }
+
+    public function ModifyRecord($DB,$id)
+    {
+        if (! $this->config)
+            throw new Exception(__FILE__ . "[" . __LINE__ ."] FormList has not been constructed with lsit parameters" );
+
+        if (! isset ($this->config['fields']) )
+            throw new Exception(__FILE__ . "[" . __LINE__ ."] No fields are sepcified in parameters" );
+
+        if (!isset($this->config['global']))
+            throw new Exception(__FILE__ . "[" . __LINE__ ."] No globals sepcified in parameters" );
+
+        if (!isset($this->config['global'] ['table'] ))
+            throw new Exception(__FILE__ . "[" . __LINE__ ."] No table sepcified in global section of parameters" );
+
+        $fields = $this->config['fields'];
+        $row = array();
+        foreach($fields as $name => $field)
+        {
+            if (! isset($field['dbfield']) || (isset($field['dbfield']) && $field['dbfield']) )
+            {
+                if (isset($field['value']))
+                    $row[$name] = $field['value'];
+            }
+        }
+        return $DB->p_update_from_array($this->config['global'] ['table'],$row,"where {$this->config['global'] ['primary_key']} = {$id}");
+    }
+
     private function buildTextField($n,$f,$data=null)
     {
         $fid = $n . "_id";
