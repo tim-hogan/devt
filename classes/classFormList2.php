@@ -78,7 +78,7 @@ class FormList
     public function value($f)
     {
         if (! $this->config)
-            throw new Exception(__FILE__ . "[" . __LINE__ ."] FormList has not been constructed with for parameters" );
+            throw new Exception(__FILE__ . "[" . __LINE__ ."] FormList has not been constructed with parameters" );
 
         if (! isset ($this->config['fields']) )
             throw new Exception(__FILE__ . "[" . __LINE__ ."] No fields are sepcified in parameters" );
@@ -92,7 +92,7 @@ class FormList
     public function haserror($f)
     {
         if (! $this->config)
-            throw new Exception(__FILE__ . "[" . __LINE__ ."] FormList has not been constructed with for parameters" );
+            throw new Exception(__FILE__ . "[" . __LINE__ ."] FormList has not been constructed with parameters" );
 
         if (! isset ($this->config['fields']) )
             throw new Exception(__FILE__ . "[" . __LINE__ ."] No fields are sepcified in parameters" );
@@ -106,7 +106,7 @@ class FormList
     public function setFieldError($f)
     {
         if (! $this->config)
-            throw new Exception(__FILE__ . "[" . __LINE__ ."] FormList has not been constructed with for parameters" );
+            throw new Exception(__FILE__ . "[" . __LINE__ ."] FormList has not been constructed with parameters" );
 
         if (! isset ($this->config['fields']) )
             throw new Exception(__FILE__ . "[" . __LINE__ ."] No fields are sepcified in parameters" );
@@ -118,7 +118,7 @@ class FormList
     public function errormessage($f)
     {
         if (! $this->config)
-            throw new Exception(__FILE__ . "[" . __LINE__ ."] FormList has not been constructed with for parameters" );
+            throw new Exception(__FILE__ . "[" . __LINE__ ."] FormList has not been constructed with parameters" );
 
         if (! isset ($this->config['fields']) )
             throw new Exception(__FILE__ . "[" . __LINE__ ."] No fields are sepcified in parameters" );
@@ -134,7 +134,7 @@ class FormList
         $ret = array();
 
         if (! $this->config)
-            throw new Exception(__FILE__ . "[" . __LINE__ ."] FormList has not been constructed with for parameters" );
+            throw new Exception(__FILE__ . "[" . __LINE__ ."] FormList has not been constructed with parameters" );
 
         if (! isset ($this->config['fields']) )
             throw new Exception(__FILE__ . "[" . __LINE__ ."] No fields are sepcified in parameters" );
@@ -164,7 +164,7 @@ class FormList
         $valid=true;
 
         if (! $this->config)
-            throw new Exception(__FILE__ . "[" . __LINE__ ."] FormList has not been constructed with for parameters" );
+            throw new Exception(__FILE__ . "[" . __LINE__ ."] FormList has not been constructed with parameters" );
 
         if (! isset ($this->config['fields']) )
             throw new Exception(__FILE__ . "[" . __LINE__ ."] No fields are sepcified in parameters" );
@@ -223,7 +223,7 @@ class FormList
     public function AddRecord($DB)
     {
         if (! $this->config)
-            throw new Exception(__FILE__ . "[" . __LINE__ ."] FormList has not been constructed with lsit parameters" );
+            throw new Exception(__FILE__ . "[" . __LINE__ ."] FormList has not been constructed with list parameters" );
 
         if (! isset ($this->config['fields']) )
             throw new Exception(__FILE__ . "[" . __LINE__ ."] No fields are sepcified in parameters" );
@@ -250,7 +250,7 @@ class FormList
     public function ModifyRecord($DB,$id)
     {
         if (! $this->config)
-            throw new Exception(__FILE__ . "[" . __LINE__ ."] FormList has not been constructed with lsit parameters" );
+            throw new Exception(__FILE__ . "[" . __LINE__ ."] FormList has not been constructed with list parameters" );
 
         if (! isset ($this->config['fields']) )
             throw new Exception(__FILE__ . "[" . __LINE__ ."] No fields are sepcified in parameters" );
@@ -609,7 +609,7 @@ class FormList
     public function getTableData($DB,$recid)
     {
         if (! $this->config)
-            throw new Exception(__FILE__ . "[" . __LINE__ ."] FormList has not been constructed with for parameters" );
+            throw new Exception(__FILE__ . "[" . __LINE__ ."] FormList has not been constructed with parameters" );
 
         if (! isset ($this->config['fields']) )
             throw new Exception(__FILE__ . "[" . __LINE__ ."] No fields are sepcified in parameters" );
@@ -637,7 +637,7 @@ class FormList
 
 
         if (! $this->config)
-            throw new Exception(__FILE__ . "[" . __LINE__ ."] FormList has not been constructed with for parameters" );
+            throw new Exception(__FILE__ . "[" . __LINE__ ."] FormList has not been constructed with parameters" );
 
         if (! isset ($this->config['fields']) )
             throw new Exception(__FILE__ . "[" . __LINE__ ."] No fields are sepcified in parameters" );
@@ -742,7 +742,7 @@ class FormList
     public function buildList($DB,$data=null)
     {
         if (! $this->config)
-            throw new Exception(__FILE__ . "[" . __LINE__ ."] FormList has not been constructed with lsit parameters" );
+            throw new Exception(__FILE__ . "[" . __LINE__ ."] FormList has not been constructed with list parameters" );
 
         if (! isset ($this->config['fields']) )
             throw new Exception(__FILE__ . "[" . __LINE__ ."] No fields are sepcified in parameters" );
