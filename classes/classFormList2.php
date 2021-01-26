@@ -804,11 +804,9 @@ class FormList
         echo "<button id='del{$table}' class='listDelete' disabled>DELETE</button>";
         echo "</div>";
 
-        error_log("Find number of rows in table: {$table} where = {$where}");
         $n = $DB->rows_in_table($table,$where);
         if ($n == 0)
         {
-            error_log("Returned zero rows");
             echo "<p class='norecord'>NO RECORDS</p>";
         }
         else
