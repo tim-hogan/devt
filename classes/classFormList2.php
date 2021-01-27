@@ -606,6 +606,68 @@ class FormList
 
     }
 
+    public function buildFKField($n,$f,$data)
+    {
+        $fid = $n . "_id";
+        $divid = $n . "_divid";
+        $classid = $n ."_class";
+        $fname = $n ."_f";
+
+        if (isset($this->config['form']))
+        {
+            $form = $this->config['form'];
+            if (isset($form['classes']))
+            {
+                $formclasses = $form['classes'];
+                if (isset($formclasses['div']))
+                    $formclassesdiv = $formclasses['div'];
+            }
+        }
+
+
+        echo "<div id='{$divid}'";
+        if ($formclassesdiv && isset($formclassesdiv['fk']))
+            echo " class='{$formclassesdiv['fk']}'";
+        echo " >";
+
+        if (isset($f['form']))
+        {
+
+            $form = $f['form'];
+            if (isset($form['display']) && $form['display'])
+            {
+                if (isset($form['formlabel']))
+                {
+                    $strLabel = htmlspecialchars($form['formlabel']);
+                    if ($form['required'])
+                        $strLabel = "* " . $strLabel;
+                    echo "<label for='{$fid}'>{$strLabel}</label>";
+                }
+
+                echo "<select id='{$fid}' class='{$classid}' name='{$fname}'>";
+                if (isset($f['fk_table']) && isset($f['fk_index']) && isset($f['fk_display']))
+                {
+                    $where = '';
+                    $order = '';
+                    if (isset(f['fk_where']))
+                        $where = trim($where);
+                    if (isset(f['fk_order']))
+                        $where = trim($order);
+                    if ( ! isset($field['form'] ['required']) ||  ! $field['form'] ['required'] )
+                        echo "<option value='0'><option>";
+                    $d = $DB->every($f['fk_table'],'where category_deleted = 0','order by category_name');
+                    foreach ($d as $a)
+                    {
+                        $strV = htmlspecialchars($a[$f['fk_display']]);
+                        echo "<option value='{$a[$f['fk_index']]}'>{$strV}</option>";
+                    }
+                }
+                echo "</select>";
+            }
+        }
+        echo "</div>";
+    }
+
     public function getTableData($DB,$recid)
     {
         if (! $this->config)
@@ -724,6 +786,9 @@ class FormList
                         break;
                     case "text":
                         $this->buildTextField($name,$field,$data);
+                        break;
+                    case "fk":
+                        $this->buildFKField($name,$field,$data);
                         break;
                     default:
                         break;
