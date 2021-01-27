@@ -909,7 +909,7 @@ class FormList
             while ($d = $r->fetch_array(MYSQLI_ASSOC))
             {
                 $recid="";
-                if haveParameterBoolean($global,"single_record")
+                if ($this->haveParameterBoolean($global,"single_record") )
                 {
                         $recid = FormList::encryptParam("table={$table}&onerec=1,action=edit");
                 }
