@@ -654,12 +654,15 @@ class FormList
                     if (isset(f['fk_order']))
                         $where = trim($order);
                     if ( ! isset($field['form'] ['required']) ||  ! $field['form'] ['required'] )
-                        echo "<option value='0'><option>";
+                        echo "<option value='0'></option>";
                     $d = $DB->every($f['fk_table'],'where category_deleted = 0','order by category_name');
                     foreach ($d as $a)
                     {
+                        $selected = '';
+                        if (isset($f['value']) && $f['value'] == $a[$f['fk_index']])
+                            $selected = 'selected';
                         $strV = htmlspecialchars($a[$f['fk_display']]);
-                        echo "<option value='{$a[$f['fk_index']]}'>{$strV}</option>";
+                        echo "<option value='{$a[$f['fk_index']]}' {$selected}>{$strV}</option>";
                     }
                 }
                 echo "</select>";
