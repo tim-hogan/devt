@@ -3,6 +3,7 @@ $formparams = [
     "global" => [
         "table" => "<edit db table name>",
         "primary_key" => "<edit db table primary key>"
+        "single_record" => true | false, //Set if there is no primary key and only a single record exists in this table.
     ],
     "form" => [
          "heading" => "<heading text>",
@@ -49,6 +50,8 @@ $formparams = [
             "dbfield" => true | false, //Assumed to be true of not specified
             "size" => "20",
             "maxlength" => "20",
+            "cols" => "50",  //The number of cols in a text area
+            "rows" => "4",  //The number of rows in a text area
             "errname" => "Prefix",
             "form" => [
                 "display" => true | false,
