@@ -271,7 +271,10 @@ class FormList
                     $row[$name] = $field['value'];
             }
         }
-        return $DB->p_update_from_array($this->config['global'] ['table'],$row,"where {$this->config['global'] ['primary_key']} = {$id}");
+        if ($id == -99)
+            return $DB->p_update_from_array($this->config['global'] ['table'],$row,"");
+        else
+            return $DB->p_update_from_array($this->config['global'] ['table'],$row,"where {$this->config['global'] ['primary_key']} = {$id}");
     }
 
     private function buildTextField($n,$f,$data=null)
@@ -906,11 +909,17 @@ class FormList
             while ($d = $r->fetch_array(MYSQLI_ASSOC))
             {
                 $recid="";
-                if (isset($d[$global['primary_key']]))
+                if haveParameterBoolean($global,"single_record")
                 {
-                    $recid = FormList::encryptParam("table={$table}&id={$d[$global['primary_key']]}&action=edit");
+                        $recid = FormList::encryptParam("table={$table}&onerec=1,action=edit");
                 }
-
+                else
+                {
+                    if (isset($d[$global['primary_key']]))
+                    {
+                        $recid = FormList::encryptParam("table={$table}&id={$d[$global['primary_key']]}&action=edit");
+                    }
+                }
                 echo "<tr>";
                 if ($this->haveParameterText($list,'type') && $list['type'] == "checkbox")
                     echo "<td><input type='checkbox' class='listcheck{$table}' value='{$recid}' onchange='deleteButtonChange(\"{$table}\")'/></td>";
