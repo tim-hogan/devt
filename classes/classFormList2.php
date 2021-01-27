@@ -626,6 +626,7 @@ class FormList
 
 
         echo "<div id='{$divid}'";
+var_error_log($formclassesdiv,"formclassdiv");
         if ($formclassesdiv && isset($formclassesdiv['fk']))
             echo " class='{$formclassesdiv['fk']}'";
         echo " >";
