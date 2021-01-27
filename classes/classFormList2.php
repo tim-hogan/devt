@@ -606,7 +606,7 @@ class FormList
 
     }
 
-    public function buildFKField($n,$f,$data)
+    public function buildFKField($n,$f,$data,$DB)
     {
         $fid = $n . "_id";
         $divid = $n . "_divid";
@@ -691,7 +691,7 @@ class FormList
         }
     }
 
-    public function buildFormFields($data=null)
+    public function buildFormFields($data=null,$DB=null)
     {
         $form = null;
         $formclasses = null;
@@ -788,7 +788,7 @@ class FormList
                         $this->buildTextField($name,$field,$data);
                         break;
                     case "fk":
-                        $this->buildFKField($name,$field,$data);
+                        $this->buildFKField($name,$field,$data,$DB);
                         break;
                     default:
                         break;
