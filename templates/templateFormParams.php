@@ -33,7 +33,12 @@ $formparams = [
     ],
     "fields" => [
         "<field name>" => [
-            "type" => "text | boolean | button | choice",
+            "type" => "text | boolean | button | choice | fk",
+            "fk_table" => "",
+            "fk_index" => "",
+            "fk_display" => "",
+            "fk_where" => "",
+            "fk_order" => "",
             "tag" => "input | textarea | checkbox",
             "sub-tag" => "text",
             "dbfield" => true | false, //Assumed to be true of not specified
