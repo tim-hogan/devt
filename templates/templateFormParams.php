@@ -38,7 +38,7 @@ $formparams = [
     ],
     "fields" => [
         "<field name>" => [
-            "type" => "text | boolean | button | choice | fk",
+            "type" => "text | boolean | integer | button | choice | fk",
             "fk_table" => "",
             "fk_index" => "",
             "fk_display" => "",
