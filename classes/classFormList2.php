@@ -626,7 +626,6 @@ class FormList
 
 
         echo "<div id='{$divid}'";
-var_error_log($formclassesdiv,"formclassdiv");
         if ($formclassesdiv && isset($formclassesdiv['fk']))
             echo " class='{$formclassesdiv['fk']}'";
         echo " >";
@@ -654,7 +653,7 @@ var_error_log($formclassesdiv,"formclassdiv");
                         $where = trim($where);
                     if (isset(f['fk_order']))
                         $where = trim($order);
-                    if ( ! isset($field['form'] ['required']) ||  ! $field['form'] ['required'] )
+                    if ( ! isset($form['required']) ||  ! $form['required'])
                         echo "<option value='0'></option>";
                     $d = $DB->every($f['fk_table'],'where category_deleted = 0','order by category_name');
                     foreach ($d as $a)
