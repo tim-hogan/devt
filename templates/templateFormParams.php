@@ -10,8 +10,13 @@ $formparams = [
          "classes" => [
             "div" => [
                 "inputtext" => "d_inputtext",
+                "emailtext" => "d_inputtext",
+                "passwordtext" => "d_inputtext",
                 "textarea" => "d_textarea",
-                "booleancheckbox" => "d_checkbox",
+                "checkbox" => "d_checkbox",
+                "choice" => "d_choice",
+                "dropdown" => "d_dropdown",
+                "fk" => "d_dropdown",
             ]
         ],
         "groups" => [
