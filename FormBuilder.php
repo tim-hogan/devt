@@ -136,6 +136,9 @@ require "./includes/classFormList2.php";
     $strtext = '';
 
     outputArray($tabledefs,0,$strtext);
+    echo "<p>";
+    var_dump($tabledefs);
+    echo "</p>";
 
     file_put_contents("/var/nvaluate/formbuilder/formparams.php",$strtext);
 
