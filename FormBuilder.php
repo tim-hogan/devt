@@ -31,6 +31,32 @@ function var_error_log( $object=null,$text='')
     error_log( "{$text} {$contents}" );
 }
 
+function strAssociateEntry($n,$v)
+{
+    $ret = '';
+    $ret .= "\"{$n}\" => ";
+    switch (gettype($v))
+    {
+        case "boolean":
+            if ($v)
+                $ret .= "true";
+            else
+                 $ret .= "false";
+            break;
+        case "integer":
+            $ret .= strval($v);
+            break;
+        case "double":
+            $ret .= strval($v);
+            break;
+        default:
+            $ret .= "\"{$v}\"";
+            break;
+    }
+
+    $ret .= ",\n";
+    return $ret;
+}
 
 require_once "./includes/classSecure.php";
 
@@ -49,6 +75,7 @@ require "./includes/classFormList2.php";
 </head>
 <body>
     <?php
+    $tabledefs = array();
     $r = $DB->query("show tables");
     $a = $r->fetch_all(MYSQLI_NUM);
     foreach($a as $table)
@@ -58,17 +85,49 @@ require "./includes/classFormList2.php";
 
         $finfo = $DB->fieldsFromTable($table[0]);
 
+        $form = array();
+        $global = array();
+
+        $global['table'] = $table[0];
+
+
         foreach ($finfo as $field)
         {
-            echo "<p> Field Info: ";
+            echo "<p> Field Info: {$field}";
 
-            if ($field->flags & FIELD_PRI_KEY_FLAG)
+            if ($field->flags & FIELD_AUTO_INCREMENT_FLAG)
             {
-                echo " PRIMARY KEY";
+                $global['primary_key'] = $field[''];
             }
             echo "</p>";
         }
+
+        $form['global'] = $global;
+
+
+        $tabledefs[$table[0]] = $form;
+
     }
+
+    //Output text
+    $strtext = '';
+    foreach($tabledefs as $name1 => $table)
+    {
+        $strtext .= "${$name1}form = [\n";
+
+        $global = $table['global'];
+        $strtext .= "    \"global\" => [\n";
+        foreach($global as $name2 => $g)
+        {
+            $strtext .= "        ". strAssociateEntry($name2,$g);
+        }
+        $strtext .= "   ],\n";
+
+        $strtext .= "];\n";
+    }
+
+    file_put_contents("/var/formbuilder/formparams.php",$strtext);
+
     ?>
 </body>
 </html>
