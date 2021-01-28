@@ -60,8 +60,9 @@ function strAssociateEntry($n,$v,$l)
     return $ret;
 }
 
-function outputArray($a,$level,&$output)
+function outputArray($a,$level)
 {
+    $ret = "";
     $l = $level*4;
     foreach($a as $name => $v)
     {
@@ -72,20 +73,21 @@ function outputArray($a,$level,&$output)
         {
             echo " Array</p>";
             for($i=0;$i<$l;$i++)
-                $output .= " ";
-            $ouput .= "\"{$name}\" => [\n";
-            outputArray($v,$level+1,$output);
+                $ret .= " ";
+            $ret .= "\"{$name}\" => [\n";
+            $ret .= outputArray($v,$level+1);
             for($i=0;$i<$l;$i++)
-                $output .= " ";
-            $ouput .= "],\n";
+                $ret .= " ";
+            $ret .= "],\n";
         }
         else
         {
             echo " Value {$v}</p>";
-            $output .= strAssociateEntry($name,$v,$l);
+            $ret .= strAssociateEntry($name,$v,$l);
         }
     }
-    $output .= "],\n";
+    $ret .= "],\n";
+    return $ret;
 }
 
 require_once "./includes/classSecure.php";
@@ -142,10 +144,7 @@ require "./includes/classFormList2.php";
     //Output text
     $strtext = '';
 
-    outputArray($tabledefs,0,$strtext);
-    echo "<p>";
-    var_dump($tabledefs);
-    echo "</p>";
+    $strtext = outputArray($tabledefs,0);
 
     file_put_contents("/var/nvaluate/formbuilder/formparams.php",$strtext);
 
