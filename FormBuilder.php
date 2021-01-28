@@ -58,6 +58,20 @@ function strAssociateEntry($n,$v)
     return $ret;
 }
 
+function outputArray($a,$level,&$output)
+{
+    foreach($a as $name => $v)
+    {
+        if (gettype($v) == 'array')
+        {
+            outputArray($v,$level+1,$output);
+        }
+        else
+            $output .= strAssociateEntry($name,$v,$level*4);
+    }
+    $output .= "],\n";
+}
+
 require_once "./includes/classSecure.php";
 
 require_once "./includes/classnValuateCorpDB.php";
@@ -111,22 +125,13 @@ require "./includes/classFormList2.php";
 
     //Output text
     $strtext = '';
+
     foreach($tabledefs as $name1 => $table)
     {
-        $strtext .= "${$name1}form = [\n";
-
-        $global = $table['global'];
-        $strtext .= "    \"global\" => [\n";
-        foreach($global as $name2 => $g)
-        {
-            $strtext .= "        ". strAssociateEntry($name2,$g);
-        }
-        $strtext .= "   ],\n";
-
-        $strtext .= "];\n";
+        outputArray($table,0,$strtext);
     }
 
-    file_put_contents("/var/formbuilder/formparams.php",$strtext);
+    file_put_contents("/var/nvaluate/formbuilder/formparams.php",$strtext);
 
     ?>
 </body>
