@@ -93,11 +93,11 @@ require "./includes/classFormList2.php";
 
         foreach ($finfo as $field)
         {
-            echo "<p> Field Info: {$field}";
+            echo "<p> Field Info: {$field->name}";
 
             if ($field->flags & FIELD_AUTO_INCREMENT_FLAG)
             {
-                $global['primary_key'] = $field[''];
+                $global['primary_key'] = $field->name;
             }
             echo "</p>";
         }
