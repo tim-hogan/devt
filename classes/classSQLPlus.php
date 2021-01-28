@@ -206,6 +206,22 @@ class SQLPlus extends mysqli
         return true;
     }
 
+    public function fieldsFromTable($table)
+    {
+        $r = $this->query("select * from {$table} limit 1");
+        if (!$r) {$this->sqlError($q); return false;}
+        return $r->fetch_fields();
+    }
+
+
+    public function firstFromTable($table,$key,$id)
+    {
+        if ($key && strlen($key) > 0)
+            return $this->p_singlequery("select * from {$table} where {$key} = ? limit 1","i",$id);
+        else
+            return $this->singlequery("select * from {$table} limit 1");
+    }
+
     public function getFromTable($table,$key,$id)
     {
         if ($key && strlen($key) > 0)
