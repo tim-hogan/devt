@@ -86,7 +86,7 @@ function outputArray($a,$level)
             $ret .= strAssociateEntry($name,$v,$l);
         }
     }
-    $ret .= "],\n";
+    //$ret .= "],\n";
     return $ret;
 }
 
