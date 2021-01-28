@@ -22,17 +22,13 @@ $r = $DB->query("show tables");
 $a = $r->fetch_all(MYSQLI_NUM);
 foreach($a as $table)
 {
-    echo "<p>";
-    var_dump($table);
-    echo "</p>";
-
     $name = $table[0];
 
     echo "<p>Table name: ";
     var_dump($name);
     echo "</p>";
 
-    $finfo = $DB->fieldsFromTable($table);
+    $finfo = $DB->fieldsFromTable($table[0]);
 
     foreach ($finfo as $field)
     {
