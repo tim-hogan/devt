@@ -126,10 +126,7 @@ require "./includes/classFormList2.php";
     //Output text
     $strtext = '';
 
-    foreach($tabledefs as $name1 => $table)
-    {
-        outputArray($table,0,$strtext);
-    }
+    outputArray($tabledefs,0,$strtext);
 
     file_put_contents("/var/nvaluate/formbuilder/formparams.php",$strtext);
 
