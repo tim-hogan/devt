@@ -53,18 +53,14 @@ require "./includes/classFormList2.php";
     $a = $r->fetch_all(MYSQLI_NUM);
     foreach($a as $table)
     {
-        $name = $table[0];
 
-        echo "<p>Table name: ";
-        var_dump($name);
-        echo "</p>";
+        echo "<p>Table name: {$table[0]}</p>";
 
         $finfo = $DB->fieldsFromTable($table[0]);
 
         foreach ($finfo as $field)
         {
             echo "<p> Field Info: ";
-            var_dump($field);
 
             if ($field->flags & FIELD_PRI_KEY_FLAG)
             {
