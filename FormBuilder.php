@@ -31,9 +31,11 @@ function var_error_log( $object=null,$text='')
     error_log( "{$text} {$contents}" );
 }
 
-function strAssociateEntry($n,$v)
+function strAssociateEntry($n,$v,$l)
 {
     $ret = '';
+    for($i=0;$i<$l;$i++)
+        $ret .= " ";
     $ret .= "\"{$n}\" => ";
     switch (gettype($v))
     {
@@ -60,14 +62,21 @@ function strAssociateEntry($n,$v)
 
 function outputArray($a,$level,&$output)
 {
+    $l = $level*4;
     foreach($a as $name => $v)
     {
         if (gettype($v) == 'array')
         {
+            for($i=0;$i<$l;$i++)
+                $output .= " ";
+            $ouput .= "\"{$name}\" => [\n";
             outputArray($v,$level+1,$output);
+            for($i=0;$i<$l;$i++)
+                $output .= " ";
+            $ouput .= "],\n";
         }
         else
-            $output .= strAssociateEntry($name,$v,$level*4);
+            $output .= strAssociateEntry($name,$v,$l);
     }
     $output .= "],\n";
 }
