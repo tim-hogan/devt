@@ -65,8 +65,12 @@ function outputArray($a,$level,&$output)
     $l = $level*4;
     foreach($a as $name => $v)
     {
+
+        echo "<p>Name: {$name} Level: {$level} ";
+
         if (gettype($v) == 'array')
         {
+            echo " Array</p>";
             for($i=0;$i<$l;$i++)
                 $output .= " ";
             $ouput .= "\"{$name}\" => [\n";
@@ -76,7 +80,10 @@ function outputArray($a,$level,&$output)
             $ouput .= "],\n";
         }
         else
+        {
+            echo " Value {$v}</p>";
             $output .= strAssociateEntry($name,$v,$l);
+        }
     }
     $output .= "],\n";
 }
