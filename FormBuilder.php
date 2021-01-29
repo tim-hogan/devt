@@ -377,6 +377,7 @@ if (isset($_GET['t']))
         #flex {display: flex;}
         #left {background-color: #ddf;padding: 8px;}
         #left ul {list-style-type: none;padding-left: 8px;}
+        #right1 {padding: 20px;border: solid 1px #888;border-top: none;background-color: #ffd;}
     </style>
 </head>
 <body>
@@ -407,8 +408,30 @@ if (isset($_GET['t']))
                     <?php
                         if ($g_table)
                         {
+                            $params = $g_def[$g_table];
+                            $global = $params['global'];
+                            $form = $params['form'];
                             echo "<h1>TABLE {$g_table}</h1>";
                             echo "<div id='form1'>";
+                                echo "<div class='section'>";
+                                    echo "<p class='secheading'>GLOBAL</p>";
+                                    echo "<form method='POST' action='{$_SERVER["PHP_SELF"]}'>";
+                                        echo "<span>table</span><input type='text' name='table' value='{$global['table']}' />";
+                                        echo "<span>primary_key</span><input type='text' name='primary_key' value='{$global['primary_key']}' />";
+                                        echo "<span>single_record</span><input type='checkbox' name='single_record'";
+                                        if ($global['single_record'])
+                                            echo " checked ";
+                                        echo "/>";
+                                        echo "</form>";
+                                echo "</div>";
+                                echo "<div class='section'>";
+                                    echo "<p class='secheading'>FORM</p>";
+                                    echo "<form method='POST' action='{$_SERVER["PHP_SELF"]}'>";
+                                        echo "<span>heading</span><input type='text' name='formheading' value='{$form['heading']}' />";
+                                        echo "<span>introduction</span><input type='text' name='forminroduction' value='{$global['introduction']}' />";
+                                    echo "</form>";
+                                    echo "</div>";
+                                echo "</div>";
                             echo "</div>";
                         }
                     ?>
