@@ -350,7 +350,7 @@ if (isset($_GET['v']))
         if ($g_def)
             OutputToFile($g_def);
     }
-    if ($_GET['t'])
+    if (isset($_GET['t']))
     {
         $g_table = $_GET['t'];
     }
@@ -367,14 +367,14 @@ if (isset($_GET['v']))
         body {font-family: Arial, Helvetica, sans-serif;font-size: 10pt;margin: 0;padding: 0;}
         #container {}
         #header {background-color: #666;color: white;padding: 10px;}
-        #header p {font-size: 24pt; font-family:'Times New Roman', Times, serif}
+        #header p {font-size: 24pt; font-family:'Times New Roman', Times, serif; text-align:center;}
         #menu {padding: 8px;border:solid 1px #777;}
         #menu div {display:inline-block; margin-right: 12px;}
         #menu a {text-decoration: none;}
         #main {}
         #flex {display: flex;}
-        #left {background-color: #ddf;}
-        #left ul {}
+        #left {background-color: #ddf;padding: 8px;}
+        #left ul {list-style-type: none;padding-left: 8px;}
     </style>
 </head>
 <body>
@@ -405,7 +405,7 @@ if (isset($_GET['v']))
                     <?php
                         if ($g_table)
                         {
-                            echo "<h1>TBALE {$g_table}</h1>";
+                            echo "<h1>TABLE {$g_table}</h1>";
                             echo "<div id='form1'>";
                             echo "</div>";
                         }
