@@ -437,7 +437,7 @@ if (isset($_GET['t']))
                                     echo "<p class='secheading'>FORM</p>";
                                     echo "<form method='POST' action='{$_SERVER["PHP_SELF"]}'>";
                                     bTF('heading','formheading',$form['heading']);
-                                    bTF('introduction','forminroduction',$form['introduction'];
+                                    bTF('introduction','forminroduction',$form['introduction']);
                                     echo "</form>";
                                     echo "</div>";
                                 echo "</div>";
