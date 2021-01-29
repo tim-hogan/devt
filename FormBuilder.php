@@ -118,6 +118,8 @@ require "./includes/classFormList2.php";
 <?php
 function buildDefault()
 {
+    global $DB;
+
     $tabledefs = array();
     $r = $DB->query("show tables");
     $a = $r->fetch_all(MYSQLI_NUM);
@@ -364,6 +366,9 @@ if (isset($_GET['v']))
     <style>
         body {}
         #container {}
+        #heading {}
+        #menu {}
+        #menu div {display:inline-block}
         #main {}
         #flex {display: flex;}
     </style>
@@ -371,7 +376,7 @@ if (isset($_GET['v']))
 <body>
     <div id="container">
         <div id="header">
-
+            <p>deVT Form Builder Version 1</p>
         </div>
         <div id="menu">
             <div><a href="FormBuilder.php?v=buildfromdb">BUILD FROM DATABASE</a></div>
@@ -382,9 +387,12 @@ if (isset($_GET['v']))
                 <div id="left">
                     <ul>
                         <?php
-                        foreach ($g_def as $name => $table)
+                        if ($g_def)
                         {
-                            echo "<li><a href='FormBuilder.php?t={$name}'>{$name}</a></li>";
+                            foreach ($g_def as $name => $table)
+                            {
+                                echo "<li><a href='FormBuilder.php?t={$name}'>{$name}</a></li>";
+                            }
                         }
                         ?>
                     </ul>
