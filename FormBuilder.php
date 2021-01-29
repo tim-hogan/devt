@@ -333,6 +333,11 @@ function OutputToFile($t)
     file_put_contents("/var/nvaluate/formbuilder/formparams.php",$strtext);
 }
 
+function bTF($txt,$fn,$v)
+{
+    echo "<div class='ff'><span>{$txt}</span><input type='text' name='{$fn}' value='{$v}' /></div>";
+}
+
 $g_def = null;
 $g_table = null;
 if (isset($_SESSION['def']))
@@ -378,6 +383,10 @@ if (isset($_GET['t']))
         #left {background-color: #ddf;padding: 8px;}
         #left ul {list-style-type: none;padding-left: 8px;}
         #right1 {padding: 20px;border: solid 1px #888;border-top: none;background-color: #ffd;}
+        #form1 span {margin-right: 8px;}
+        .section {border: solid 1px #aaa;padding: 12px;border-radius: 6px;}
+        .secheading {margin: 0;position: relative;top: -20px;background-color: #ffd;display: inline-block;}
+        .ff {margin-bottom: 16px;}
     </style>
 </head>
 <body>
@@ -416,19 +425,19 @@ if (isset($_GET['t']))
                                 echo "<div class='section'>";
                                     echo "<p class='secheading'>GLOBAL</p>";
                                     echo "<form method='POST' action='{$_SERVER["PHP_SELF"]}'>";
-                                        echo "<span>table</span><input type='text' name='table' value='{$global['table']}' />";
-                                        echo "<span>primary_key</span><input type='text' name='primary_key' value='{$global['primary_key']}' />";
-                                        echo "<span>single_record</span><input type='checkbox' name='single_record'";
+                                    bTF('table','table',$global['table']);
+                                    bTF('primary_key','primary_key',$global['primary_key']);
+                                        echo "<div class='ff'><span>single_record</span><input type='checkbox' name='single_record'";
                                         if ($global['single_record'])
                                             echo " checked ";
-                                        echo "/>";
+                                        echo "/></div>";
                                         echo "</form>";
                                 echo "</div>";
                                 echo "<div class='section'>";
                                     echo "<p class='secheading'>FORM</p>";
                                     echo "<form method='POST' action='{$_SERVER["PHP_SELF"]}'>";
-                                        echo "<span>heading</span><input type='text' name='formheading' value='{$form['heading']}' />";
-                                        echo "<span>introduction</span><input type='text' name='forminroduction' value='{$global['introduction']}' />";
+                                    bTF('heading','formheading',$form['heading']);
+                                    bTF('introduction','forminroduction',$form['introduction'];
                                     echo "</form>";
                                     echo "</div>";
                                 echo "</div>";
