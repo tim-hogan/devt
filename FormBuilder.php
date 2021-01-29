@@ -364,13 +364,16 @@ if (isset($_GET['v']))
     <meta name="viewport" content="initial-scale=1.0" />
     <title>FormBuilder</title>
     <style>
-        body {}
+        body {font-family: Arial, Helvetica, sans-serif;font-size: 10pt;margin: 0;padding: 0;}
         #container {}
-        #heading {}
-        #menu {}
-        #menu div {display:inline-block}
+        #heading {background-color: #666;color: white;padding: 10px;}
+        #heading p {font-size: 24pt; font-family:'Times New Roman', Times, serif}
+        #menu {padding: 8px;}
+        #menu div {display:inline-block; margin-right: 12px;}
         #main {}
         #flex {display: flex;}
+        #left {background-color: #ddf;}
+        #left ul {}
     </style>
 </head>
 <body>
