@@ -332,6 +332,7 @@ function OutputToFile($t)
 }
 
 $g_def = null;
+$g_table = null;
 if (isset($_SESSION['def']))
     $g_def = $_SESSION['def'];
 
@@ -346,6 +347,10 @@ if (isset($_GET['v']))
     {
         if ($g_def)
             OutputToFile($g_def);
+    }
+    if ($_GET['t'])
+    {
+        $g_table = $_GET['t'];
     }
 }
 ?>
@@ -385,10 +390,33 @@ if (isset($_GET['v']))
                     </ul>
                 </div>
                 <div id="right1">
-
+                    <?php
+                        if ($g_table)
+                        {
+                            echo "<h1>TBALE {$g_table}</h1>";
+                            echo "<div id='form1'>";
+                            echo "</div>";
+                        }
+                    ?>
                 </div>
                 <div id="right2">
+                    <?php
+                    if ($g_table)
+                    {
 
+                            echo "<div class='form'>";
+                            echo "<form method='POST' autocomplete='off' action='{$_SERVER["PHP_SELF"]}'>";
+                            $FL = new FormList($g_def[$g_table]);
+                            $FL->buildFormFields(null,$DB);
+                            echo "<div class='submit'>";
+                                $v = FormList::encryptParam("table=server&action=create");
+                                echo "<input type='hidden' name='v' value='{$v}' />";
+                                echo "<input type='submit' name='_server_new' value='CREATE NEW' />";
+                            echo "</div>";
+                            echo "</form>";
+                            echo "</div>";
+                    }
+                    ?>
                 </div>
             </div>
         </div>
