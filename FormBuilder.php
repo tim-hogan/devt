@@ -353,6 +353,7 @@ if (isset($_GET['v']))
     if (isset($_GET['t']))
     {
         $g_table = $_GET['t'];
+        error_log("table = {$g_table}");
     }
 }
 ?>
