@@ -156,7 +156,7 @@ require "./includes/classFormList2.php";
         $div["fk"] = "d_dropdown";
 
 
-        $classes['div'] = $div
+        $classes['div'] = $div;
         $form['classes'] = $classes;
 
         $groups = array();
@@ -200,7 +200,7 @@ require "./includes/classFormList2.php";
                 $fdata["fk_where"] = "";
                 $fdata["fk_order"] = "";
 
-                $fdata["maxlength"] => $field->max_length;
+                $fdata["maxlength"] = $field->max_length;
                 $fdata["cols"] = "50";
                 $fdata["rows"] = "4";
                 $fdata["errname"] = $field->name;
@@ -261,56 +261,56 @@ require "./includes/classFormList2.php";
                 {
                     case FIELD_TYPE_TINYINT:
                         $fdata['type'] = 'boolean';
-                        $fdata['tag'] => "checkbox",
-                        $fdata['sub-tag'] => "",
+                        $fdata['tag'] = "checkbox";
+                        $fdata['sub-tag'] = "";
                         break;
 
                     case FIELD_TYPE_SMALLINT:
                     case FIELD_TYPE_INTEGER:
                     case FIELD_TYPE_BIGINT:
                         $fdata['type'] = 'integer';
-                        $fdata['tag'] => "input",
-                        $fdata['sub-tag'] => "text",
+                        $fdata['tag'] = "input";
+                        $fdata['sub-tag'] = "text";
                         break;
 
                     case FIELD_TYPE_FLOAT:
                     case FIELD_TYPE_DOUBLE:
                     case FIELD_TYPE_DECIMAL:
                         $fdata['type'] = 'decimal';
-                        $fdata['tag'] => "input",
-                        $fdata['sub-tag'] => "text",
+                        $fdata['tag'] = "input";
+                        $fdata['sub-tag'] = "text";
                         break;
 
                     case FIELD_TYPE_TIMESTAMP:
                     case FIELD_TYPE_DATETIME:
                         $fdata['type'] = 'datetime';
-                        $fdata['tag'] => "input",
-                        $fdata['sub-tag'] => "datetime-local",
+                        $fdata['tag'] = "input";
+                        $fdata['sub-tag'] = "datetime-local";
                         break;
 
                     case FIELD_TYPE_DATE:
                         $fdata['type'] = 'date';
-                        $fdata['tag'] => "input",
-                        $fdata['sub-tag'] => "date",
+                        $fdata['tag'] = "input";
+                        $fdata['sub-tag'] = "date";
                         break;
 
                     case FIELD_TYPE_TIME:
                         $fdata['type'] = 'time';
-                        $fdata['tag'] => "input",
-                        $fdata['sub-tag'] => "time",
+                        $fdata['tag'] = "input";
+                        $fdata['sub-tag'] = "time";
                         break;
 
                     case FIELD_TYPE_YEAR:
                         $fdata['type'] = 'year';
-                        $fdata['tag'] => "input",
-                        $fdata['sub-tag'] => "text",
+                        $fdata['tag'] = "input";
+                        $fdata['sub-tag'] = "text";
                         break;
                     case FIELD_TYPE_DECIMAL:
                     case FIELD_TYPE_VARCHAR:
                     case FIELD_TYPE_CHAR:
                         $fdata['type'] = 'text';
-                        $fdata['tag'] => "input",
-                        $fdata['sub-tag'] => "text",
+                        $fdata['tag'] = "input";
+                        $fdata['sub-tag'] = "text";
                         break;
 
                     default:
