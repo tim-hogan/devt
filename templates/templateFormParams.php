@@ -2,7 +2,7 @@
 $formparams = [
     "global" => [
         "table" => "<edit db table name>",
-        "primary_key" => "<edit db table primary key>"
+        "primary_key" => "<edit db table primary key>",
         "single_record" => true | false, //Set if there is no primary key and only a single record exists in this table.
     ],
     "form" => [
