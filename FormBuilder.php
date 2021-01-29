@@ -366,10 +366,11 @@ if (isset($_GET['v']))
     <style>
         body {font-family: Arial, Helvetica, sans-serif;font-size: 10pt;margin: 0;padding: 0;}
         #container {}
-        #heading {background-color: #666;color: white;padding: 10px;}
-        #heading p {font-size: 24pt; font-family:'Times New Roman', Times, serif}
-        #menu {padding: 8px;}
+        #header {background-color: #666;color: white;padding: 10px;}
+        #header p {font-size: 24pt; font-family:'Times New Roman', Times, serif}
+        #menu {padding: 8px;border:solid 1px #777;}
         #menu div {display:inline-block; margin-right: 12px;}
+        #menu a {text-decoration: none;}
         #main {}
         #flex {display: flex;}
         #left {background-color: #ddf;}
@@ -388,17 +389,17 @@ if (isset($_GET['v']))
         <div id="main">
             <div id="flex">
                 <div id="left">
-                    <ul>
                         <?php
                         if ($g_def)
                         {
+                            echo "<ul>";
                             foreach ($g_def as $name => $table)
                             {
                                 echo "<li><a href='FormBuilder.php?t={$name}'>{$name}</a></li>";
                             }
+                            echo "</ul>";
                         }
                         ?>
-                    </ul>
                 </div>
                 <div id="right1">
                     <?php
