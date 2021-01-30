@@ -485,18 +485,36 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
                                     echo "<div class='section'>";
                                         echo "<p class='secheading'>CLASSES</p>";
                                         echo "<div class='section'>";
-                                            echo "<p class='secheading'>div</p>";
-                                            bTF('heading','form_inputtext',$form['classes'] ['div'] ['inputtext']);
-                                        echo "</div>"
-                                    echo "</div>"
-
+                                            echo "<p class='secheading'>DIV</p>";
+                                            bTF('inputtext','form_inputtext',$form['classes'] ['div'] ['inputtext']);
+                                            bTF('emailtext','form_emailtext',$form['classes'] ['div'] ['emailtext']);
+                                            bTF('passwordtext','form_passwordtext',$form['classes'] ['div'] ['passwordtext']);
+                                            bTF('checkbox','form_checkbox',$form['classes'] ['div'] ['checkbox']);
+                                            bTF('choice','form_choice',$form['classes'] ['div'] ['choice']);
+                                            bTF('dropdown','form_dropdown',$form['classes'] ['div'] ['dropdown']);
+                                            bTF('fk','form_fk',$form['classes'] ['div'] ['fk']);
+                                            echo "</div>";
+                                    echo "</div>";
+                                    echo "<div class='section'>";
+                                    echo "<p class='secheading'>GROUPS</p>";
+                                    $idx = 0;
+                                    foreach($form['classes'] ['groups'] as $name => $group)
+                                    {
+                                        bTF('GroupName',"form_groupname{$idx}",$name);
+                                        echo "<div class='section'>";
+                                            echo "<p class='secheading'>{$name}</p>";
+                                            bTF('heading',"form_heading{$idx}",$group['heading']);
+                                        echo "</div>";
+                                        $idx++;
+                                    }
+                                    echo "</div>";
                                 echo "</div>";
                                 echo "<input type='hidden' name='table' value='{$g_table}'/>";
                                 echo "<input type='submit' name='tableupdate' value='CONFIRM CHANGE' />";
                             echo "</form>";
                             echo "</div>";
                         }
-?></div>
+                ?></div>
                 <div id="right2"><?php
                     if ($g_table)
                     {
