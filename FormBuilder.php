@@ -361,6 +361,14 @@ function updateTextrec(&$a,$t)
     }
 }
 
+function updateBoolanrec(&$a,$t)
+{
+    if (isset($_POST[$t]))
+    {
+        $a = FormList::getCheckboxField($t);
+    }
+}
+
 $g_def = null;
 $g_table = null;
 if (isset($_SESSION['def']))
@@ -388,17 +396,16 @@ if (isset($_GET['t']))
 //Post
 if ($_SERVER["REQUEST_METHOD"] == "POST")
 {
-    error_log("We have post");
     if (isset($_POST['tableupdate']))
     {
-        error_log("We have tableupdate");
         if ($g_def)
         {
-            error_log("We have g_def");
-            $table = $_POST['table'];
-            updateTextrec($g_def[$table] ['global'] ['primary_key'],'primary_key');
+            $g_table = $_POST['table'];
+            updateTextrec($g_def[$g_table] ['global'] ['primary_key'],'primary_key');
+            updateBoolanrec($g_def[$g_table] ['global'] ['single_record'],'single_record');
+            updateTextrec($g_def[$g_table] ['form'] ['heading'],'formheading');
+            updateTextrec($g_def[$g_table] ['form'] ['introduction'],'formintroduction');
 
-            error_log("Change is {$g_def[$table] ['global'] ['primary_key']}");
         }
     }
     $_SESSION['def'] = $g_def;
@@ -473,16 +480,23 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
                                 echo "</div>";
                                 echo "<div class='section'>";
                                     echo "<p class='secheading'>FORM</p>";
-                                    echo "<form method='POST' action='{$_SERVER["PHP_SELF"]}'>";
                                     bTF('heading','formheading',$form['heading']);
-                                    bTF('introduction','forminroduction',$form['introduction']);
+                                    bTF('introduction','formintroduction',$form['introduction']);
+                                    echo "<div class='section'>";
+                                        echo "<p class='secheading'>CLASSES</p>";
+                                        echo "<div class='section'>";
+                                            echo "<p class='secheading'>div</p>";
+                                            bTF('heading','form_inputtext',$form['classes'] ['div'] ['inputtext']);
+                                        echo "</div>"
+                                    echo "</div>"
+
                                 echo "</div>";
                                 echo "<input type='hidden' name='table' value='{$g_table}'/>";
                                 echo "<input type='submit' name='tableupdate' value='CONFIRM CHANGE' />";
                             echo "</form>";
                             echo "</div>";
                         }
-                    ?></div>
+?></div>
                 <div id="right2"><?php
                     if ($g_table)
                     {
