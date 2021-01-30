@@ -439,7 +439,6 @@ if (isset($_GET['t']))
                                     bTF('heading','formheading',$form['heading']);
                                     bTF('introduction','forminroduction',$form['introduction']);
                                     echo "</form>";
-                                    echo "</div>";
                                 echo "</div>";
                             echo "</div>";
                         }
