@@ -338,6 +338,14 @@ function bTF($txt,$fn,$v)
     echo "<div class='ff'><span>{$txt}</span><input type='text' name='{$fn}' value='{$v}' /></div>";
 }
 
+function bBF($txt,$fn,$v)
+{
+    echo "<div class='ff'><span>{$txt}</span><input type='checkbox' name='{$fn}'";
+    if ($v)
+        echo " checked ";
+    echo "/></div>";
+}
+
 $g_def = null;
 $g_table = null;
 if (isset($_SESSION['def']))
@@ -370,6 +378,8 @@ if (isset($_GET['t']))
     <meta name="viewport" content="width=device-width" />
     <meta name="viewport" content="initial-scale=1.0" />
     <title>FormBuilder</title>
+    <link rel='stylesheet' type='text/css' href='css/form.css' />
+    <link rel='stylesheet' type='text/css' href='css/list.css' />
     <style>
         body {font-family: Arial, Helvetica, sans-serif;font-size: 10pt;margin: 0;padding: 0;}
         #container {}
@@ -422,24 +432,21 @@ if (isset($_GET['t']))
                             $form = $params['form'];
                             echo "<h1>TABLE {$g_table}</h1>";
                             echo "<div id='form1'>";
+                            echo "<form method='POST' action='{$_SERVER["PHP_SELF"]}'>";
                                 echo "<div class='section'>";
                                     echo "<p class='secheading'>GLOBAL</p>";
-                                    echo "<form method='POST' action='{$_SERVER["PHP_SELF"]}'>";
                                     bTF('table','table',$global['table']);
                                     bTF('primary_key','primary_key',$global['primary_key']);
-                                        echo "<div class='ff'><span>single_record</span><input type='checkbox' name='single_record'";
-                                        if ($global['single_record'])
-                                            echo " checked ";
-                                        echo "/></div>";
-                                        echo "</form>";
+                                    bBF('single_record','single_record',$global['single_record']);
                                 echo "</div>";
                                 echo "<div class='section'>";
                                     echo "<p class='secheading'>FORM</p>";
                                     echo "<form method='POST' action='{$_SERVER["PHP_SELF"]}'>";
                                     bTF('heading','formheading',$form['heading']);
                                     bTF('introduction','forminroduction',$form['introduction']);
-                                    echo "</form>";
                                 echo "</div>";
+                                echo "<input type='submit' name='update' value='CONFIRM CHANGE' />";
+                            echo "</form>";
                             echo "</div>";
                         }
                     ?>
