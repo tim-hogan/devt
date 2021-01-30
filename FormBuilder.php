@@ -389,6 +389,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
             updateTextrec($g_def[$table] ['global'] ['primary_key'],'priamry_key');
         }
     }
+    $_SESSION['def'] = $g_def;
 }
 
 ?>
@@ -409,7 +410,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
         #menu {padding: 8px;border:solid 1px #777;}
         #menu div {display:inline-block; margin-right: 12px;}
         #menu a {text-decoration: none;}
-        #main {}
+        #main {padding: 0;}
         #flex {display: flex;}
         #left {background-color: #ddf;padding: 8px;}
         #left ul {list-style-type: none;padding-left: 8px;}
@@ -432,8 +433,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
         </div>
         <div id="main">
             <div id="flex">
-                <div id="left">
-                        <?php
+                <div id="left"><?php
                         if ($g_def)
                         {
                             echo "<ul>";
@@ -443,10 +443,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
                             }
                             echo "</ul>";
                         }
-                        ?>
-                </div>
-                <div id="right1">
-                    <?php
+                        ?></div>
+                <div id="right1"><?php
                         if ($g_table)
                         {
                             $params = $g_def[$g_table];
@@ -472,13 +470,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
                             echo "</form>";
                             echo "</div>";
                         }
-                    ?>
-                </div>
-                <div id="right2">
-                    <?php
+                    ?></div>
+                <div id="right2"><?php
                     if ($g_table)
                     {
-
                             echo "<div class='form'>";
                             echo "<form method='POST' autocomplete='off' action='{$_SERVER["PHP_SELF"]}'>";
                             $FL = new FormList($g_def[$g_table]);
@@ -491,8 +486,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
                             echo "</form>";
                             echo "</div>";
                     }
-                    ?>
-                </div>
+                    ?></div>
             </div>
         </div>
     </div>
