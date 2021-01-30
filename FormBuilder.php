@@ -346,7 +346,7 @@ function bBF($txt,$fn,$v)
     echo "/></div>";
 }
 
-function updatearec(&$a,$t)
+function updateTextrec(&$a,$t)
 {
     if (isset($_POST[$t]))
     {
@@ -386,7 +386,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
         if ($g_def)
         {
             $table = $_POST['table'];
-            updatearec($g_def[$table] ['global'] ['primary_key'],'priamry_key');
+            updateTextrec($g_def[$table] ['global'] ['primary_key'],'priamry_key');
         }
     }
 }
