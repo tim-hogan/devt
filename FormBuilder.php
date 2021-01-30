@@ -112,6 +112,10 @@ $DB = new nvaluatecorp($devt_environment->getDatabaseParameters());
 
 require "./includes/classFormList2.php";
 
+
+
+if (! isset($_SESSION['csrf_key']))
+    $_SESSION['csrf_key'] = base64_encode(openssl_random_pseudo_bytes(32));
 ?>
 
 
