@@ -346,6 +346,14 @@ function bBF($txt,$fn,$v)
     echo "/></div>";
 }
 
+function updatearec(&$a,$t)
+{
+    if (isset($_POST[$t]))
+    {
+        $a = $_POST[$t];
+    }
+}
+
 $g_def = null;
 $g_table = null;
 if (isset($_SESSION['def']))
@@ -368,6 +376,19 @@ if (isset($_GET['v']))
 if (isset($_GET['t']))
 {
     $g_table = $_GET['t'];
+}
+
+//Post
+if ($_SERVER["REQUEST_METHOD"] == "POST")
+{
+    if (isset($_POST['tableupdate']))
+    {
+        if ($g_def)
+        {
+            $table = $_POST['table'];
+            updatearec($g_def[$table] ['global'] ['primary_key'],'priamry_key');
+        }
+    }
 }
 
 ?>
@@ -393,8 +414,9 @@ if (isset($_GET['t']))
         #left {background-color: #ddf;padding: 8px;}
         #left ul {list-style-type: none;padding-left: 8px;}
         #right1 {padding: 20px;border: solid 1px #888;border-top: none;background-color: #ffd;}
+        #right2 {padding: 20px; border-right: solid 1px #888;border-bottom: solid 1px #888;background-color: #f8f8f8}
         #form1 span {margin-right: 8px;}
-        .section {border: solid 1px #aaa;padding: 12px;border-radius: 6px;}
+        .section {margin-bottom: 16px; border: solid 1px #aaa;padding: 12px;border-radius: 6px;}
         .secheading {margin: 0;position: relative;top: -20px;background-color: #ffd;display: inline-block;}
         .ff {margin-bottom: 16px;}
     </style>
@@ -445,7 +467,8 @@ if (isset($_GET['t']))
                                     bTF('heading','formheading',$form['heading']);
                                     bTF('introduction','forminroduction',$form['introduction']);
                                 echo "</div>";
-                                echo "<input type='submit' name='update' value='CONFIRM CHANGE' />";
+                                echo "<input type='hidden' name='table' value='{$g_table}'/>";
+                                echo "<input type='submit' name='tableupdate' value='CONFIRM CHANGE' />";
                             echo "</form>";
                             echo "</div>";
                         }
