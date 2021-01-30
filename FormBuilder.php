@@ -138,6 +138,8 @@ function buildDefault()
         $form = array();
 
         $global['table'] = $table[0];
+        $global['single_record'] = true;
+
         $form['heading'] = "{$table[0]} Heading";
         $form['introduction'] = "";
 
@@ -187,6 +189,7 @@ function buildDefault()
             if ($field->flags & FIELD_AUTO_INCREMENT_FLAG)
             {
                 $global['primary_key'] = $field->name;
+                $global['single_record'] = false;
             }
 
             $fdata = array();
@@ -385,12 +388,17 @@ if (isset($_GET['t']))
 //Post
 if ($_SERVER["REQUEST_METHOD"] == "POST")
 {
+    error_log("We have post");
     if (isset($_POST['tableupdate']))
     {
+        error_log("We have tableupdate");
         if ($g_def)
         {
+            error_log("We have g_def");
             $table = $_POST['table'];
-            updateTextrec($g_def[$table] ['global'] ['primary_key'],'priamry_key');
+            updateTextrec($g_def[$table] ['global'] ['primary_key'],'primary_key');
+
+            error_log("Change is {$g_def[$table] ['global'] ['primary_key']}");
         }
     }
     $_SESSION['def'] = $g_def;
