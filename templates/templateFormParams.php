@@ -74,7 +74,7 @@ $formparams = [
                 "anchor" => true,  // This is the field that has a link to click of edit
                 "displayoption" => "tick | ",
             ],
-            "secuity_view" => integer,
+            "secruity_view" => integer,
             "security_edit" => integer
         ]
     ]
