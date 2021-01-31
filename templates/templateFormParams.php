@@ -75,7 +75,7 @@ $formparams = [
                 "displayoption" => "tick | ",
             ],
             "secuity_view" => integer,
-            "security_eidt" => integer
+            "security_edit" => integer
         ]
     ]
 ];
