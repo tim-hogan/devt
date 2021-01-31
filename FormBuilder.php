@@ -200,8 +200,8 @@ function buildDefault()
             $fdata["fk_where"] = "";
             $fdata["fk_order"] = "";
 
-            $fdata["size"] = max(4,$field->max_length);
-            $fdata["maxlength"] = $field->max_length;
+            $fdata["size"] = max(4,$field->length);
+            $fdata["maxlength"] = $field->length;
             $fdata["cols"] = "50";
             $fdata["rows"] = "4";
             $fdata["errname"] = $field->name;
@@ -487,6 +487,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
                 $g_def[$g_table] ['fields'] [$name] ['form'] ['display'] = $b;
                 $b = boolval(FormList::getCheckboxField("{$g_table}_{$name}_lsitform"));
                 $g_def[$g_table] ['fields'] [$name] ['list'] ['display'] = $b;
+
+                if (isset($_POST["{$g_table}_{$name}_size"]) )
+                    $g_def[$g_table] ['fields'] [$name] ['size'] =$_POST["{$g_table}_{$name}_size;
+
             }
 
         }
