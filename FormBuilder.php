@@ -437,6 +437,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
         #menu a {text-decoration: none;}
         #main {padding: 0;}
         #fileload {display: none;}
+        #fileload h1 {color: #777;}
+        #fileload input {display: block; font-size: 14pt;}
         #flex {display: flex;}
         #left {background-color: #ddf;padding: 8px;}
         #left ul {list-style-type: none;padding-left: 8px;}
@@ -480,7 +482,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
             <div id="fileload">
                 <h1>LOAD FORM DATA FROM FILE</h1>
                 <form method='POST' action='<?php echo $_SERVER["PHP_SELF"]?>'>
-                    <input type="text" name="filename" value="/var/nvaluate/formbuilder/formparams.php" />
+                    <input type="text" name="filename" value="/var/nvaluate/formbuilder/formparams.php" size="60"/>
                     <input type="submit" value="LOAD" name="loadform" /> 
                 </form>
             </div>
@@ -502,6 +504,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
                             $params = $g_def[$g_table];
                             $global = $params['global'];
                             $form = $params['form'];
+                            $list = $params['list'];
+                            $fields = $params['fields'];
                             echo "<h1>TABLE {$g_table}</h1>";
                             echo "<div id='form1'>";
                             echo "<form method='POST' action='{$_SERVER["PHP_SELF"]}'>";
@@ -537,17 +541,55 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
                                         echo "<div class='section'>";
                                             echo "<p class='secheading'>{$name}</p>";
                                             bTF('heading',"form_heading{$idx}",$group['heading']);
-                                        echo "</div>";
+                                            bTF('introduction1',"form_introduction1{$idx}",$group['introduction1']);
+                                            bTF('introduction2',"form_introduction2{$idx}",$group['introduction2']);
+                                            bTF('introduction3',"form_introduction3{$idx}",$group['introduction3']);
+                                            echo "</div>";
                                         $idx++;
                                     }
                                     echo "</div>";
                                 echo "</div>";
+                                echo "<div class='section'>";
+                                echo "<p class='secheading'>:LIST</p>";
+                                bTF('type',"list_type",$list['type']);
+                                bBF('record_selector',"list_record_selector",$list['record_selector']);
+                                bTF('heading',"list_heading",$list['heading']);
+                                bTF('introduction',"list_introduction",$list['introduction']);
+                                bTF('default_order',"list_default_order",$list['default_order']);
+                                bTF('default_where',"list_default_where",$list['default_where']);
+                                echo "</div>";
+                                echo "<div class='section'>";
+                                echo "<p class='secheading'>FIELDS</p>";
+                                echo "<table>";
+                                echo "<tr><th></th><th colspan='2'>DISPLAY</th></tr>";
+                                echo "<tr><th>NAME</th><th>FORM</th><th>LIST</th></tr>";
+                                foreach($fields as $name => $field)
+                                {
+                                    echo "<tr>";
+                                    echo "<td>{$name}</td>";
+                                    echo "<td><input type='checkbox' name='{$g_table}_{$name}_dispform'";
+                                    if ($field['form'] ['display'])
+                                        echo " checked ";
+                                    echo "/></td>";
+                                    echo "<td><input type='checkbox' name='{$g_table}_{$name}_displist'";
+                                    if ($field['list'] ['display'])
+                                        echo " checked ";
+                                    echo "/></td>";
+                                    echo "</tr>";
+                                }
+                                echo "</table>";
+                                echo "</div>";
+
+
+
+
+
                                 echo "<input type='hidden' name='table' value='{$g_table}'/>";
                                 echo "<input type='submit' name='tableupdate' value='CONFIRM CHANGE' />";
                             echo "</form>";
                             echo "</div>";
                         }
-                ?></div>
+?></div>
                 <div id="right2"><?php
                     if ($g_table)
                     {
