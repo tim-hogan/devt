@@ -369,6 +369,8 @@ function updateBoolanrec(&$a,$t)
     }
 }
 
+$mode = null;
+
 $g_def = null;
 $g_table = null;
 if (isset($_SESSION['def']))
@@ -385,6 +387,10 @@ if (isset($_GET['v']))
     {
         if ($g_def)
             OutputToFile($g_def);
+    }
+    if ($_GET['v'] == 'loadfromfile')
+    {
+        $mode = "loadfile";
     }
 }
 
@@ -430,6 +436,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
         #menu div {display:inline-block; margin-right: 12px;}
         #menu a {text-decoration: none;}
         #main {padding: 0;}
+        #fileload {display: none;}
         #flex {display: flex;}
         #left {background-color: #ddf;padding: 8px;}
         #left ul {list-style-type: none;padding-left: 8px;}
@@ -440,17 +447,39 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
         .secheading {margin: 0;position: relative;top: -20px;background-color: #ffd;display: inline-block;}
         .ff {margin-bottom: 16px;}
     </style>
+    <script>
+                <?php
+        if ($mode && $mode == "loadfile")
+        {
+            echo "var g_mode = loadfile;";
+        }
+        else
+        {
+            echo "var g_mode = null;";
+        }
+                ?>
+        function start() {
+            if (g_mode == 'loadfile') {
+                document.getElementById('fileload').style.display = 'block';
+                document.getElementById('flex').style.display = 'none';
+            }
+        }
+    </script>
 </head>
-<body>
+<body onload="start()">
     <div id="container">
         <div id="header">
             <p>deVT Form Builder Version 1</p>
         </div>
         <div id="menu">
+            <div><a href="FormBuilder.php?v=loadfromfile">LOAD FROM FILE</a></div>
             <div><a href="FormBuilder.php?v=buildfromdb">BUILD FROM DATABASE</a></div>
-            <div><a href="FormBuilder.php?v=output">SAVE TOP FILE</a></div>
+            <div><a href="FormBuilder.php?v=output">SAVE TO FILE</a></div>
         </div>
         <div id="main">
+            <div id="fileload">
+
+            </div>
             <div id="flex">
                 <div id="left"><?php
                         if ($g_def)
@@ -498,7 +527,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
                                     echo "<div class='section'>";
                                     echo "<p class='secheading'>GROUPS</p>";
                                     $idx = 0;
-                                    foreach($form['classes'] ['groups'] as $name => $group)
+                                    foreach($form['groups'] as $name => $group)
                                     {
                                         bTF('GroupName',"form_groupname{$idx}",$name);
                                         echo "<div class='section'>";
