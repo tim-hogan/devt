@@ -200,6 +200,7 @@ function buildDefault()
             $fdata["fk_where"] = "";
             $fdata["fk_order"] = "";
 
+            $fdata["size"] = max(4,$field->max_length);
             $fdata["maxlength"] = $field->max_length;
             $fdata["cols"] = "50";
             $fdata["rows"] = "4";
@@ -344,16 +345,38 @@ function OutputToFile($t)
 
 function bTF($txt,$fn,$v)
 {
-    echo "<div class='ff'><span>{$txt}</span><input type='text' name='{$fn}' value='{$v}' /></div>";
+    echo "<tr>";
+    echo "<td>{$txt}</td>";
+    echo "<td><input type='text' name='{$fn}' value='{$v}' /></td>";
+    echo "</tr>";
+    //echo "<div class='ff'><span>{$txt}</span><input type='text' name='{$fn}' value='{$v}' /></div>";
 }
 
 function bBF($txt,$fn,$v)
 {
-    echo "<div class='ff'><span>{$txt}</span><input type='checkbox' name='{$fn}'";
+    echo "<tr>";
+    echo "<td>{$txt}</td>";
+    echo "<td><input type='checkbox' name='{$fn}'";
     if ($v)
         echo " checked ";
-    echo "/></div>";
+    echo "/></td>";
+    echo "</tr>";
+    //echo "<div class='ff'><span>{$txt}</span><input type='checkbox' name='{$fn}'";
+    //if ($v)
+        //echo " checked ";
+    //echo "/></div>";
 }
+
+function bIF($txt,$fn,$v)
+{
+    $vv = intval($v)
+    echo "<tr>";
+    echo "<td>{$txt}</td>";
+    echo "<td><input type='text' name='{$fn}' value='{$vv}' /></td>";
+    echo "</tr>";
+    //echo "<div class='ff'><span>{$txt}</span><input type='text' name='{$fn}' value='{$vv}' /></div>";
+}
+
 
 function updateTextrec(&$a,$t)
 {
@@ -565,18 +588,23 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
                             echo "<form method='POST' action='{$_SERVER["PHP_SELF"]}'>";
                                 echo "<div class='section'>";
                                     echo "<p class='secheading'>GLOBAL</p>";
+                                    echo "<table>";
                                     bTF('table','table',$global['table']);
                                     bTF('primary_key','primary_key',$global['primary_key']);
                                     bBF('single_record','single_record',$global['single_record']);
+                                    echo "</table>";
                                 echo "</div>";
                                 echo "<div class='section'>";
                                     echo "<p class='secheading'>FORM</p>";
+                                    echo "<table>";
                                     bTF('heading','formheading',$form['heading']);
                                     bTF('introduction','formintroduction',$form['introduction']);
+                                    echo "</table>";
                                     echo "<div class='section'>";
                                         echo "<p class='secheading'>CLASSES</p>";
                                         echo "<div class='section'>";
                                             echo "<p class='secheading'>DIV</p>";
+                                            echo "<table>";
                                             bTF('inputtext','form_inputtext',$form['classes'] ['div'] ['inputtext']);
                                             bTF('emailtext','form_emailtext',$form['classes'] ['div'] ['emailtext']);
                                             bTF('passwordtext','form_passwordtext',$form['classes'] ['div'] ['passwordtext']);
@@ -584,6 +612,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
                                             bTF('choice','form_choice',$form['classes'] ['div'] ['choice']);
                                             bTF('dropdown','form_dropdown',$form['classes'] ['div'] ['dropdown']);
                                             bTF('fk','form_fk',$form['classes'] ['div'] ['fk']);
+                                            echo "</table>";
                                             echo "</div>";
                                     echo "</div>";
                                     echo "<div class='section'>";
@@ -591,13 +620,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
                                     $idx = 0;
                                     foreach($form['groups'] as $name => $group)
                                     {
+                                        echo "<table>";
                                         bTF('GroupName',"form_groupname{$idx}",$name);
+                                        echo "</table>";
                                         echo "<div class='section'>";
                                             echo "<p class='secheading'>{$name}</p>";
+                                            echo "<table>";
                                             bTF('heading',"form_heading{$idx}",$group['heading']);
                                             bTF('introduction1',"form_introduction1{$idx}",$group['introduction1']);
                                             bTF('introduction2',"form_introduction2{$idx}",$group['introduction2']);
                                             bTF('introduction3',"form_introduction3{$idx}",$group['introduction3']);
+                                            echo "</table>";
                                             echo "</div>";
                                         $idx++;
                                     }
@@ -605,12 +638,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
                                 echo "</div>";
                                 echo "<div class='section'>";
                                 echo "<p class='secheading'>LIST</p>";
+                                echo "<table>";
                                 bTF('type',"list_type",$list['type']);
                                 bBF('record_selector',"list_record_selector",$list['record_selector']);
                                 bTF('heading',"list_heading",$list['heading']);
                                 bTF('introduction',"list_introduction",$list['introduction']);
                                 bTF('default_order',"list_default_order",$list['default_order']);
                                 bTF('default_where',"list_default_where",$list['default_where']);
+                                echo "</table>";
                                 echo "</div>";
                                 echo "<div class='section'>";
                                 echo "<p class='secheading'>FIELDS</p>";
@@ -638,18 +673,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
                                 {
                                     echo "<div class='section'>";
                                     echo "<p class='secheading'>FIELD DATA FOR {$g_field}</p>";
+                                    echo "<table>";
                                     bTF('type',"{$g_table}_{$g_field}_type",$fields[$g_field] ['type']);
                                     bTF('tag',"{$g_table}_{$g_field}_tag",$fields[$g_field] ['tag']);
                                     bTF('sub-tag',"{$g_table}_{$g_field}_sub-tag",$fields[$g_field] ['sub-tag']);
                                     bBF('dbfield',"{$g_table}_{$g_field}_dbfield",$fields[$g_field] ['dbfield']);
-                                    bTF('size',"{$g_table}_{$g_field}_size",$fields[$g_field] ['size']);
-                                    bTF('maxlength',"{$g_table}_{$g_field}_maxlength",$fields[$g_field] ['maxlength']);
-                                    bTF('cols',"{$g_table}_{$g_field}_cols",$fields[$g_field] ['cols']);
-                                    bTF('rows',"{$g_table}_{$g_field}_rows",$fields[$g_field] ['rows']);
+                                    bIF('size',"{$g_table}_{$g_field}_size",$fields[$g_field] ['size']);
+                                    bIF('maxlength',"{$g_table}_{$g_field}_maxlength",$fields[$g_field] ['maxlength']);
+                                    bIF('cols',"{$g_table}_{$g_field}_cols",$fields[$g_field] ['cols']);
+                                    bIF('rows',"{$g_table}_{$g_field}_rows",$fields[$g_field] ['rows']);
                                     bTF('errname',"{$g_table}_{$g_field}_errname",$fields[$g_field] ['errname']);
-                                    bTF('secuity_view',"{$g_table}_{$g_field}_secuity_view",$fields[$g_field] ['secuity_view']);
-                                    bTF('security_edit',"{$g_table}_{$g_field}_security_edit",$fields[$g_field] ['security_edit']);
-
+                                    bIF('secuity_view',"{$g_table}_{$g_field}_secuity_view",$fields[$g_field] ['secuity_view']);
+                                    bIF('security_edit',"{$g_table}_{$g_field}_security_edit",$fields[$g_field] ['security_edit']);
+                                    echo "</table>";
                                     echo "</div>";
                                 }
 
