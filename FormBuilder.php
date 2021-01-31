@@ -409,8 +409,50 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
             $g_table = $_POST['table'];
             updateTextrec($g_def[$g_table] ['global'] ['primary_key'],'primary_key');
             updateBoolanrec($g_def[$g_table] ['global'] ['single_record'],'single_record');
+
             updateTextrec($g_def[$g_table] ['form'] ['heading'],'formheading');
             updateTextrec($g_def[$g_table] ['form'] ['introduction'],'formintroduction');
+
+            updateTextrec($g_def[$g_table] ['form'] ['classes'] ['div'] ['inputtext'],'form_inputtext');
+            updateTextrec($g_def[$g_table] ['form'] ['classes'] ['div'] ['emailtext'],'form_emailtext');
+            updateTextrec($g_def[$g_table] ['form'] ['classes'] ['div'] ['passwordtext'],'form_passwordtext');
+            updateTextrec($g_def[$g_table] ['form'] ['classes'] ['div'] ['textarea'],'form_textarea');
+            updateTextrec($g_def[$g_table] ['form'] ['classes'] ['div'] ['checkbox'],'form_checkbox');
+            updateTextrec($g_def[$g_table] ['form'] ['classes'] ['div'] ['choice'],'form_choice');
+            updateTextrec($g_def[$g_table] ['form'] ['classes'] ['div'] ['dropdown'],'form_dropdown');
+            updateTextrec($g_def[$g_table] ['form'] ['classes'] ['div'] ['fk'],'form_fk');
+
+            for($cnt=0;$cnt < 50;$cnt++)
+            {
+                if (isset($_POST["form_groupname{$cnt}"]) )
+                {
+                    $name = $_POST["form_groupname{$cnt}"];
+                    if (! isset($g_def[$g_table] ['form'] ['groups'] [$name]) )
+                        $g_def[$g_table] ['form'] ['groups'] [$name] = array();
+                    updateTextrec($g_def[$g_table] ['form'] ['groups'] [$name] ['heading'],"form_heading{$cnt}");
+                    updateTextrec($g_def[$g_table] ['form'] ['groups'] [$name] ['introduction1'],"form_introduction1{$cnt}");
+                    updateTextrec($g_def[$g_table] ['form'] ['groups'] [$name] ['introduction2'],"form_introduction2{$cnt}");
+                    updateTextrec($g_def[$g_table] ['form'] ['groups'] [$name] ['introduction3'],"form_introduction3{$cnt}");
+                }
+                else
+                    break;
+            }
+
+            updateTextrec($g_def[$g_table] ['list'] ['type'] ,'list_type');
+            updateBoolanrec($g_def[$g_table] ['list'] ['single_record'],'list_single_record');
+            updateTextrec($g_def[$g_table] ['list'] ['heading'] ,'list_heading');
+            updateTextrec($g_def[$g_table] ['list'] ['introduction'] ,'list_introduction');
+            updateTextrec($g_def[$g_table] ['list'] ['default_order'] ,'list_default_order');
+            updateTextrec($g_def[$g_table] ['list'] ['default_where'] ,'list_default_where');
+
+            $fields = $g_def[$g_table] ['fields'];
+            foreach($fields as $name => $field)
+            {
+                $b = boolval(FormList::getCheckboxField("{$g_table}_{$name}_dispform"));
+                $g_def[$g_table] ['fields'] [$name] ['form'] ['display'] = $b;
+                $b = boolval(FormList::getCheckboxField("{$g_table}_{$name}_lsitform"));
+                $g_def[$g_table] ['fields'] [$name] ['list'] ['display'] = $b;
+            }
 
         }
     }
@@ -483,7 +525,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
                 <h1>LOAD FORM DATA FROM FILE</h1>
                 <form method='POST' action='<?php echo $_SERVER["PHP_SELF"]?>'>
                     <input type="text" name="filename" value="/var/nvaluate/formbuilder/formparams.php" size="60"/>
-                    <input type="submit" value="LOAD" name="loadform" /> 
+                    <input type="submit" value="LOAD" name="loadform" />
                 </form>
             </div>
             <div id="flex">
@@ -550,7 +592,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
                                     echo "</div>";
                                 echo "</div>";
                                 echo "<div class='section'>";
-                                echo "<p class='secheading'>:LIST</p>";
+                                echo "<p class='secheading'>LIST</p>";
                                 bTF('type',"list_type",$list['type']);
                                 bBF('record_selector',"list_record_selector",$list['record_selector']);
                                 bTF('heading',"list_heading",$list['heading']);
