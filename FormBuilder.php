@@ -255,7 +255,7 @@ function buildDefault()
                 $fl["anchor"] = false;
             $fl["displayoption"] = "";
 
-            $ff["list"] = $fl;
+            $fdata["list"] = $fl;
 
             switch ($field->type)
             {
@@ -335,8 +335,10 @@ function buildDefault()
 
 function OutputToFile($t)
 {
-    $strtext = '';
+    $strtext = 'return [\n';
     $strtext = outputArray($t,0);
+    $strtext = '];\n';
+
     file_put_contents("/var/nvaluate/formbuilder/formparams.php",$strtext);
 }
 
