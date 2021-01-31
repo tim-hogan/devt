@@ -489,7 +489,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
                 $g_def[$g_table] ['fields'] [$name] ['list'] ['display'] = $b;
 
                 if (isset($_POST["{$g_table}_{$name}_size"]) )
-                    $g_def[$g_table] ['fields'] [$name] ['size'] =$_POST["{$g_table}_{$name}_size;
+                    $g_def[$g_table] ['fields'] [$name] ['size'] =$_POST["{$g_table}_{$name}_size"];
 
             }
 
