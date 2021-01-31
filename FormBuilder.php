@@ -375,6 +375,8 @@ $mode = null;
 
 $g_def = null;
 $g_table = null;
+$g_field = null;
+
 if (isset($_SESSION['def']))
     $g_def = $_SESSION['def'];
 
@@ -399,6 +401,14 @@ if (isset($_GET['v']))
 if (isset($_GET['t']))
 {
     $g_table = $_GET['t'];
+}
+
+if (isset($_GET['f']))
+{
+    $v = $_GET['f'];
+    $a = explode ("_", $_GET['f']);
+    $g_table = $a[0];
+    $g_field = $a[1];
 }
 
 //Post
@@ -610,7 +620,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
                                 foreach($fields as $name => $field)
                                 {
                                     echo "<tr>";
-                                    echo "<td>{$name}</td>";
+                                    echo "<td><a href='FormBuilder.php?f={$g_table}_{$name}'>{$name}</a></td>";
                                     echo "<td><input type='checkbox' name='{$g_table}_{$name}_dispform'";
                                     if ($field['form'] ['display'])
                                         echo " checked ";
@@ -624,9 +634,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
                                 echo "</table>";
                                 echo "</div>";
 
+                                if ($g_field)
+                                {
+                                    echo "<div class='section'>";
+                                    echo "<p class='secheading'>FIELD DATA FOR {$g_field}</p>";
+                                    bTF('type',"{$g_table}_{$g_field}_type",$fields[$g_field] ['type']);
+                                    bTF('tag',"{$g_table}_{$g_field}_tag",$fields[$g_field] ['tag']);
+                                    bTF('sub-tag',"{$g_table}_{$g_field}_sub-tag",$fields[$g_field] ['sub-tag']);
+                                    bBF('dbfield',"{$g_table}_{$g_field}_dbfield",$fields[$g_field] ['dbfield']);
+                                    bTF('size',"{$g_table}_{$g_field}_size",$fields[$g_field] ['size']);
+                                    bTF('maxlength',"{$g_table}_{$g_field}_maxlength",$fields[$g_field] ['maxlength']);
+                                    bTF('cols',"{$g_table}_{$g_field}_cols",$fields[$g_field] ['cols']);
+                                    bTF('rows',"{$g_table}_{$g_field}_rows",$fields[$g_field] ['rows']);
+                                    bTF('errname',"{$g_table}_{$g_field}_errname",$fields[$g_field] ['errname']);
+                                    bTF('secuity_view',"{$g_table}_{$g_field}_secuity_view",$fields[$g_field] ['secuity_view']);
+                                    bTF('security_edit',"{$g_table}_{$g_field}_security_edit",$fields[$g_field] ['security_edit']);
 
-
-
+                                    echo "</div>";
+                                }
 
                                 echo "<input type='hidden' name='table' value='{$g_table}'/>";
                                 echo "<input type='submit' name='tableupdate' value='CONFIRM CHANGE' />";
