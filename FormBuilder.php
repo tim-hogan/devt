@@ -239,6 +239,8 @@ function buildDefault()
 
             $ff["choice"] = $choice;
 
+            $ff["security_view"] = 0;
+            $ff["security_edit"] = 0;
 
             $fdata["form"] = $ff;
 
@@ -687,7 +689,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
                                     bIF('cols',"{$g_table}_{$g_field}_cols",$fields[$g_field] ['cols']);
                                     bIF('rows',"{$g_table}_{$g_field}_rows",$fields[$g_field] ['rows']);
                                     bTF('errname',"{$g_table}_{$g_field}_errname",$fields[$g_field] ['errname']);
-                                    bIF('secuity_view',"{$g_table}_{$g_field}_secuity_view",$fields[$g_field] ['secuity_view']);
+                                    bIF('security_view',"{$g_table}_{$g_field}_secuity_view",$fields[$g_field] ['security_view']);
                                     bIF('security_edit',"{$g_table}_{$g_field}_security_edit",$fields[$g_field] ['security_edit']);
                                     echo "</table>";
                                     echo "</div>";
