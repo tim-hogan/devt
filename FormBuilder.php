@@ -406,7 +406,7 @@ if (isset($_GET['t']))
 if (isset($_GET['f']))
 {
     $v = $_GET['f'];
-    $a = explode ("_", $_GET['f']);
+    $a = explode (":", $_GET['f']);
     $g_table = $a[0];
     $g_field = $a[1];
 }
@@ -620,7 +620,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
                                 foreach($fields as $name => $field)
                                 {
                                     echo "<tr>";
-                                    echo "<td><a href='FormBuilder.php?f={$g_table}_{$name}'>{$name}</a></td>";
+                                    echo "<td><a href='FormBuilder.php?f={$g_table}:{$name}'>{$name}</a></td>";
                                     echo "<td><input type='checkbox' name='{$g_table}_{$name}_dispform'";
                                     if ($field['form'] ['display'])
                                         echo " checked ";
