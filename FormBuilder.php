@@ -451,7 +451,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
                 <?php
         if ($mode && $mode == "loadfile")
         {
-            echo "var g_mode = loadfile;";
+            echo "var g_mode = 'loadfile';";
         }
         else
         {
@@ -478,7 +478,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
         </div>
         <div id="main">
             <div id="fileload">
-
+                <h1>LOAD FORM DATA FROM FILE</h1>
+                <form method='POST' action='<?php echo $_SERVER["PHP_SELF"]?>'>
+                    <input type="text" name="filename" value="/var/nvaluate/formbuilder/formparams.php" />
+                    <input type="submit" value="LOAD" name="loadform" /> 
+                </form>
             </div>
             <div id="flex">
                 <div id="left"><?php
