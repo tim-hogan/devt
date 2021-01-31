@@ -369,7 +369,7 @@ function bBF($txt,$fn,$v)
 
 function bIF($txt,$fn,$v)
 {
-    $vv = intval($v)
+    $vv = intval($v);
     echo "<tr>";
     echo "<td>{$txt}</td>";
     echo "<td><input type='text' name='{$fn}' value='{$vv}' /></td>";
