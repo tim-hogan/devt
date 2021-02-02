@@ -339,8 +339,8 @@ function buildDefault()
 function OutputToFile($t)
 {
     $strtext = 'return [\n';
-    $strtext = outputArray($t,0);
-    $strtext = '];\n';
+    $strtext .= outputArray($t,0);
+    $strtext .= '];\n';
 
     file_put_contents("/var/nvaluate/formbuilder/formparams.php",$strtext);
 }
