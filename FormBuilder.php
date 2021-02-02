@@ -500,7 +500,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
 
     if (isset($_POST["loadform"]) )
     {
-        if (isset(($_POST["filename"]))
+        if (isset($_POST["filename"]))
         {
             $filename = trim($_POST["filename"]);
             if (file_exists($filename))
