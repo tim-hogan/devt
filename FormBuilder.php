@@ -504,7 +504,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
         {
             $filename = trim($_POST["filename"]);
             if (file_exists($filename))
+            {
                 $g_def = include ($filename);
+                error_log("Loaded from file");
+                var_error_log($g_def,"g_def");
+            }
         }
 
     }
@@ -534,6 +538,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
         #fileload {display: none;}
         #fileload h1 {color: #777;}
         #fileload input {display: block; font-size: 14pt;}
+        #fileload input[type="submit"] {margin-top: 20px; display: block; font-size: 14pt;}
         #flex {display: flex;}
         #left {background-color: #ddf;padding: 8px;}
         #left ul {list-style-type: none;padding-left: 8px;}
@@ -575,9 +580,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
         </div>
         <div id="main">
             <div id="fileload">
-                <h1>LOAD FORM DATA FROM FILE</h1>
+                <h1>LOAD FROM FILE</h1>
                 <form method='POST' action='<?php echo $_SERVER["PHP_SELF"]?>'>
-                    <input type="text" name="filename" value="/var/nvaluate/formbuilder/formparams.php" size="60"/>
+                    <label for="loadfilename">ENTER FILE NAME</label>
+                    <input id="loadfilename" type="text" name="filename" value="/var/nvaluate/formbuilder/formparams.php" size="60"/>
                     <input type="submit" value="LOAD" name="loadform" />
                 </form>
             </div>
