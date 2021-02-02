@@ -338,9 +338,9 @@ function buildDefault()
 
 function OutputToFile($t)
 {
-    $strtext = 'return [\n';
+    $strtext = "return [ \n";
     $strtext .= outputArray($t,0);
-    $strtext .= '];\n';
+    $strtext .= "]; \n";
 
     file_put_contents("/var/nvaluate/formbuilder/formparams.php",$strtext);
 }
@@ -505,7 +505,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
             $filename = trim($_POST["filename"]);
             if (file_exists($filename))
             {
-                $g_def = include ($filename);
+                $g_def = require($filename);
                 error_log("Loaded from file");
                 var_error_log($g_def,"g_def");
             }
