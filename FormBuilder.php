@@ -381,7 +381,7 @@ function bDDF($txt,$fn,$v,$list)
         echo "<option value='{$val}'";
         if ($v == $val)
             echo " selected ";
-        echo ">{$v}</option>";
+        echo ">{$val}</option>";
     }
     echo "</select></td>";
     echo "</tr>";
@@ -616,7 +616,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
         #right2 {padding: 20px; border-right: solid 1px #888;border-bottom: solid 1px #888;background-color: #ffd;}
         #right3 {padding: 20px; border-right: solid 1px #888;border-bottom: solid 1px #888;background-color: #f8f8f8}
         #form1 span {margin-right: 8px;}
-        .section {margin-bottom: 16px; border: solid 1px #aaa;padding: 12px;border-radius: 6px;}
+        .section {margin-top: 10px;margin-bottom: 16px; border: solid 1px #aaa;padding: 12px;border-radius: 6px;}
         .secheading {margin: 0;position: relative;top: -20px;background-color: #ffd;display: inline-block;}
         .ff {margin-bottom: 16px;}
     </style>
