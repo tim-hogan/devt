@@ -544,7 +544,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
         #left {background-color: #ddf;padding: 8px;}
         #left ul {list-style-type: none;padding-left: 8px;}
         #right1 {padding: 20px;border: solid 1px #888;border-top: none;background-color: #ffd;}
-        #right2 {padding: 20px; border-right: solid 1px #888;border-bottom: solid 1px #888;background-color: #f8f8f8}
+        #right2 {padding: 20px; border-right: solid 1px #888;border-bottom: solid 1px #888;background-color: #ffd;}
+        #right3 {padding: 20px; border-right: solid 1px #888;border-bottom: solid 1px #888;background-color: #f8f8f8}
         #form1 span {margin-right: 8px;}
         .section {margin-bottom: 16px; border: solid 1px #aaa;padding: 12px;border-radius: 6px;}
         .secheading {margin: 0;position: relative;top: -20px;background-color: #ffd;display: inline-block;}
@@ -720,9 +721,33 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
                             echo "</div>";
                         }
 ?></div>
-                <div id="right2"><?php
+                <?php
+                    if ($g_field)
+                    {
+                        echo "<div id='right2'>";
+                        echo "<div class='section'>";
+                        echo "<p class='secheading'>FIELD DATA FOR {$g_field}</p>";
+                        echo "<table>";
+                        bTF('type',"{$g_table}_{$g_field}_type",$fields[$g_field] ['type']);
+                        bTF('tag',"{$g_table}_{$g_field}_tag",$fields[$g_field] ['tag']);
+                        bTF('sub-tag',"{$g_table}_{$g_field}_sub-tag",$fields[$g_field] ['sub-tag']);
+                        bBF('dbfield',"{$g_table}_{$g_field}_dbfield",$fields[$g_field] ['dbfield']);
+                        bIF('size',"{$g_table}_{$g_field}_size",$fields[$g_field] ['size']);
+                        bIF('maxlength',"{$g_table}_{$g_field}_maxlength",$fields[$g_field] ['maxlength']);
+                        bIF('cols',"{$g_table}_{$g_field}_cols",$fields[$g_field] ['cols']);
+                        bIF('rows',"{$g_table}_{$g_field}_rows",$fields[$g_field] ['rows']);
+                        bTF('errname',"{$g_table}_{$g_field}_errname",$fields[$g_field] ['errname']);
+                        bIF('security_view',"{$g_table}_{$g_field}_secuity_view",$fields[$g_field] ['security_view']);
+                        bIF('security_edit',"{$g_table}_{$g_field}_security_edit",$fields[$g_field] ['security_edit']);
+                        echo "</table>";
+                        echo "</div>";
+                        echo "</div>";
+\                    }
+                ?>
+                <?php
                     if ($g_table)
                     {
+                            echo "<div id='right3'>";
                             echo "<div class='form'>";
                             echo "<form method='POST' autocomplete='off' action='{$_SERVER["PHP_SELF"]}'>";
                             $FL = new FormList($g_def[$g_table]);
@@ -734,8 +759,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
                             echo "</div>";
                             echo "</form>";
                             echo "</div>";
-                    }
-                    ?></div>
+                            echo "</div>";
+                   }
+                ?>
             </div>
         </div>
     </div>
