@@ -535,12 +535,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
 
             foreach($g_def[$g_table] ['form'] ['groups'] as $name => $group)
             {
-                if (isset($_POST["form_group_name_{$name}"]) )
+                if (isset($_POST["form_group_{$name}"]) )
                 {
-                    if ($_POST["form_group_name_{$name}"] != $name)
+                    if ($_POST["form_group_{$name}"] != $name)
                     {
                         //The name has changed
-                        $newname = $_POST["form_group_name_{$name}"];
+                        $newname = $_POST["form_group_{$name}"];
                         $g_def[$g_table] ['form'] ['groups'] [$newname] = array();
                         updateTextrec($g_def[$g_table] ['form'] ['groups'] [$newname] ['heading'],"form_group_{$name}_heading");
                         updateTextrec($g_def[$g_table] ['form'] ['groups'] [$newname] ['introduction1'],"form_group_{$name}_introduction1");
