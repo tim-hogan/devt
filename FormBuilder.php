@@ -205,6 +205,8 @@ function buildDefault()
             $fdata["cols"] = "50";
             $fdata["rows"] = "4";
             $fdata["errname"] = $field->name;
+            $fdata["security_view"] = 0;
+            $fdata["security_edit"] = 0;
 
             $ff = array();
             $ff["display"] = true;
@@ -239,8 +241,6 @@ function buildDefault()
 
             $ff["choice"] = $choice;
 
-            $ff["security_view"] = 0;
-            $ff["security_edit"] = 0;
 
             $fdata["form"] = $ff;
 
