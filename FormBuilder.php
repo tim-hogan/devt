@@ -371,6 +371,24 @@ function bBF($txt,$fn,$v)
     //echo "/></div>";
 }
 
+function bDDF($txt,$fn,$v,$list)
+{
+    echo "<tr>";
+    echo "<td>{$txt}</td>";
+    echo "<td><select name='{$fn}'>";
+    foreach($list as $val)
+    {
+        echo "<option value='{$val}'";
+        if ($v == $val)
+            echo " selected ";
+        echo ">{$v}</option>";
+    }
+    echo "</select></td>";
+    echo "</tr>";
+}
+
+
+
 function bIF($txt,$fn,$v)
 {
     $vv = intval($v);
@@ -777,7 +795,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
                         echo "<p class='secheading'>FIELD DATA FOR {$g_field}</p>";
                         echo "<form method='POST' action='{$_SERVER["PHP_SELF"]}'>";
                         echo "<table>";
-                        bTF('type',"{$g_table}_{$g_field}_type",$fields[$g_field] ['type']);
+                        bDDF('type',"{$g_table}_{$g_field}_type",$fields[$g_field] ['type'],['text','boolean','integer','button','choice','fk']);
+                        //bTF('type',"{$g_table}_{$g_field}_type",$fields[$g_field] ['type']);
                         bTF('tag',"{$g_table}_{$g_field}_tag",$fields[$g_field] ['tag']);
                         bTF('sub-tag',"{$g_table}_{$g_field}_sub-tag",$fields[$g_field] ['sub-tag']);
                         bBF('dbfield',"{$g_table}_{$g_field}_dbfield",$fields[$g_field] ['dbfield']);
@@ -789,6 +808,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
                         bIF('security_view',"{$g_table}_{$g_field}_secuity_view",$fields[$g_field] ['security_view']);
                         bIF('security_edit',"{$g_table}_{$g_field}_security_edit",$fields[$g_field] ['security_edit']);
                         echo "</table>";
+
+                        echo "<div class='section'>";
+                        echo "<p class='secheading'>FORM</p>";
+                        bBF('display',"{$g_table}_{$g_field}_form_display",$fields[$g_field] ['form'] ['display']);
+
+
+                        echo "</div>";
+
+
                         echo "<input type='hidden' name='table' value='{$g_table}'/>";
                         echo "<input type='hidden' name='field' value='{$g_field}'/>";
                         echo "<input type='submit' name='fieldupdate' value='CONFIRM CHANGE' />";
