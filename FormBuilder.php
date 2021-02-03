@@ -336,7 +336,7 @@ function buildDefault()
     return $tabledefs;
 }
 
-function OutputToFile($t)
+function OutputToFile($t,$f)
 {
     $strtext = "<?php\n";
     $strtext .= "return [\n";
@@ -344,7 +344,7 @@ function OutputToFile($t)
     $strtext .= "];\n";
     $strtext .= "?>";
 
-    file_put_contents("/var/nvaluate/formbuilder/formparams.php",$strtext);
+    file_put_contents($f,$strtext);
 }
 
 function bTF($txt,$fn,$v)
@@ -433,7 +433,7 @@ if (isset($_GET['v']))
     if ($_GET['v'] == 'output')
     {
         if ($g_def)
-            OutputToFile($g_def);
+            $mode = "savefile";
     }
     if ($_GET['v'] == 'loadfromfile')
     {
@@ -535,6 +535,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
     }
 
 
+    if (isset($_POST["saveform"]))
+    {
+        if ($g_def)
+        {
+            if (isset($_POST["filename"]))
+            {
+                $filename = trim($_POST["filename"]);
+                OutputToFile($g_def,$filename);
+            }
+        }
+    }
+
     if (isset($_POST["loadform"]) )
     {
         $g_def = null;
@@ -571,10 +583,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
         #menu div {display:inline-block; margin-right: 12px;}
         #menu a {text-decoration: none;}
         #main {padding: 0;}
-        #fileload {display: none;}
+        #fileload {display: none;padding: 20px;}
         #fileload h1 {color: #777;}
         #fileload input {display: block; font-size: 14pt;}
         #fileload input[type="submit"] {margin-top: 20px; display: block; font-size: 14pt;}
+        #filesave {display: none;padding: 20px;}
+        #filesave h1 {color: #777;}
+        #filesave input {display: block; font-size: 14pt;}
+        #filesave input[type="submit"] {margin-top: 20px; display: block; font-size: 14pt;}
         #flex {display: flex;}
         #left {background-color: #ddf;padding: 8px;}
         #left ul {list-style-type: none;padding-left: 8px;}
@@ -587,19 +603,28 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
         .ff {margin-bottom: 16px;}
     </style>
     <script>
-                <?php
+                        <?php
         if ($mode && $mode == "loadfile")
         {
             echo "var g_mode = 'loadfile';";
         }
         else
+            if ($mode && $mode == "savefile")
+            {
+                echo "var g_mode = 'savefile';";
+            }
+            else
         {
             echo "var g_mode = null;";
         }
-                ?>
+                        ?>
         function start() {
             if (g_mode == 'loadfile') {
                 document.getElementById('fileload').style.display = 'block';
+                document.getElementById('flex').style.display = 'none';
+            }
+             if (g_mode == 'savefile') {
+                document.getElementById('filelsave').style.display = 'block';
                 document.getElementById('flex').style.display = 'none';
             }
         }
@@ -616,11 +641,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
             <div><a href="FormBuilder.php?v=output">SAVE TO FILE</a></div>
         </div>
         <div id="main">
+            <div id="filelsave">
+                <h1>SAVE FILE</h1>
+                <form method='POST' action='<?php echo $_SERVER["PHP_SELF"]?>'>
+                    <label for="savefilename">ENTER FILE NAME</label>
+                    <input id="savefilename" type="text" name="filename" value="./forms/formparams.php" size="60" />
+                    <input type="submit" value="SAVE FORM DATA" name="saveform" />
+                </form>
+            </div>
             <div id="fileload">
                 <h1>LOAD FROM FILE</h1>
                 <form method='POST' action='<?php echo $_SERVER["PHP_SELF"]?>'>
                     <label for="loadfilename">ENTER FILE NAME</label>
-                    <input id="loadfilename" type="text" name="filename" value="/var/nvaluate/formbuilder/formparams.php" size="60"/>
+                    <input id="loadfilename" type="text" name="filename" value="./forms/formparams.php" size="60"/>
                     <input type="submit" value="LOAD" name="loadform" />
                 </form>
             </div>
