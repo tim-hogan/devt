@@ -398,6 +398,22 @@ function updateBoolanrec(&$a,$t)
     }
 }
 
+
+function updateTextFieldInfo($table,$field,$attribute)
+{
+    global $g_def;
+    if (isset($_POST["{$table}_{$field}_{$attribute}"]) )
+        $g_def[$table] ['fields'] [$field] [$attribute] = $_POST["{$table}_{$field}_{$attribute}"];
+}
+
+function updateIntegerFieldInfo($table,$field,$attribute)
+{
+    global $g_def;
+    if (isset($_POST["{$table}_{$field}_{$attribute}"]) )
+        $g_def[$table] ['fields'] [$field] [$attribute] = intval($_POST["{$table}_{$field}_{$attribute}"]);
+}
+
+
 $mode = null;
 
 $g_def = null;
@@ -491,14 +507,28 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
                 $g_def[$g_table] ['fields'] [$name] ['form'] ['display'] = $b;
                 $b = boolval(FormList::getCheckboxField("{$g_table}_{$name}_lsitform"));
                 $g_def[$g_table] ['fields'] [$name] ['list'] ['display'] = $b;
-
-                if (isset($_POST["{$g_table}_{$name}_size"]) )
-                    $g_def[$g_table] ['fields'] [$name] ['size'] =$_POST["{$g_table}_{$name}_size"];
-
             }
 
         }
     }
+
+    if (isset($_POST["fieldupdate"))
+    {
+        $table = $_POST['table'];
+        $field = $_POST['field'];
+
+        updateTextFieldInfo($table,$field,"type");
+        updateTextFieldInfo($table,$field,"tag");
+        updateTextFieldInfo($table,$field,"sub-tag");
+        updateIntegerFieldInfo($table,$field,"size");
+        updateIntegerFieldInfo($table,$field,"maxlength");
+        updateIntegerFieldInfo($table,$field,"cols");
+        updateIntegerFieldInfo($table,$field,"rows");
+        updateTextFieldInfo($table,$field,"errname");
+        updateIntegerFieldInfo($table,$field,"security_view");
+        updateIntegerFieldInfo($table,$field,"security_edit");
+    }
+
 
     if (isset($_POST["loadform"]) )
     {
@@ -695,26 +725,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
                                 echo "</table>";
                                 echo "</div>";
 
-                                if ($g_field)
-                                {
-                                    echo "<div class='section'>";
-                                    echo "<p class='secheading'>FIELD DATA FOR {$g_field}</p>";
-                                    echo "<table>";
-                                    bTF('type',"{$g_table}_{$g_field}_type",$fields[$g_field] ['type']);
-                                    bTF('tag',"{$g_table}_{$g_field}_tag",$fields[$g_field] ['tag']);
-                                    bTF('sub-tag',"{$g_table}_{$g_field}_sub-tag",$fields[$g_field] ['sub-tag']);
-                                    bBF('dbfield',"{$g_table}_{$g_field}_dbfield",$fields[$g_field] ['dbfield']);
-                                    bIF('size',"{$g_table}_{$g_field}_size",$fields[$g_field] ['size']);
-                                    bIF('maxlength',"{$g_table}_{$g_field}_maxlength",$fields[$g_field] ['maxlength']);
-                                    bIF('cols',"{$g_table}_{$g_field}_cols",$fields[$g_field] ['cols']);
-                                    bIF('rows',"{$g_table}_{$g_field}_rows",$fields[$g_field] ['rows']);
-                                    bTF('errname',"{$g_table}_{$g_field}_errname",$fields[$g_field] ['errname']);
-                                    bIF('security_view',"{$g_table}_{$g_field}_secuity_view",$fields[$g_field] ['security_view']);
-                                    bIF('security_edit',"{$g_table}_{$g_field}_security_edit",$fields[$g_field] ['security_edit']);
-                                    echo "</table>";
-                                    echo "</div>";
-                                }
-
                                 echo "<input type='hidden' name='table' value='{$g_table}'/>";
                                 echo "<input type='submit' name='tableupdate' value='CONFIRM CHANGE' />";
                             echo "</form>";
@@ -727,6 +737,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
                         echo "<div id='right2'>";
                         echo "<div class='section'>";
                         echo "<p class='secheading'>FIELD DATA FOR {$g_field}</p>";
+                        echo "<form method='POST' action='{$_SERVER["PHP_SELF"]}'>";
                         echo "<table>";
                         bTF('type',"{$g_table}_{$g_field}_type",$fields[$g_field] ['type']);
                         bTF('tag',"{$g_table}_{$g_field}_tag",$fields[$g_field] ['tag']);
@@ -740,6 +751,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
                         bIF('security_view',"{$g_table}_{$g_field}_secuity_view",$fields[$g_field] ['security_view']);
                         bIF('security_edit',"{$g_table}_{$g_field}_security_edit",$fields[$g_field] ['security_edit']);
                         echo "</table>";
+                        echo "<input type='hidden' name='table' value='{$g_table}'/>";
+                        echo "<input type='hidden' name='field' value='{$g_field}'/>";
+                        echo "<input type='submit' name='fieldupdate' value='CONFIRM CHANGE' />";
+                        echo "</form>";
                         echo "</div>";
                         echo "</div>";
                     }
