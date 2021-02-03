@@ -811,7 +811,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
 
                         echo "<div class='section'>";
                         echo "<p class='secheading'>FORM</p>";
+                        echo "<table>";
                         bBF('display',"{$g_table}_{$g_field}_form_display",$fields[$g_field] ['form'] ['display']);
+                        echo "</table>";
 
 
                         echo "</div>";
