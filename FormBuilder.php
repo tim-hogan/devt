@@ -502,14 +502,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
 
     if (isset($_POST["loadform"]) )
     {
+        $g_def = null;
         if (isset($_POST["filename"]))
         {
             $filename = trim($_POST["filename"]);
             if (file_exists($filename))
             {
                 $g_def = require($filename);
-                error_log("Loaded from file");
-                var_error_log($g_def,"g_def");
             }
         }
 
