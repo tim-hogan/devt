@@ -813,6 +813,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
                         echo "<p class='secheading'>FORM</p>";
                         echo "<table>";
                         bBF('display',"{$g_table}_{$g_field}_form_display",$fields[$g_field] ['form'] ['display']);
+                        bTF('formlabel',"{$g_table}_{$g_field}_form_formlabel",$fields[$g_field] ['form'] ['formlabel']);
+                        bTF('title',"{$g_table}_{$g_field}_form_title",$fields[$g_field] ['form'] ['title']);
+                        bBF('required',"{$g_table}_{$g_field}_form_required",$fields[$g_field] ['form'] ['required']);
+                        bTF('default',"{$g_table}_{$g_field}_form_default",$fields[$g_field] ['form'] ['default']);
+                        bTF('errtext',"{$g_table}_{$g_field}_form_errtext",$fields[$g_field] ['form'] ['errtext']);
+                        bTF('posttext',"{$g_table}_{$g_field}_form_posttext",$fields[$g_field] ['form'] ['posttext']);
+                        bBF('trim',"{$g_table}_{$g_field}_form_trim",$fields[$g_field] ['form'] ['trim']);
+                        bTF('group',"{$g_table}_{$g_field}_form_group",$fields[$g_field] ['form'] ['group']);
                         echo "</table>";
 
 
