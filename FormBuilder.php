@@ -492,6 +492,27 @@ if (isset($_GET['f']))
 //Post
 if ($_SERVER["REQUEST_METHOD"] == "POST")
 {
+    if (isset($_POST['addgroup']) )
+    {
+        $g_table = $_POST['table'];
+        if ($g_table)
+        {
+            $cnt = 0;
+            $newname = "newgroup" . strval($cnt);
+            while (isset(g_def[$g_table] ['form'] ['groups'] [$newname]))
+            {
+                $cnt++;
+                $newname = "newgroup" . strval($cnt);
+            }
+
+            $g_def[$g_table] ['form'] ['groups'] [$newname] = array();
+            $g_def[$g_table] ['form'] ['groups'] [$newname] ["heading"] = "";
+            $g_def[$g_table] ['form'] ['groups'] [$newname] ["introduction1"] = "";
+            $g_def[$g_table] ['form'] ['groups'] [$newname] ["introduction2"] = "";
+            $g_def[$g_table] ['form'] ['groups'] [$newname] ["introduction3"] = "";
+        }
+    }
+
     if (isset($_POST['tableupdate']))
     {
         if ($g_def)
@@ -775,6 +796,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
                                             echo "</div>";
                                         $idx++;
                                     }
+                                    echo "<input type='submit' name='addgroup' value='ADD GROUP' />";
                                     echo "</div>";
                                 echo "</div>";
                                 echo "<div class='section'>";
