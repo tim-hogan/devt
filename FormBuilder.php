@@ -533,20 +533,29 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
             updateTextrec($g_def[$g_table] ['form'] ['classes'] ['div'] ['dropdown'],'form_dropdown');
             updateTextrec($g_def[$g_table] ['form'] ['classes'] ['div'] ['fk'],'form_fk');
 
-            for($cnt=0;$cnt < 50;$cnt++)
+            foreach($g_def[$g_table] ['form'] ['groups'] as $name => $group)
             {
-                if (isset($_POST["form_groupname{$cnt}"]) )
+                if (isset($_POST["form_group_name_{$name}"]) )
                 {
-                    $name = $_POST["form_groupname{$cnt}"];
-                    if (! isset($g_def[$g_table] ['form'] ['groups'] [$name]) )
-                        $g_def[$g_table] ['form'] ['groups'] [$name] = array();
-                    updateTextrec($g_def[$g_table] ['form'] ['groups'] [$name] ['heading'],"form_heading{$cnt}");
-                    updateTextrec($g_def[$g_table] ['form'] ['groups'] [$name] ['introduction1'],"form_introduction1{$cnt}");
-                    updateTextrec($g_def[$g_table] ['form'] ['groups'] [$name] ['introduction2'],"form_introduction2{$cnt}");
-                    updateTextrec($g_def[$g_table] ['form'] ['groups'] [$name] ['introduction3'],"form_introduction3{$cnt}");
+                    if ($_POST["form_group_name_{$name}"] != $name)
+                    {
+                        //The name has changed
+                        $newname = $_POST["form_group_name_{$name}"];
+                        $g_def[$g_table] ['form'] ['groups'] [$newname] = array();
+                        updateTextrec($g_def[$g_table] ['form'] ['groups'] [$newname] ['heading'],"form_group_{$name}_heading");
+                        updateTextrec($g_def[$g_table] ['form'] ['groups'] [$newname] ['introduction1'],"form_group_{$name}_introduction1");
+                        updateTextrec($g_def[$g_table] ['form'] ['groups'] [$newname] ['introduction2'],"form_group_{$name}_introduction2");
+                        updateTextrec($g_def[$g_table] ['form'] ['groups'] [$newname] ['introduction3'],"form_group_{$name}_introduction3");
+                        unset($g_def[$g_table] ['form'] ['groups'] [$name]);
+                    }
+                    else
+                    {
+                        updateTextrec($g_def[$g_table] ['form'] ['groups'] [$name] ['heading'],"form_group_{$name}_heading");
+                        updateTextrec($g_def[$g_table] ['form'] ['groups'] [$name] ['introduction1'],"form_group_{$name}_introduction1");
+                        updateTextrec($g_def[$g_table] ['form'] ['groups'] [$name] ['introduction2'],"form_group_{$name}_introduction2");
+                        updateTextrec($g_def[$g_table] ['form'] ['groups'] [$name] ['introduction3'],"form_group_{$name}_introduction3");
+                    }
                 }
-                else
-                    break;
             }
 
             updateTextrec($g_def[$g_table] ['list'] ['type'] ,'list_type');
@@ -783,15 +792,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
                                     foreach($form['groups'] as $name => $group)
                                     {
                                         echo "<table>";
-                                        bTF('GroupName',"form_groupname{$idx}",$name);
+                                        bTF('GroupName',"form_group_{$name}",$name);
                                         echo "</table>";
                                         echo "<div class='section'>";
                                             echo "<p class='secheading'>{$name}</p>";
                                             echo "<table>";
-                                            bTF('heading',"form_heading{$idx}",$group['heading']);
-                                            bTF('introduction1',"form_introduction1{$idx}",$group['introduction1']);
-                                            bTF('introduction2',"form_introduction2{$idx}",$group['introduction2']);
-                                            bTF('introduction3',"form_introduction3{$idx}",$group['introduction3']);
+                                            bTF('heading',"form_group_{$name}_heading",$group['heading']);
+                                            bTF('introduction1',"form_group_{$name}_introduction1",$group['introduction1']);
+                                            bTF('introduction2',"form_group_{$name}_introduction2",$group['introduction2']);
+                                            bTF('introduction3',"form_group_{$name}_introduction3",$group['introduction3']);
                                             echo "</table>";
                                             echo "</div>";
                                         $idx++;
