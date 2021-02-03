@@ -624,7 +624,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
                 document.getElementById('flex').style.display = 'none';
             }
              if (g_mode == 'savefile') {
-                document.getElementById('filelsave').style.display = 'block';
+                document.getElementById('filesave').style.display = 'block';
                 document.getElementById('flex').style.display = 'none';
             }
         }
