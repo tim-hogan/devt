@@ -641,7 +641,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
             <div><a href="FormBuilder.php?v=output">SAVE TO FILE</a></div>
         </div>
         <div id="main">
-            <div id="filelsave">
+            <div id="filesave">
                 <h1>SAVE FILE</h1>
                 <form method='POST' action='<?php echo $_SERVER["PHP_SELF"]?>'>
                     <label for="savefilename">ENTER FILE NAME</label>
