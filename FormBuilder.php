@@ -517,16 +517,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
         $table = $_POST['table'];
         $field = $_POST['field'];
 
-        updateTextFieldInfo($table,$field,"type");
-        updateTextFieldInfo($table,$field,"tag");
-        updateTextFieldInfo($table,$field,"sub-tag");
-        updateIntegerFieldInfo($table,$field,"size");
-        updateIntegerFieldInfo($table,$field,"maxlength");
-        updateIntegerFieldInfo($table,$field,"cols");
-        updateIntegerFieldInfo($table,$field,"rows");
-        updateTextFieldInfo($table,$field,"errname");
-        updateIntegerFieldInfo($table,$field,"security_view");
-        updateIntegerFieldInfo($table,$field,"security_edit");
+        if ($g_def)
+        {
+            $g_table = $table;
+            $g_field = $field;
+            updateTextFieldInfo($table,$field,"type");
+            updateTextFieldInfo($table,$field,"tag");
+            updateTextFieldInfo($table,$field,"sub-tag");
+            updateIntegerFieldInfo($table,$field,"size");
+            updateIntegerFieldInfo($table,$field,"maxlength");
+            updateIntegerFieldInfo($table,$field,"cols");
+            updateIntegerFieldInfo($table,$field,"rows");
+            updateTextFieldInfo($table,$field,"errname");
+            updateIntegerFieldInfo($table,$field,"security_view");
+            updateIntegerFieldInfo($table,$field,"security_edit");
+        }
     }
 
 
