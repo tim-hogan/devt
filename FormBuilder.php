@@ -742,24 +742,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
                         echo "</table>";
                         echo "</div>";
                         echo "</div>";
-\                    }
+                    }
                 ?>
                 <?php
                     if ($g_table)
                     {
-                            echo "<div id='right3'>";
-                            echo "<div class='form'>";
-                            echo "<form method='POST' autocomplete='off' action='{$_SERVER["PHP_SELF"]}'>";
-                            $FL = new FormList($g_def[$g_table]);
-                            $FL->buildFormFields(null,$DB);
-                            echo "<div class='submit'>";
-                                $v = FormList::encryptParam("table=server&action=create");
-                                echo "<input type='hidden' name='v' value='{$v}' />";
-                                echo "<input type='submit' name='_server_new' value='CREATE NEW' />";
-                            echo "</div>";
-                            echo "</form>";
-                            echo "</div>";
-                            echo "</div>";
+                        echo "<div id='right3'>";
+                        echo "<div class='form'>";
+                        echo "<form method='POST' autocomplete='off' action='{$_SERVER["PHP_SELF"]}'>";
+                        $FL = new FormList($g_def[$g_table]);
+                        $FL->buildFormFields(null,$DB);
+                        echo "<div class='submit'>";
+                            $v = FormList::encryptParam("table=server&action=create");
+                            echo "<input type='hidden' name='v' value='{$v}' />";
+                            echo "<input type='submit' name='_server_new' value='CREATE NEW' />";
+                        echo "</div>";
+                        echo "</form>";
+                        echo "</div>";
+                        echo "</div>";
                    }
                 ?>
             </div>
