@@ -512,7 +512,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
         }
     }
 
-    if (isset($_POST["fieldupdate"))
+    if (isset($_POST["fieldupdate"]))
     {
         $table = $_POST['table'];
         $field = $_POST['field'];
