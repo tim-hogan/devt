@@ -431,6 +431,23 @@ function updateIntegerFieldInfo($table,$field,$attribute)
         $g_def[$table] ['fields'] [$field] [$attribute] = intval($_POST["{$table}_{$field}_{$attribute}"]);
 }
 
+function updateTextFieldFormInfo($table,$field,$attribute)
+{
+    global $g_def;
+    if (isset($_POST["{$table}_{$field}_form_{$attribute}"]) )
+        $g_def[$table] ['fields'] [$field] ['form'] [$attribute] = $_POST["{$table}_{$field}_form_{$attribute}"];
+}
+
+function updateBooleanFieldFormInfo($table,$field,$attribute)
+{
+    global $g_def;
+    if (isset($_POST["{$table}_{$field}_form_{$attribute}"]) )
+    {
+        $b = boolval(FormList::getCheckboxField("{$table}_{$field}_form_{$attribute}"));
+        $g_def[$table] ['fields'] [$field] ['form'] [$attribute] = $b;
+    }
+}
+
 
 $mode = null;
 
@@ -549,6 +566,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
             updateTextFieldInfo($table,$field,"errname");
             updateIntegerFieldInfo($table,$field,"security_view");
             updateIntegerFieldInfo($table,$field,"security_edit");
+
+
+            updateBooleanFieldFormInfo($table,$field,"display");
+            updateTextFieldFormInfo($table,$field,"formlabel");
+            updateTextFieldFormInfo($table,$field,"title");
+            updateBooleanFieldFormInfo($table,$field,"required");
+            updateBooleanFieldFormInfo($table,$field,"trim");
+            updateTextFieldFormInfo($table,$field,"default");
+            updateTextFieldFormInfo($table,$field,"errtext");
+            updateTextFieldFormInfo($table,$field,"formlabel");
+            updateTextFieldFormInfo($table,$field,"posttext");
+            updateTextFieldFormInfo($table,$field,"group");
         }
     }
 
