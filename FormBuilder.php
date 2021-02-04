@@ -241,7 +241,6 @@ function buildDefault()
 
             $ff["choice"] = $choice;
 
-
             $fdata["form"] = $ff;
 
 
@@ -882,10 +881,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
                         bBF('trim',"{$g_table}_{$g_field}_form_trim",$fields[$g_field] ['form'] ['trim']);
                         bTF('group',"{$g_table}_{$g_field}_form_group",$fields[$g_field] ['form'] ['group']);
                         echo "</table>";
-
-
                         echo "</div>";
 
+                        echo "<div class='section'>";
+                        echo "<p class='secheading'>CHOICE</p>";
+                        $cnt = 0;
+                        foreach($fields[$g_field] ['choice'] as $ca)
+                        {
+                            echo "<div class='section'>";
+                            echo "<p class='secheading'>CHOICE</p>";
+                            echo "<table>";
+                            bTF('text',"{$g_table}_{$g_field}_form_choice_text{$cnt}",$ca['text']);
+                            bTF('value',"{$g_table}_{$g_field}_form_choice_value{$cnt}",$ca['value']);
+                            bTF('selected',"{$g_table}_{$g_field}_form_choice_selected{$cnt}",$ca['selected']);
+                            $cnt++;
+                            echo "</table>";
+                            echo "</div>";
+                        }
+                        echo "</div>";
 
                         echo "<input type='hidden' name='table' value='{$g_table}'/>";
                         echo "<input type='hidden' name='field' value='{$g_field}'/>";
