@@ -569,7 +569,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
             {
                 $b = boolval(FormList::getCheckboxField("{$g_table}_{$name}_dispform"));
                 $g_def[$g_table] ['fields'] [$name] ['form'] ['display'] = $b;
-                $b = boolval(FormList::getCheckboxField("{$g_table}_{$name}_lsitform"));
+                $b = boolval(FormList::getCheckboxField("{$g_table}_{$name}_displist"));
                 $g_def[$g_table] ['fields'] [$name] ['list'] ['display'] = $b;
             }
 
@@ -640,7 +640,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
 
     $_SESSION['def'] = $g_def;
 }
-                   
+
 $fn = "./forms/formparams.php";
 if (isset($_SESSION['filename']))
     $fn = $_SESSION['filename'];
@@ -817,7 +817,7 @@ if (isset($_SESSION['filename']))
                                 echo "<div class='section'>";
                                 echo "<p class='secheading'>LIST</p>";
                                 echo "<table>";
-                                bTF('type',"list_type",$list['type']);
+                                bDDF('type',"list_type",$list['type'],["plain","checkbox"]);
                                 bBF('record_selector',"list_record_selector",$list['record_selector']);
                                 bTF('heading',"list_heading",$list['heading']);
                                 bTF('introduction',"list_introduction",$list['introduction']);
