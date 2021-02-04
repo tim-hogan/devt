@@ -762,7 +762,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
                                     bTF('table','table',$global['table']);
                                     $prim_key = '';
                                     if (isset($global['primary_key']))
-                                        $prim_key = $global['primary_key']
+                                        $prim_key = $global['primary_key'];
                                     bTF('primary_key','primary_key',$prim_key);
                                     bBF('single_record','single_record',$global['single_record']);
                                     echo "</table>";
