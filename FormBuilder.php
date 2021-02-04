@@ -632,6 +632,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
             if (file_exists($filename))
             {
                 $g_def = require($filename);
+                $_SESSION['filename'] = $filename;
             }
         }
 
@@ -639,7 +640,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
 
     $_SESSION['def'] = $g_def;
 }
-
+                   
+$fn = "./forms/formparams.php";
+if (isset($_SESSION['filename']))
+    $fn = $_SESSION['filename'];
 ?>
 
 <!DOCTYPE HTML>
@@ -721,7 +725,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
                 <h1>SAVE FILE</h1>
                 <form method='POST' action='<?php echo $_SERVER["PHP_SELF"]?>'>
                     <label for="savefilename">ENTER FILE NAME</label>
-                    <input id="savefilename" type="text" name="filename" value="./forms/formparams.php" size="60" />
+                    <input id="savefilename" type="text" name="filename" value="<?php echo $fn;?>" size="60" />
                     <input type="submit" value="SAVE FORM DATA" name="saveform" />
                 </form>
             </div>
@@ -729,7 +733,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
                 <h1>LOAD FROM FILE</h1>
                 <form method='POST' action='<?php echo $_SERVER["PHP_SELF"]?>'>
                     <label for="loadfilename">ENTER FILE NAME</label>
-                    <input id="loadfilename" type="text" name="filename" value="./forms/formparams.php" size="60"/>
+                    <input id="loadfilename" type="text" name="filename" value="<?php echo $fn;?>" size="60" />
                     <input type="submit" value="LOAD" name="loadform" />
                 </form>
             </div>
