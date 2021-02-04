@@ -346,13 +346,15 @@ function OutputToFile($t,$f)
     file_put_contents($f,$strtext);
 }
 
-function bTF($txt,$fn,$v)
+function bTF($txt,$fn,$v,$size='')
 {
     echo "<tr>";
     echo "<td>{$txt}</td>";
-    echo "<td><input type='text' name='{$fn}' value='{$v}' /></td>";
+    echo "<td><input type='text' name='{$fn}' value='{$v}'";
+    if (strlen($size) > 0)
+        echo " size='{$size}'"
+    echo " /></td>";
     echo "</tr>";
-    //echo "<div class='ff'><span>{$txt}</span><input type='text' name='{$fn}' value='{$v}' /></div>";
 }
 
 function bBF($txt,$fn,$v)
@@ -446,6 +448,25 @@ function updateBooleanFieldFormInfo($table,$field,$attribute)
         $g_def[$table] ['fields'] [$field] ['form'] [$attribute] = $b;
     }
 }
+
+function updateTextFieldListInfo($table,$field,$attribute)
+{
+    global $g_def;
+    if (isset($_POST["{$table}_{$field}_list_{$attribute}"]) )
+        $g_def[$table] ['fields'] [$field] ['list'] [$attribute] = $_POST["{$table}_{$field}_list_{$attribute}"];
+}
+
+function updateBooleanFieldListInfo($table,$field,$attribute)
+{
+    global $g_def;
+    if (isset($_POST["{$table}_{$field}_list_{$attribute}"]) )
+    {
+        $b = boolval(FormList::getCheckboxField("{$table}_{$field}_list_{$attribute}"));
+        $g_def[$table] ['fields'] [$field] ['list'] [$attribute] = $b;
+    }
+}
+
+
 
 
 $mode = null;
@@ -607,6 +628,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
             updateTextFieldFormInfo($table,$field,"formlabel");
             updateTextFieldFormInfo($table,$field,"posttext");
             updateTextFieldFormInfo($table,$field,"group");
+
+
+            updateBooleanFieldListInfo($table,$field,"display");
+            updateTextFieldListInfo($table,$field,"heading");
+            updateBooleanFieldListInfo($table,$field,"anchor");
+            updateTextFieldListInfo($table,$field,"displayoption");
+
         }
     }
 
@@ -774,8 +802,8 @@ if (isset($_SESSION['filename']))
                                 echo "<div class='section'>";
                                     echo "<p class='secheading'>FORM</p>";
                                     echo "<table>";
-                                    bTF('heading','formheading',$form['heading']);
-                                    bTF('introduction','formintroduction',$form['introduction']);
+                                    bTF('heading','formheading',$form['heading'],40);
+                                    bTF('introduction','formintroduction',$form['introduction'],50);
                                     echo "</table>";
                                     echo "<div class='section'>";
                                         echo "<p class='secheading'>CLASSES</p>";
@@ -803,10 +831,10 @@ if (isset($_SESSION['filename']))
                                         echo "<div class='section'>";
                                             echo "<p class='secheading'>{$name}</p>";
                                             echo "<table>";
-                                            bTF('heading',"form_group_{$name}_heading",$group['heading']);
-                                            bTF('introduction1',"form_group_{$name}_introduction1",$group['introduction1']);
-                                            bTF('introduction2',"form_group_{$name}_introduction2",$group['introduction2']);
-                                            bTF('introduction3',"form_group_{$name}_introduction3",$group['introduction3']);
+                                            bTF('heading',"form_group_{$name}_heading",$group['heading'],30);
+                                            bTF('introduction1',"form_group_{$name}_introduction1",$group['introduction1'],30);
+                                            bTF('introduction2',"form_group_{$name}_introduction2",$group['introduction2'],30);
+                                            bTF('introduction3',"form_group_{$name}_introduction3",$group['introduction3'],30);
                                             echo "</table>";
                                             echo "</div>";
                                         $idx++;
@@ -819,8 +847,8 @@ if (isset($_SESSION['filename']))
                                 echo "<table>";
                                 bDDF('type',"list_type",$list['type'],["plain","checkbox"]);
                                 bBF('record_selector',"list_record_selector",$list['record_selector']);
-                                bTF('heading',"list_heading",$list['heading']);
-                                bTF('introduction',"list_introduction",$list['introduction']);
+                                bTF('heading',"list_heading",$list['heading'],30);
+                                bTF('introduction',"list_introduction",$list['introduction'],30);
                                 bTF('default_order',"list_default_order",$list['default_order']);
                                 bTF('default_where',"list_default_where",$list['default_where']);
                                 echo "</table>";
@@ -888,7 +916,6 @@ if (isset($_SESSION['filename']))
                         bBF('trim',"{$g_table}_{$g_field}_form_trim",$fields[$g_field] ['form'] ['trim']);
                         bTF('group',"{$g_table}_{$g_field}_form_group",$fields[$g_field] ['form'] ['group']);
                         echo "</table>";
-                        echo "</div>";
 
                         echo "<div class='section'>";
                         echo "<p class='secheading'>CHOICE</p>";
@@ -906,6 +933,18 @@ if (isset($_SESSION['filename']))
                             echo "</div>";
                         }
                         echo "</div>";
+                        echo "</div>";
+
+                        echo "<div class='section'>";
+                        echo "<p class='secheading'>LIST</p>";
+                        echo "<table>";
+                        bBF('display',"{$g_table}_{$g_field}_list_display",$fields[$g_field] ['list'] ['display']);
+                        bTF('heading',"{$g_table}_{$g_field}_form_heading",$fields[$g_field] ['form'] ['heading']);
+                        bBF('anchor',"{$g_table}_{$g_field}_list_anchor",$fields[$g_field] ['list'] ['anchor']);
+                        bDDF('displayoption',"{$g_table}_{$g_field}_list_displayoption",$fields[$g_field] ['list'] ['displayoption'],['none','tick']);
+                        echo "</table>";
+                        echo "</div>";
+
 
                         echo "<input type='hidden' name='table' value='{$g_table}'/>";
                         echo "<input type='hidden' name='field' value='{$g_field}'/>";
