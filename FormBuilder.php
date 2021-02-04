@@ -760,7 +760,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
                                     echo "<p class='secheading'>GLOBAL</p>";
                                     echo "<table>";
                                     bTF('table','table',$global['table']);
-                                    bTF('primary_key','primary_key',$global['primary_key']);
+                                    $prim_key = '';
+                                    if (isset($global['primary_key']))
+                                        $prim_key = $global['primary_key']
+                                    bTF('primary_key','primary_key',$prim_key);
                                     bBF('single_record','single_record',$global['single_record']);
                                     echo "</table>";
                                 echo "</div>";
@@ -886,7 +889,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
                         echo "<div class='section'>";
                         echo "<p class='secheading'>CHOICE</p>";
                         $cnt = 0;
-                        foreach($fields[$g_field] ['choice'] as $ca)
+                        foreach($fields[$g_field] ['form'] ['choice'] as $ca)
                         {
                             echo "<div class='section'>";
                             echo "<p class='secheading'>CHOICE</p>";
