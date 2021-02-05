@@ -13,9 +13,12 @@ class htmlElement
             $this->_attributes["id"] = $id;
         if ($class)
             $this->_attributes["class"] = $class;
-        foreach ($attributes as $name => $value)
+        if ($attributes)
         {
-            $this->_attributes[$name] = $value;
+            foreach ($attributes as $name => $value)
+            {
+                $this->_attributes[$name] = $value;
+            }
         }
     }
 
