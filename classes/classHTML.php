@@ -39,12 +39,17 @@ class htmlElement
         {
             $ret .= "{$name}='{$value}'";
         }
-        $ret .= ">";
-        foreach ($this->_children as $child)
+        if (strtoupper($this->_tag) == "INPUT" || strtoupper($this->_tag) == "BR" )
+            $ret .= "/>";
+        else
         {
-            $ret .=  $child->toString();
+            $ret .= ">";
+            foreach ($this->_children as $child)
+            {
+                $ret .=  $child->toString();
+            }
+            $ret .= "</{$this->_tag}>";
         }
-        $ret .= "</{$this->_tag}>";
         return $ret;
     }
 }
@@ -59,10 +64,31 @@ class htmlDiv extends htmlElement
 
 class htmlForm extends htmlElement
 {
-    function __construct($method="POST",$id=null,$class=null,$attributes=null)
+    function __construct($method="POST",$action=null,$id=null,$class=null,$attributes=null)
     {
         parent::__construct("form",$id,$class,$attributes);
+        if (! $action)
+            $act = htmlspecialchars($_SERVER['PHP_SELF']);
+        else
+            $act = $action;
+
         $this->addAttribute("method",$method);
+        $this->addAttribute("action",$act);
+    }
+}
+
+class htmlInput extends htmlElement
+{
+    function __construct($type,$name,$value=null,$id=null,$class=null,$attributes=null)
+    {
+        parent::__construct("input",$id,$class,$attributes);
+        if ($type)
+            $this->addAttribute("type",$type);
+        if ($name)
+            $this->addAttribute("name",$name);
+        if ($value)
+            $this->addAttribute("value",$value);
+
     }
 }
 ?>
