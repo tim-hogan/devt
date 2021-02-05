@@ -352,7 +352,7 @@ function bTF($txt,$fn,$v,$size='')
     echo "<td>{$txt}</td>";
     echo "<td><input type='text' name='{$fn}' value='{$v}'";
     if (strlen($size) > 0)
-        echo " size='{$size}'"
+        echo " size='{$size}'";
     echo " /></td>";
     echo "</tr>";
 }
