@@ -18,7 +18,9 @@ class htmlElement
 
     function addAttribute($name,$value)
     {
-        array_push($this->_attributes,["{$name}" => "{$value}"]);
+        $att = array();
+        $att[$name] = $value;
+        array_push($this->_attributes,$att);
     }
 
     function toString()
