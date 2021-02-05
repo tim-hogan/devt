@@ -21,6 +21,7 @@ class htmlElement
         $att = array();
         $att[$name] = $value;
         array_push($this->_attributes,$att);
+        var_dump($this->_attributes);
     }
 
     function toString()
