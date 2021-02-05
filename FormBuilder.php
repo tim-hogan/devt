@@ -111,6 +111,7 @@ require_once "./includes/classnValuateCorpDB.php";
 $DB = new nvaluatecorp($devt_environment->getDatabaseParameters());
 
 require "./includes/classFormList2.php";
+require "./includes/classHTML.php";
 
 
 
@@ -973,6 +974,12 @@ if (isset($_SESSION['filename']))
                    }
                 ?>
             </div>
+        </div> //Main
+        <div>
+            <?php
+            $fm = new devt\HTML\htmlForm();
+            echo $fm->toString();
+            ?>
         </div>
     </div>
 </body>
