@@ -980,6 +980,10 @@ if (isset($_SESSION['filename']))
             $dv1 = new devt\HTML\htmlDiv();
             $fm1 = new devt\HTML\htmlForm('POST',null,null,$dv1);
             $i1 = new devt\HTML\htmlInput("text","mydata","MY Data",$fm1);
+            $t1 = new devt\HTML\htmlTable(null,$dv1);
+            $row = new devt\HTML\htmlRow(null,$t1);
+            $c1 = new devt\HTML\htmlCell("COL 1",$row);
+            $c2 = new devt\HTML\htmlCell("COL 2",$row);
             echo $dv1->toString();
             ?>
         </div>
