@@ -3,12 +3,14 @@ namespace devt\HTML;
 class htmlElement
 {
     private $_tag;
+    private $_value;
     private $_attributes = array();
     private $_children = array();
 
-    function __construct($tag,$id=null,$class=null,$attributes=null)
+    function __construct($tag,$value=null,$parent=null,$id=null,$class=null,$attributes=null)
     {
         $this->_tag = $tag;
+        $this->_value = $value;
         if ($id)
             $this->_attributes["id"] = $id;
         if ($class)
@@ -19,6 +21,10 @@ class htmlElement
             {
                 $this->_attributes[$name] = $value;
             }
+        }
+        if ($parent)
+        {
+            $parent->insertChild($this);
         }
     }
 
@@ -56,17 +62,17 @@ class htmlElement
 
 class htmlDiv extends htmlElement
 {
-    function __construct($id=null,$class=null,$attributes=null)
+    function __construct($value=null,$parent=null,$id=null,$class=null,$attributes=null)
     {
-        parent::__construct("div",$id,$class,$attributes);
+        parent::__construct("div",$value,$parent,$id,$class,$attributes);
     }
 }
 
 class htmlForm extends htmlElement
 {
-    function __construct($method="POST",$action=null,$id=null,$class=null,$attributes=null)
+    function __construct($method="POST",$action=null,$value=null,$parent=null,$id=null,$class=null,$attributes=null)
     {
-        parent::__construct("form",$id,$class,$attributes);
+        parent::__construct("form",$value,$parent,$id,$class,$attributes);
         if (! $action)
             $act = htmlspecialchars($_SERVER['PHP_SELF']);
         else
@@ -79,9 +85,9 @@ class htmlForm extends htmlElement
 
 class htmlInput extends htmlElement
 {
-    function __construct($type,$name,$value=null,$id=null,$class=null,$attributes=null)
+    function __construct($type,$name,$value=null,$parent=null,$id=null,$class=null,$attributes=null)
     {
-        parent::__construct("input",$id,$class,$attributes);
+        parent::__construct("input",null,$parent,$id,$class,$attributes);
         if ($type)
             $this->addAttribute("type",$type);
         if ($name)
@@ -89,6 +95,35 @@ class htmlInput extends htmlElement
         if ($value)
             $this->addAttribute("value",$value);
 
+    }
+}
+
+class htmlCell extends htmlElement
+{
+    function __construct($value=null,$parent=null,$id=null,$class=null,$attributes=null)
+    {
+        parent::__construct("td",$value,$parent,$id,$class,$attributes);
+    }
+}
+
+class htmlRow extends htmlElement
+{
+    function __construct($value=null,$parent=null,$id=null,$class=null,$attributes=null)
+    {
+        parent::__construct("tr",$value,$parent,$id,$class,$attributes);
+    }
+
+    function addCell($value,$id=null,$class=null,$attributes=null)
+    {
+        $this->insertChild(new htmlCell($value,null,$id,$class,$attributes));
+    }
+}
+
+class htmlTable extends htmlElement
+{
+    function __construct($value=null,$parent=null,$id=null,$class=null,$attributes=null)
+    {
+        parent::__construct("table",$value,$parent,$id,$class,$attributes);
     }
 }
 ?>
