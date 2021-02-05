@@ -974,7 +974,7 @@ if (isset($_SESSION['filename']))
                    }
                 ?>
             </div>
-        </div> //Main
+        </div>
         <div>
             <?php
             $fm = new devt\HTML\htmlForm();
