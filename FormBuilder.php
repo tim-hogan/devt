@@ -940,7 +940,7 @@ if (isset($_SESSION['filename']))
                         echo "<p class='secheading'>LIST</p>";
                         echo "<table>";
                         bBF('display',"{$g_table}_{$g_field}_list_display",$fields[$g_field] ['list'] ['display']);
-                        bTF('heading',"{$g_table}_{$g_field}_form_heading",$fields[$g_field] ['list'] ['heading']);
+                        bTF('heading',"{$g_table}_{$g_field}_list_heading",$fields[$g_field] ['list'] ['heading']);
                         bBF('anchor',"{$g_table}_{$g_field}_list_anchor",$fields[$g_field] ['list'] ['anchor']);
                         bDDF('displayoption',"{$g_table}_{$g_field}_list_displayoption",$fields[$g_field] ['list'] ['displayoption'],['none','tick']);
                         echo "</table>";
