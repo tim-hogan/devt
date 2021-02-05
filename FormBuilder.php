@@ -977,7 +977,7 @@ if (isset($_SESSION['filename']))
         </div>
         <div>
             <?php
-            echo new devt\HTML\htmlForm()->toString();
+            echo (new devt\HTML\htmlForm())->toString();
             ?>
         </div>
     </div>
