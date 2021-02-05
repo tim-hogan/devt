@@ -977,7 +977,11 @@ if (isset($_SESSION['filename']))
         </div>
         <div>
             <?php
-            echo (new devt\HTML\htmlForm())->toString();
+            $dv1 = new devt\HTML\htmlDiv("fred");
+            $fm1 = new devt\HTML\htmlForm();
+            $fm1->insertChild(new devt\HTML\htmlInput("text","mydata","MY Data") );
+            $dv1->insertChild($fm1);
+            echo $dv1->toString();
             ?>
         </div>
     </div>
