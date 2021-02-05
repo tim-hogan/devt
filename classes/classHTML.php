@@ -50,6 +50,8 @@ class htmlElement
         else
         {
             $ret .= ">";
+            if ($this->_value)
+                $ret .= $this->_value;
             foreach ($this->_children as $child)
             {
                 $ret .=  $child->toString();
