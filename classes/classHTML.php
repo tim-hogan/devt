@@ -6,9 +6,17 @@ class htmlElement
     private $_attributes = array();
     private $_children = array();
 
-    function __construct($tag)
+    function __construct($tag,$id=null,$class=null,$attributes=null)
     {
         $this->_tag = $tag;
+        if ($id)
+            $this->_attributes["id"] = $id;
+        if ($class)
+            $this->_attributes["class"] = $class;
+        foreach ($attributes as $name => $value)
+        {
+            $this->_attributes[$name] = $value;
+        }
     }
 
     function insertChild($child)
@@ -18,10 +26,7 @@ class htmlElement
 
     function addAttribute($name,$value)
     {
-        $att = array();
-        $att[$name] = $value;
-        array_push($this->_attributes,$att);
-        var_dump($this->_attributes);
+        $this->_attributes[$name] = $value;
     }
 
     function toString()
@@ -41,11 +46,19 @@ class htmlElement
     }
 }
 
+class htmlDiv extends htmlElement
+{
+    function __construct($id=null,$class=null,$attributes=null)
+    {
+        parent::__construct("div",$id,$class,$attributes);
+    }
+}
+
 class htmlForm extends htmlElement
 {
-    function __construct($method="POST")
+    function __construct($method="POST",$id=null,$class=null,$attributes=null)
     {
-        parent::__construct("form");
+        parent::__construct("form",$id,$class,$attributes);
         $this->addAttribute("method",$method);
     }
 }
