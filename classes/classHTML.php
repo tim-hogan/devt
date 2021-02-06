@@ -7,7 +7,7 @@ class htmlElement
     private $_attributes = array();
     private $_children = array();
 
-    function __construct($tag,$value=null,$parent=null,$id=null,$class=null,$attributes=null)
+    function __construct($tag,$parent=null,$value=null,$id=null,$class=null,$attributes=null)
     {
         $this->_tag = $tag;
         $this->_value = $value;
@@ -64,17 +64,17 @@ class htmlElement
 
 class htmlDiv extends htmlElement
 {
-    function __construct($value=null,$parent=null,$id=null,$class=null,$attributes=null)
+    function __construct($parent=null,$value=null,$id=null,$class=null,$attributes=null)
     {
-        parent::__construct("div",$value,$parent,$id,$class,$attributes);
+        parent::__construct("div",$parent,$value,$id,$class,$attributes);
     }
 }
 
 class htmlForm extends htmlElement
 {
-    function __construct($method="POST",$action=null,$value=null,$parent=null,$id=null,$class=null,$attributes=null)
+    function __construct($method="POST",$action=null,$parent=null,$value=null,$id=null,$class=null,$attributes=null)
     {
-        parent::__construct("form",$value,$parent,$id,$class,$attributes);
+        parent::__construct("form",$parent,$value,$id,$class,$attributes);
         if (! $action)
             $act = htmlspecialchars($_SERVER['PHP_SELF']);
         else
@@ -87,9 +87,9 @@ class htmlForm extends htmlElement
 
 class htmlInput extends htmlElement
 {
-    function __construct($type,$name,$value=null,$parent=null,$id=null,$class=null,$attributes=null)
+    function __construct($type,$name,$parent=null,$value=null,$id=null,$class=null,$attributes=null)
     {
-        parent::__construct("input",null,$parent,$id,$class,$attributes);
+        parent::__construct("input"$parent,null,$id,$class,$attributes);
         if ($type)
             $this->addAttribute("type",$type);
         if ($name)
@@ -102,17 +102,17 @@ class htmlInput extends htmlElement
 
 class htmlCell extends htmlElement
 {
-    function __construct($value=null,$parent=null,$id=null,$class=null,$attributes=null)
+    function __construct($parent=null,$value=null,$id=null,$class=null,$attributes=null)
     {
-        parent::__construct("td",$value,$parent,$id,$class,$attributes);
+        parent::__construct("td",$parent,$value,$id,$class,$attributes);
     }
 }
 
 class htmlRow extends htmlElement
 {
-    function __construct($value=null,$parent=null,$id=null,$class=null,$attributes=null)
+    function __construct($parent=null,$value=null,$id=null,$class=null,$attributes=null)
     {
-        parent::__construct("tr",$value,$parent,$id,$class,$attributes);
+        parent::__construct("tr",$parent,$value,$id,$class,$attributes);
     }
 
     function addCell($value,$id=null,$class=null,$attributes=null)
@@ -123,9 +123,9 @@ class htmlRow extends htmlElement
 
 class htmlTable extends htmlElement
 {
-    function __construct($value=null,$parent=null,$id=null,$class=null,$attributes=null)
+    function __construct($parent=null,$value=null,$id=null,$class=null,$attributes=null)
     {
-        parent::__construct("table",$value,$parent,$id,$class,$attributes);
+        parent::__construct("table",$parent,$value,$id,$class,$attributes);
     }
 }
 ?>
