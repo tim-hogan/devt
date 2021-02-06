@@ -89,7 +89,7 @@ class htmlInput extends htmlElement
 {
     function __construct($type,$name,$parent=null,$value=null,$id=null,$class=null,$attributes=null)
     {
-        parent::__construct("input"$parent,null,$id,$class,$attributes);
+        parent::__construct("input",$parent,null,$id,$class,$attributes);
         if ($type)
             $this->addAttribute("type",$type);
         if ($name)
