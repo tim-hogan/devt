@@ -206,6 +206,7 @@ function buildDefault()
             $fdata["cols"] = "50";
             $fdata["rows"] = "4";
             $fdata["errname"] = $field->name;
+            $fdata["decimalplaces"] = 2;
             $fdata["security_view"] = 0;
             $fdata["security_edit"] = 0;
 
@@ -615,6 +616,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
             updateIntegerFieldInfo($table,$field,"cols");
             updateIntegerFieldInfo($table,$field,"rows");
             updateTextFieldInfo($table,$field,"errname");
+            updateIntegerFieldInfo($table,$field,"decimalplaces");
             updateIntegerFieldInfo($table,$field,"security_view");
             updateIntegerFieldInfo($table,$field,"security_edit");
 
@@ -890,7 +892,7 @@ if (isset($_SESSION['filename']))
                         echo "<p class='secheading'>FIELD DATA FOR {$g_field}</p>";
                         echo "<form method='POST' action='{$_SERVER["PHP_SELF"]}'>";
                         echo "<table>";
-                        bDDF('type',"{$g_table}_{$g_field}_type",$fields[$g_field] ['type'],['text','boolean','integer','button','choice','fk']);
+                        bDDF('type',"{$g_table}_{$g_field}_type",$fields[$g_field] ['type'],['text','boolean','integer','decimal','button','choice','fk']);
                         //bTF('type',"{$g_table}_{$g_field}_type",$fields[$g_field] ['type']);
                         bTF('tag',"{$g_table}_{$g_field}_tag",$fields[$g_field] ['tag']);
                         bTF('sub-tag',"{$g_table}_{$g_field}_sub-tag",$fields[$g_field] ['sub-tag']);
@@ -900,6 +902,7 @@ if (isset($_SESSION['filename']))
                         bIF('cols',"{$g_table}_{$g_field}_cols",$fields[$g_field] ['cols']);
                         bIF('rows',"{$g_table}_{$g_field}_rows",$fields[$g_field] ['rows']);
                         bTF('errname',"{$g_table}_{$g_field}_errname",$fields[$g_field] ['errname']);
+                        bIF('decimalplaces',"{$g_table}_{$g_field}_decimalplaces",$fields[$g_field] ['decimalplaces']);
                         bIF('security_view',"{$g_table}_{$g_field}_secuity_view",$fields[$g_field] ['security_view']);
                         bIF('security_edit',"{$g_table}_{$g_field}_security_edit",$fields[$g_field] ['security_edit']);
                         echo "</table>";
