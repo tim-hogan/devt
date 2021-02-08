@@ -39,7 +39,7 @@ $formparams = [
     ],
     "fields" => [
         "<field name>" => [
-            "type" => "text | boolean | integer | button | choice | fk",
+            "type" => "text | boolean | integer | decimal | button | choice | fk",
             "fk_table" => "",
             "fk_index" => "",
             "fk_display" => "",
@@ -53,6 +53,7 @@ $formparams = [
             "cols" => "50",  //The number of cols in a text area
             "rows" => "4",  //The number of rows in a text area
             "errname" => "Prefix",
+            "decimalplaces" => 2,
             "form" => [
                 "display" => true | false,
                 "formlabel" => "<label name>",
