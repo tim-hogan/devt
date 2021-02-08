@@ -70,6 +70,14 @@ class htmlDiv extends htmlElement
     }
 }
 
+class htmlP extends htmlElement
+{
+    function __construct($parent=null,$value=null,$id=null,$class=null,$attributes=null)
+    {
+        parent::__construct("p",$parent,$value,$id,$class,$attributes);
+    }
+}
+
 class htmlForm extends htmlElement
 {
     function __construct($method="POST",$action=null,$parent=null,$value=null,$id=null,$class=null,$attributes=null)
