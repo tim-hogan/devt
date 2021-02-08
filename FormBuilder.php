@@ -907,6 +907,10 @@ if (isset($_SESSION['filename']))
                         bIF('security_edit',"{$g_table}_{$g_field}_security_edit",$fields[$g_field] ['security_edit']);
                         echo "</table>";
 
+                        $div = new \devt\HTML\htmlDiv(null,null,null,'section');
+                        new \devt\HTML\htmlP($div,"FORIEGN KEYS",null,'secheading');
+                        echo $div->toString();
+
                         echo "<div class='section'>";
                         echo "<p class='secheading'>FORM</p>";
                         echo "<table>";
