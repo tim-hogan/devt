@@ -359,6 +359,14 @@ function bTF($txt,$fn,$v,$size='')
     echo "</tr>";
 }
 
+function bTF2($tbl,$txt,$fn,$v,$size='')
+{
+    $row = new \devt\HTML\htmlRow($tbl);
+    new \devt\HTML\htmlCell($row,$txt);
+    $cell = new \devt\HTML\htmlCell($row);
+    $inp = new \devt\HTML\htmlInput("text",$fn,$cell,$v);
+}
+
 function bBF($txt,$fn,$v)
 {
     echo "<tr>";
@@ -619,6 +627,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
             updateIntegerFieldInfo($table,$field,"decimalplaces");
             updateIntegerFieldInfo($table,$field,"security_view");
             updateIntegerFieldInfo($table,$field,"security_edit");
+            updateTextFieldInfo($table,$field,"fk_table");
+            updateTextFieldInfo($table,$field,"fk_index");
+            updateTextFieldInfo($table,$field,"fk_display");
+            updateTextFieldInfo($table,$field,"fk_where");
+            updateTextFieldInfo($table,$field,"fk_order");
 
 
             updateBooleanFieldFormInfo($table,$field,"display");
@@ -910,11 +923,12 @@ if (isset($_SESSION['filename']))
                         $div = new \devt\HTML\htmlDiv(null,null,null,'section');
                         new \devt\HTML\htmlP($div,"FOREIGN KEYS",null,'secheading');
                         $tbl = new \devt\HTML\htmlTable($div);
-                        $row = new \devt\HTML\htmlRow($tbl);
 
-                        new \devt\HTML\htmlCell($row,"fk_table");
-                        $cell = new \devt\HTML\htmlCell($row);
-                        $inp = new \devt\HTML\htmlInput("text","{$g_table}_{$g_field}_fk_table",$cell,$fields[$g_field] ['fk_table']);
+                        bTF2($tbl,"fk_table","{$g_table}_{$g_field}_fk_table",$fields[$g_field] ['fk_table']);
+                        bTF2($tbl,"fk_index","{$g_table}_{$g_field}_fk_index",$fields[$g_field] ['fk_index']);
+                        bTF2($tbl,"fk_display","{$g_table}_{$g_field}_fk_display",$fields[$g_field] ['fk_display']);
+                        bTF2($tbl,"fk_where","{$g_table}_{$g_field}_fk_where",$fields[$g_field] ['fk_where']);
+                        bTF2($tbl,"fk_order","{$g_table}_{$g_field}_fk_order",$fields[$g_field] ['fk_order']);
 
                         echo $div->toString();
 
