@@ -908,7 +908,14 @@ if (isset($_SESSION['filename']))
                         echo "</table>";
 
                         $div = new \devt\HTML\htmlDiv(null,null,null,'section');
-                        new \devt\HTML\htmlP($div,"FORIEGN KEYS",null,'secheading');
+                        new \devt\HTML\htmlP($div,"FOREIGN KEYS",null,'secheading');
+                        $tbl = new \devt\HTML\htmlTable($div);
+                        $row = new \devt\HTML\htmlRow($tbl);
+
+                        new \devt\HTML\htmlCell($row,"fk_table");
+                        $cell = new \devt\HTML\htmlCell($row);
+                        $inp = new \devt\HTML\htmlInput("text","{$g_table}_{$g_field}_fk_table",$cell,$fields[$g_field] ['fk_table']);
+
                         echo $div->toString();
 
                         echo "<div class='section'>";
