@@ -226,7 +226,7 @@ class FormList
                         $symbol = "$";
                         if (isset($this->config['fields'] [$name] ['currency_symbol'] ))
                             $symbol = $this->config['fields'] [$name] ['currency_symbol'];
-                        $this->config['fields'] [$name] ["value"] = FormList::getCurrencyField($name . "_f",$trim),$symbol;
+                        $this->config['fields'] [$name] ["value"] = FormList::getCurrencyField($name . "_f",$trim,$symbol);
                         break;
                     case "choice":
                         $this->config['fields'] [$name] ["value"] = FormList::getField($name . "_f",$trim);
