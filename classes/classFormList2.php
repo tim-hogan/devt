@@ -1049,9 +1049,9 @@ private function buildChoiceField($n,$f,$data=null)
                 {
                     $where = '';
                     $order = '';
-                    if (isset(f['fk_where']))
+                    if (isset($f['fk_where']))
                         $where = trim($where);
-                    if (isset(f['fk_order']))
+                    if (isset($f['fk_order']))
                         $where = trim($order);
                     if ( ! isset($form['required']) ||  ! $form['required'])
                         echo "<option value='0'></option>";
