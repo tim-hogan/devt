@@ -207,6 +207,7 @@ function buildDefault()
             $fdata["rows"] = "4";
             $fdata["errname"] = $field->name;
             $fdata["decimalplaces"] = 2;
+            $fdata["currency_symbol"] = "$";
             $fdata["security_view"] = 0;
             $fdata["security_edit"] = 0;
 
@@ -309,7 +310,6 @@ function buildDefault()
                     $fdata['tag'] = "input";
                     $fdata['sub-tag'] = "text";
                     break;
-                case FIELD_TYPE_DECIMAL:
                 case FIELD_TYPE_VARCHAR:
                 case FIELD_TYPE_CHAR:
                     $fdata['type'] = 'text';
@@ -625,6 +625,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
             updateIntegerFieldInfo($table,$field,"rows");
             updateTextFieldInfo($table,$field,"errname");
             updateIntegerFieldInfo($table,$field,"decimalplaces");
+            updateTextFieldInfo($table,$field,"currency_symbol");
             updateIntegerFieldInfo($table,$field,"security_view");
             updateIntegerFieldInfo($table,$field,"security_edit");
             updateTextFieldInfo($table,$field,"fk_table");
@@ -905,8 +906,7 @@ if (isset($_SESSION['filename']))
                         echo "<p class='secheading'>FIELD DATA FOR {$g_field}</p>";
                         echo "<form method='POST' action='{$_SERVER["PHP_SELF"]}'>";
                         echo "<table>";
-                        bDDF('type',"{$g_table}_{$g_field}_type",$fields[$g_field] ['type'],['text','boolean','integer','decimal','button','choice','fk']);
-                        //bTF('type',"{$g_table}_{$g_field}_type",$fields[$g_field] ['type']);
+                        bDDF('type',"{$g_table}_{$g_field}_type",$fields[$g_field] ['type'],['text','boolean','integer','decimal','currency','button','choice','fk']);
                         bTF('tag',"{$g_table}_{$g_field}_tag",$fields[$g_field] ['tag']);
                         bTF('sub-tag',"{$g_table}_{$g_field}_sub-tag",$fields[$g_field] ['sub-tag']);
                         bBF('dbfield',"{$g_table}_{$g_field}_dbfield",$fields[$g_field] ['dbfield']);
@@ -915,7 +915,8 @@ if (isset($_SESSION['filename']))
                         bIF('cols',"{$g_table}_{$g_field}_cols",$fields[$g_field] ['cols']);
                         bIF('rows',"{$g_table}_{$g_field}_rows",$fields[$g_field] ['rows']);
                         bTF('errname',"{$g_table}_{$g_field}_errname",$fields[$g_field] ['errname']);
-                        bIF('decimalplaces',"{$g_table}_{$g_field}_decimalplaces",$fields[$g_field] ['decimalplaces']);
+                        bIF('decimalplaces',"{$g_table}_{$g_field}_decimalplaces",$fields[$g_field] ['decimalplaces'],2);
+                        bTF('currency_symbol',"{$g_table}_{$g_field}_currency_symbol",$fields[$g_field] ['currency_symbol'],1);
                         bIF('security_view',"{$g_table}_{$g_field}_secuity_view",$fields[$g_field] ['security_view']);
                         bIF('security_edit',"{$g_table}_{$g_field}_security_edit",$fields[$g_field] ['security_edit']);
                         echo "</table>";
@@ -1002,18 +1003,6 @@ if (isset($_SESSION['filename']))
                    }
                 ?>
             </div>
-        </div>
-        <div>
-            <?php
-            $dv1 = new devt\HTML\htmlDiv();
-            $fm1 = new devt\HTML\htmlForm('POST',null,null,$dv1);
-            $i1 = new devt\HTML\htmlInput ("text","mydata",$fm1,"MY Data");
-            $t1 = new devt\HTML\htmlTable($dv1);
-            $row = new devt\HTML\htmlRow($t1);
-            $c1 = new devt\HTML\htmlCell($row,"COL 1");
-            $c2 = new devt\HTML\htmlCell($row,"COL 2");
-            echo $dv1->toString();
-            ?>
         </div>
     </div>
 </body>
