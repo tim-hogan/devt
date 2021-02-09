@@ -65,6 +65,34 @@ class FormList
         return $data;
     }
 
+    static public function getIntegerField($f,$trimit=true)
+    {
+        $data = null;
+        if (isset($_POST[$f]))
+            $data = intval(FormList::getField($f,$trimit));
+        return $data;
+    }
+
+    static public function getDecimalField($f,$trimit=true)
+    {
+        $data = null;
+        if (isset($_POST[$f]))
+            $data = floatval(FormList::getField($f,$trimit));
+        return $data;
+    }
+
+    static public function getCurrencyField($f,$trimit=true,$symbol="$")
+    {
+        $data = null;
+        if (isset($_POST[$f]))
+        {
+            $data = FormList::getField($f,$trimit);
+            $data = str_replace($symbol,"",$data);
+            $data = floatval(FormList::getField($f,$trimit));
+        }
+        return $data;
+    }
+
     static public function getCheckboxField($f)
     {
         if (isset($_POST[$f]))
@@ -187,6 +215,18 @@ class FormList
                                 $this->config['fields'] [$name] ["value"] = FormList::getCheckboxField($name . "_f");
                                 break;
                         }
+                        break;
+                    case "integer":
+                        $this->config['fields'] [$name] ["value"] = FormList::getIntegerField($name . "_f",$trim);
+                        break;
+                    case "decimal":
+                        $this->config['fields'] [$name] ["value"] = FormList::getDecimalField($name . "_f",$trim);
+                        break;
+                    case "currency":
+                        $symbol = "$";
+                        if (isset($this->config['fields'] [$name] ['currency_symbol'] ))
+                            $symbol = $this->config['fields'] [$name] ['currency_symbol'];
+                        $this->config['fields'] [$name] ["value"] = FormList::getCurrencyField($name . "_f",$trim),$symbol;
                         break;
                     case "choice":
                         $this->config['fields'] [$name] ["value"] = FormList::getField($name . "_f",$trim);
@@ -640,7 +680,95 @@ class FormList
         echo "</div>";
     }
 
-    private function buildChoiceField($n,$f,$data=null)
+    private function buildCurrencyField($n,$f,$data=null)
+    {
+        $fid = $n . "_id";
+        $divid = $n . "_divid";
+        $fname = $n ."_f";
+        $tag = 'input';
+
+        if (isset($this->config['form']))
+        {
+            $form = $this->config['form'];
+            if (isset($form['classes']))
+            {
+                $formclasses = $form['classes'];
+                if (isset($formclasses['div']))
+                    $formclassesdiv = $formclasses['div'];
+            }
+        }
+
+        if (isset($f['tag']))
+            $tag = $f['tag'];
+
+        echo "<div id='{$divid}'";
+        if ($formclassesdiv && isset($formclassesdiv['inputtext']))
+            echo " class='{$formclassesdiv['inputtext']}'";
+        echo ">";
+
+        $prefix = "";
+        if (isset($f ['form'] ['required']) && $f ['form'] ['required'])
+            $prefix="* ";
+        if (isset($f ['form'] ['formlabel']))
+            echo "<label for='{$fid}'>{$prefix}{$f ['form'] ['formlabel']}</label>";
+
+        //Default values
+        if (! isset ($f['value']))
+        {
+            if (isset($f['form'] ['default']))
+            {
+                if ($this->isVariable($f['form'] ['default']) )
+                {
+                    $f['value'] = $this->getVariable($data,$f['form'] ['default']);
+                }
+                else
+                    $f['value'] = $f['form'] ['default'];
+            }
+        }
+
+        $subtag = "text";
+        if (isset($f['sub-tag']))
+            $subtag = $f['sub-tag'];
+        echo "<input ";
+        if (isset($f['error']) && $f['error'])
+        {
+            echo "class='err'";
+        }
+        echo "type='{$subtag}' id='{$fid}' name='{$fname}'";
+        if (isset ($f['value']))
+        {
+            $v = floatval($f['value']);
+            $places = 2;
+            if (isset($f['decimalplaces']))
+                $places = intval($f['decimalplaces']);
+            $v = number_format($v,$places);
+            $currencySymbol = "$";
+            if (isset($f['currency_symbol']))
+                $currencySymbol = $f['currency_symbol'];
+            echo "value='{$currencySymbol}{$v}' ";
+        }
+        if (isset($f['size']))
+            echo " size='{$f['size']}' ";
+        if (isset ($f['form'] ['title']) && strlen($f['form'] ['title'] ) > 0)
+            echo "title='{$f['form'] ['title']}' ";
+        echo " />";
+
+
+        //Check for post text
+        if ( isset ($f['form'] ['posttext']) && strlen($f['form'] ['posttext']) > 0)
+        {
+            $v = $f['form'] ['posttext'];
+            if ($data && $this->isVariable($v))
+            {
+                $v = $this->getVariable($data,$v);
+            }
+            echo "<span>{$v}</span>";
+        }
+
+        echo "</div>";
+    }
+
+private function buildChoiceField($n,$f,$data=null)
     {
         $fid = $n . "_id";
         $divid = $n . "_divid";
@@ -955,6 +1083,9 @@ class FormList
                         break;
                     case "decimal":
                         $this->buildDecimalField($name,$field);
+                        break;
+                    case "currency":
+                        $this->buildCurrencyField($name,$field);
                         break;
                     case "dropdown":
                         $this->buildDropdownField($name,$field);
