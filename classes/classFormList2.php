@@ -563,11 +563,11 @@ class FormList
         $subtag = "text";
         if (isset($f['sub-tag']))
             $subtag = $f['sub-tag'];
-        echo "<input ";
+        echo "<input class='integer";
         if (isset($f['error']) && $f['error'])
-        {
-            echo "class='err'";
-        }
+            echo " err'";
+        else
+            echo "'";
         echo "type='{$subtag}' id='{$fid}' name='{$fname}'";
         if (isset ($f['value']))
         {
@@ -644,11 +644,11 @@ class FormList
         $subtag = "text";
         if (isset($f['sub-tag']))
             $subtag = $f['sub-tag'];
-        echo "<input ";
+        echo "<input class='decimal";
         if (isset($f['error']) && $f['error'])
-        {
-            echo "class='err'";
-        }
+            echo " err'";
+        else
+            echo "'";
         echo "type='{$subtag}' id='{$fid}' name='{$fname}'";
         if (isset ($f['value']))
         {
@@ -729,11 +729,11 @@ class FormList
         $subtag = "text";
         if (isset($f['sub-tag']))
             $subtag = $f['sub-tag'];
-        echo "<input ";
+        echo "<input class='currency";
         if (isset($f['error']) && $f['error'])
-        {
-            echo "class='err'";
-        }
+            echo " err'";
+        else
+            echo "'";
         echo "type='{$subtag}' id='{$fid}' name='{$fname}'";
         if (isset ($f['value']))
         {
