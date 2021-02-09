@@ -261,6 +261,8 @@ class FormList
                 //Check required
                 if ( isset($field['form'] ['required']) && $field['form'] ['required'] )
                 {
+if (!isset($this->config['fields'] [$name] ["value"]))
+    error_log("Not Set {$name} ");
                     if (strlen($this->config['fields'] [$name] ["value"]) == 0)
                     {
                         $this->config['fields'] [$name] ["error"] = true;
