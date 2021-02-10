@@ -1361,14 +1361,14 @@ private function buildChoiceField($n,$f,$data=null)
                                     $strData = htmlspecialchars(intval($d[$name]));
                                     break;
                                 case 'decimal':
-                                    $v = floatval($d[$name]));
+                                    $v = floatval($d[$name]);
                                     $decimals = 2;
                                     if (isset($field['decimalplaces']))
                                         $decimals = field['decimalplaces'];
                                     $strData = number_format($v,$decimals);
                                     break;
                                 case 'currency':
-                                    $v = floatval($d[$name]));
+                                    $v = floatval($d[$name]);
                                     $decimals = 2;
                                     if (isset($field['decimalplaces']))
                                         $decimals = field['decimalplaces'];
@@ -1378,7 +1378,7 @@ private function buildChoiceField($n,$f,$data=null)
                                     $strData = $currency_char . number_format($v,$decimals);
                                     break;
                                 case 'percent':
-                                    $v = floatval($d[$name])) * 100.0;
+                                    $v = floatval($d[$name]) * 100.0;
                                     $decimals = 2;
                                     if (isset($field['decimalplaces']))
                                         $decimals = field['decimalplaces'];
