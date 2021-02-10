@@ -255,6 +255,9 @@ class FormList
                     case "dropdown":
                         $this->config['fields'] [$name] ["value"] = FormList::getField($name . "_f",$trim);
                         break;
+                    case "fk":
+                        $this->config['fields'] [$name] ["value"] = FormList::getIntegerField($name . "_f",$trim);
+                        break;
 
                 }
 
