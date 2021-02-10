@@ -1351,7 +1351,47 @@ private function buildChoiceField($n,$f,$data=null)
 
                         $strData = '';
                         if (isset($d[$name]))
+                        {
+                            switch ($field['type'])
+                            {
+                                case 'text':
+                                    $strData = htmlspecialchars($d[$name]);
+                                    break;
+                                case 'integer':
+                                    $strData = htmlspecialchars(intval($d[$name]));
+                                    break;
+                                case 'decimal':
+                                    $v = floatval($d[$name]));
+                                    $decimals = 2;
+                                    if (isset($field['decimalplaces']))
+                                        $decimals = field['decimalplaces'];
+                                    $strData = number_format($v,$decimals);
+                                    break;
+                                case 'currency':
+                                    $v = floatval($d[$name]));
+                                    $decimals = 2;
+                                    if (isset($field['decimalplaces']))
+                                        $decimals = field['decimalplaces'];
+                                    $currency_char = "$";
+                                    if (isset($field['currency_symbol']))
+                                        $currency_char = field['currency_symbol'];
+                                    $strData = $currency_char . number_format($v,$decimals);
+                                    break;
+                                case 'percent':
+                                    $v = floatval($d[$name])) * 100.0;
+                                    $decimals = 2;
+                                    if (isset($field['decimalplaces']))
+                                        $decimals = field['decimalplaces'];
+                                    $strData = number_format($v,$decimals) . "%";
+                                    break;
+                                default:
+                                    $strData = htmlspecialchars($d[$name]);
+                                    break;
+
+                            }
+
                             $strData = htmlspecialchars($d[$name]);
+                        }
                         echo $strData;
 
                         if ($this->haveParameterBoolean($list_attr,'anchor'))
