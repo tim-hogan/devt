@@ -1338,10 +1338,27 @@ private function buildChoiceField($n,$f,$data=null)
 
                 foreach($fields as $name => $field)
                 {
+                    $tdClass='';
+                    switch ($field['type'])
+                    {
+                        case 'decimal':
+                        case 'integer':
+                        case 'currency':
+                        case 'percent':
+                            $tdClass = "r";
+                            break;
+                        default:
+                            break;
+                    }
+
+
                     $list_attr = $field['list'];
                     if ($list_attr['display'])
                     {
-                        echo "<td>";
+                        echo "<td";
+                        if (strlen($tdClass) > 0)
+                            echo " class='{$tdClass}'";
+                        echo">";
                         if ($this->haveParameterBoolean($list_attr,'anchor'))
                         {
                             $v = urlencode($recid);
@@ -1364,24 +1381,24 @@ private function buildChoiceField($n,$f,$data=null)
                                     $v = floatval($d[$name]);
                                     $decimals = 2;
                                     if (isset($field['decimalplaces']))
-                                        $decimals = field['decimalplaces'];
+                                        $decimals = intval($field['decimalplaces']);
                                     $strData = number_format($v,$decimals);
                                     break;
                                 case 'currency':
                                     $v = floatval($d[$name]);
                                     $decimals = 2;
                                     if (isset($field['decimalplaces']))
-                                        $decimals = field['decimalplaces'];
+                                        $decimals = intval($field['decimalplaces']);
                                     $currency_char = "$";
                                     if (isset($field['currency_symbol']))
-                                        $currency_char = field['currency_symbol'];
+                                        $currency_char = $field['currency_symbol'];
                                     $strData = $currency_char . number_format($v,$decimals);
                                     break;
                                 case 'percent':
                                     $v = floatval($d[$name]) * 100.0;
                                     $decimals = 2;
                                     if (isset($field['decimalplaces']))
-                                        $decimals = field['decimalplaces'];
+                                        $decimals = intval($field['decimalplaces']);
                                     $strData = number_format($v,$decimals) . "%";
                                     break;
                                 default:
