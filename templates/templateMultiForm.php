@@ -35,7 +35,7 @@ if (isset($_SESSION['userid']))
 Secure::CheckPage2($user,SECURITY_ADMIN);
 
 $pageData = array();
-$pageData ['select'] = 'global';
+$pageData ['select'] = '**EDIT** FIRST database table';
 $pageData ['form'] = array();
 $pageData ['form'] ['display'] = false;
 $pageData ['form'] ['mode'] = "";
@@ -137,7 +137,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
                 <div id="right">
                     <div class="minimiser" expanded="1" minsize="20" onclick="minmaxwinddow(this)"><<</div>
                     <div class="panel">
-                        <div id="global" class="rtEntity">
+                        <div id="**EDIT** table name" class="rtEntity first">
                             <div id="listglobals">
                                 <?php
                                 $FL = new FormList($formdata['global']);
@@ -145,7 +145,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
                                 ?>
                             </div>
                         </div>
-                        <div id="server" class="rtEntity">
+                        <div id="**EDIT** table name" class="rtEntity">
                             <div id="listservers">
                                 <?php
                                 $FL = new FormList($formdata['server']);
@@ -158,7 +158,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
                 <div id="rightdetail">
                     <div class="hider" expanded="1" minsize="20" onclick="hidewinddow(this)">X</div>
                     <div class="panel">
-                        <div id="globalform" class="detailEntity">
+                        <div id="**EDIT** table name + form  e.g. userform" class="detailEntity first">
                             <div class="form">
                             <form method="POST" autocomplete="off" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">
                                 <?php
@@ -187,7 +187,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
                             </form>
                             </div>
                         </div>
-                        <div id="serverform" class="detailEntity">
+                        <div id="**EDIT** table name + form  e.g. userform" class="detailEntity">
                             <div class="form">
                             <form method="POST" autocomplete="off" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">
                                 <?php
