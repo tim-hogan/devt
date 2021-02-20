@@ -96,14 +96,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
     <meta name="viewport" content="width=device-width" />
     <meta name="viewport" content="initial-scale=1.0" />
     <title>**EDIT**</title>
-    <link rel='stylesheet' type='text/css' href='css/basefull.css' />
+    <link rel='stylesheet' type='text/css' href='css/base.css' />
     <link rel='stylesheet' type='text/css' href='css/heading.css' />
     <link rel='stylesheet' type='text/css' href='css/menu.css' />
-    <link rel='stylesheet' type='text/css' href='css/mainfull.css' />
+    <link rel='stylesheet' type='text/css' href='css/main.css' />
     <link rel='stylesheet' type='text/css' href='css/form.css' />
     <link rel='stylesheet' type='text/css' href='css/list.css' />
-    <link rel='stylesheet' type='text/css' href='css/AdminHome.css' />
-    **EDIT**<script src="/js/templateMultiForm.js"></script>
+    <link rel='stylesheet' type='text/css' href='css/**EDIT**.css' />
+    **EDIT**<script src="/js/MultiForm.js"></script>
 </head>
 <body onload="start()">
     <div id="container">
@@ -185,7 +185,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
                                 if ($pageData ['select'] == 'server')
                                 {
                                     $FL = new FormList($formdata['server']);
-                                    //$FL = new FormList($sevrerparams);
                                     if ($pageData ['form'] ['mode'] == "edit")
                                         $FL->getTableData($DB,$pageData ['form'] ['recid']);
                                     $FL->buildFormFields(null,$DB);
