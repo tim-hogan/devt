@@ -21,6 +21,12 @@ require_once "./includes/classRolling.php";
 require "./includes/classFormList2.php";
 $formdata = require("./forms/**EDIT**.php");
 
+/**
+ * Database
+ */
+require "./includes/class**EDIT**.php";
+$DB = new **EDIT**($devt_environment->getDatabaseParameters());
+
 
 $selff = trim($_SERVER["PHP_SELF"],"/");
 $user = null;
