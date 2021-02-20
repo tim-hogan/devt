@@ -94,6 +94,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
         }
     }
 }
+
+$g_data = array();
+//**EDIT**  Enter any gloabl data to pass to the formlist class here
+//Example $g_data['max_wait_time'] = 400; 
 ?>
 
 <!DOCTYPE HTML>
@@ -141,7 +145,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
                             <div id="listglobals">
                                 <?php
                                 $FL = new FormList($formdata['global']);
-                                $FL->buildList($DB,null);
+                                $FL->buildList($DB,$g_data);
                                 ?>
                             </div>
                         </div>
@@ -149,7 +153,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
                             <div id="listservers">
                                 <?php
                                 $FL = new FormList($formdata['server']);
-                                $FL->buildList($DB,null);
+                                $FL->buildList($DB,$g_data);
                                 ?>
                             </div>
                         </div>

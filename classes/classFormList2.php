@@ -51,6 +51,24 @@ class FormList
         return "";
     }
 
+    private function parseVariable($str,$data)
+    {
+        if ($data)
+        {
+            if (($start = strpos($str,"{")) !== false)
+            {
+                if (($end = strpos($str,"}",$start)) !== false)
+                {
+                    $v = substr($str,$start,($end-$start)+1);
+                    $v = $this->getVariable($data,$v);
+                    $ret = substr($str,0,$start) . $v . substr($str,$end+1);
+                    return $ret;
+                }
+            }
+        }
+        return $str;
+    }
+
     static public function getField($f,$trimit=true)
     {
         $data = null;
@@ -1261,7 +1279,11 @@ private function buildChoiceField($n,$f,$data=null)
         if ($this->haveParameterText($list,'default_order') )
             $order = $list['default_order'];
         if ($this->haveParameterText($list,'default_where') )
+        {
             $where = $list['default_where'];
+            if ($data)
+                $where = $this->parseVariable($where,$data);
+        }
 
         //Check session list variables
         if (! isset($_SESSION["liststate"]))
@@ -1411,13 +1433,11 @@ private function buildChoiceField($n,$f,$data=null)
                                     $strData = number_format($v,$decimals) . "%";
                                     break;
                                 case 'fk':
-                                    error_log("List fk");
                                     $v = intval($d[$name]);
-                                    $data = $DB->getFromTable($field['fk_table'],$field['fk_index'],$v);
-                                    if ($data && isset($data[$field['fk_display']]))
+                                    $d = $DB->getFromTable($field['fk_table'],$field['fk_index'],$v);
+                                    if ($d && isset($d[$field['fk_display']]))
                                     {
-                                        error_log("Have data");
-                                        $strData = htmlspecialchars($data[$field['fk_display']]);
+                                        $strData = htmlspecialchars($d[$field['fk_display']]);
                                     }
                                     break;
                                 default:
@@ -1426,7 +1446,6 @@ private function buildChoiceField($n,$f,$data=null)
 
                             }
 
-                            $strData = htmlspecialchars($d[$name]);
                         }
                         echo $strData;
 
