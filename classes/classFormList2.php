@@ -1354,7 +1354,7 @@ private function buildChoiceField($n,$f,$data=null)
                 $recid="";
                 if ($this->haveParameterBoolean($global,"single_record") )
                 {
-                        $recid = FormList::encryptParam("table={$table}&onerec=1,action=edit");
+                    $recid = FormList::encryptParam("table={$table}&onerec=1,action=edit");
                 }
                 else
                 {
@@ -1369,8 +1369,6 @@ private function buildChoiceField($n,$f,$data=null)
 
                 foreach($fields as $name => $field)
                 {
-
-                    error_log("Field name {$name}");
 
 
                     $tdClass='';
@@ -1402,6 +1400,7 @@ private function buildChoiceField($n,$f,$data=null)
                         }
 
                         $strData = '';
+
                         if (isset($d[$name]))
                         {
                             switch ($field['type'])
@@ -1438,10 +1437,10 @@ private function buildChoiceField($n,$f,$data=null)
                                     break;
                                 case 'fk':
                                     $v = intval($d[$name]);
-                                    $d = $DB->getFromTable($field['fk_table'],$field['fk_index'],$v);
-                                    if ($d && isset($d[$field['fk_display']]))
+                                    $d2 = $DB->getFromTable($field['fk_table'],$field['fk_index'],$v);
+                                    if ($d2 && isset($d2[$field['fk_display']]))
                                     {
-                                        $strData = htmlspecialchars($d[$field['fk_display']]);
+                                        $strData = htmlspecialchars($d2[$field['fk_display']]);
                                     }
                                     break;
                                 default:
@@ -1451,8 +1450,8 @@ private function buildChoiceField($n,$f,$data=null)
                             }
 
                         }
+
                         echo $strData;
-                        error_log(" displat data {$strData}");
 
                         if ($this->haveParameterBoolean($list_attr,'anchor'))
                         {
@@ -1471,6 +1470,18 @@ private function buildChoiceField($n,$f,$data=null)
 
         echo "</div>";
 
+    }
+
+    static public function buildPanel($DB,$data,$tablename,$formdata,$first=false)
+    {
+        echo "<div id='{$tablename}' class='rtEntity";
+        if ($first)
+            echo " first";
+        echo "'>";
+        echo "<div id='list{$tablename}'>";
+        (new FormList($formdata[$tablename]))->buildList($DB,$data);    
+        echo "</div>";
+        echo "</div>";
     }
 
     static public function encryptParam($v)
