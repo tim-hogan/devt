@@ -138,7 +138,7 @@ $g_data = array();
                 <div id="left">
                     <div class="minimiser" expanded="1" minsize="20" onclick="minmaxwinddow(this)" title="Minimise"><<</div>
                     <div class="panel">
-                        <p class="lefttitle">**EDIT**</p>
+                        <<h1>SETTINGS</h1>
                         <ul>
                             <?php FormList::buildAllSelectEntries($g_FormTables,$formdata); ?>
                         </ul>
