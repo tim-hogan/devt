@@ -98,6 +98,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
 $g_data = array();
 //**EDIT**  Enter any gloabl data to pass to the formlist class here
 //Example $g_data['max_wait_time'] = 400; 
+
+
+
+//Declare all tables to be managed
+$g_FormTables = ['**EDIT** TABLE NAME','**EDIT** TABLE NAME'];
+
 ?>
 
 <!DOCTYPE HTML>
@@ -133,30 +139,14 @@ $g_data = array();
                     <div class="panel">
                         <p class="lefttitle">**EDIT**</p>
                         <ul>
-                            <li id="selglobal" class="liselector" onclick="selectRight(this,'global')">**EDIT**Global Parameters</li>
-                            <li id="selserver" class="liselector" onclick="selectRight(this,'server')">**EDIT**Servers</li>
+                            <?php FormList::buildAllSelectEntries($g_FormTables,$formdata); ?>
                         </ul>
                     </div>
                 </div>
                 <div id="right">
                     <div class="minimiser" expanded="1" minsize="20" onclick="minmaxwinddow(this)"><<</div>
                     <div class="panel">
-                        <div id="**EDIT** table name" class="rtEntity first">
-                            <div id="listglobals">
-                                <?php
-                                $FL = new FormList($formdata['global']);
-                                $FL->buildList($DB,$g_data);
-                                ?>
-                            </div>
-                        </div>
-                        <div id="**EDIT** table name" class="rtEntity">
-                            <div id="listservers">
-                                <?php
-                                $FL = new FormList($formdata['server']);
-                                $FL->buildList($DB,$g_data);
-                                ?>
-                            </div>
-                        </div>
+                        <?php FormList::buildAllPanels($DB,$g_data,$g_FormTables,$formdata); ?>
                     </div>
                 </div>
                 <div id="rightdetail">

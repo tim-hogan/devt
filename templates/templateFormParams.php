@@ -4,6 +4,7 @@ $formparams = [
         "table" => "<edit db table name>",
         "primary_key" => "<edit db table primary key>",
         "single_record" => true | false, //Set if there is no primary key and only a single record exists in this table.
+        "selector_text" => "GLOBAL",
     ],
     "form" => [
          "heading" => "<heading text>",
@@ -39,7 +40,7 @@ $formparams = [
     ],
     "fields" => [
         "<field name>" => [
-            "type" => "text | boolean | integer | decimal | currency | percent | button | choice | fk",
+            "type" => "text | boolean | integer | decimal | currency | percent | date | datetime | button | choice | fk | hidden",
             "fk_table" => "",
             "fk_index" => "",
             "fk_display" => "",

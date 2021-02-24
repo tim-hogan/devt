@@ -80,6 +80,7 @@ function buildDefault()
 
         $global['table'] = $table[0];
         $global['single_record'] = true;
+        $global['selector_text'] = $table[0];
 
         $form['heading'] = "{$table[0]} Heading";
         $form['introduction'] = "";

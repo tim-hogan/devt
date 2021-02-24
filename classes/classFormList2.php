@@ -1,4 +1,5 @@
 <?php
+require_once "./includes/classTime.php";
 class FormList
 {
     private $config;
@@ -124,6 +125,45 @@ class FormList
             $data = floatval($data);
         }
         return $data;
+    }
+
+    static public function getDateField($f,$trimit=true)
+    {
+        //Uses $_SESSION['tz'] or $_SESSION['timezone']
+        $tz = 'UTC';
+        if (isset($_SESSION['tz']))
+            $tz = $_SESSION['tz'];
+        elseif (isset($_SESSION['timezone']))
+            $tz = $_SESSION['timezone'];
+        if (isset($_POST[$f]))
+        {
+            $data = FormList::getField($f,$trimit);
+            error_log("POST DATA FOR DATE FIELD IS {$data} for timezone {$tz}");
+            $date = new DateTime($data,new DateTimeZone($tz));
+            $date->setTimezone(new DateTimeZone('UTC'));
+            return $date->format('Y-m-d H:i:s');
+        }
+        return null;
+    }
+
+    static public function getDateTimeField($f,$trimit=true)
+    {
+        //Uses $_SESSION['tz'] or $_SESSION['timezone']
+        $tz = 'UTC';
+        if (isset($_SESSION['tz']))
+            $tz = $_SESSION['tz'];
+        elseif (isset($_SESSION['timezone']))
+            $tz = $_SESSION['timezone'];
+        if (isset($_POST[$f]))
+        {
+            $data = FormList::getField($f,$trimit);
+            error_log("POST DATA FOR DATETIME FIELD IS {$data} for timezone {$tz}");
+            $date = new DateTime($data,new DateTimeZone($tz));
+            $date->setTimezone(new DateTimeZone('UTC'));
+            return $date->format('Y-m-d H:i:s');
+        }
+        return null;
+
     }
 
     static public function getCheckboxField($f)
@@ -264,6 +304,15 @@ class FormList
                     case "percent":
                         $this->config['fields'] [$name] ["value"] = FormList::getPercentField($name . "_f",$trim,$symbol);
                         break;
+                    case "date":
+                        $this->config['fields'] [$name] ["value"] = FormList::getDateField($name . "_f",$trim,$symbol);
+                        error_log("Decoded date value from form is {$this->config['fields'] [$name] ["value"]}");
+                        break;
+                    case "datetime":
+                        $this->config['fields'] [$name] ["value"] = FormList::getDateTimeField($name . "_f",$trim,$symbol);
+                        error_log("Decoded date value from form is {$this->config['fields'] [$name] ["value"]}");
+                        break;
+                        break;
                     case "choice":
                         $this->config['fields'] [$name] ["value"] = FormList::getField($name . "_f",$trim);
                         break;
@@ -275,6 +324,11 @@ class FormList
                         break;
                     case "fk":
                         $this->config['fields'] [$name] ["value"] = FormList::getIntegerField($name . "_f",$trim);
+                        break;
+                    case "hidden":
+                        $hiddenValue = FormList::getField($name . "_f",false);
+                        $decode = FormList::decryptParamRaw($hiddenValue);
+                        $this->config['fields'] [$name] ["value"] = $decode['hidden'];
                         break;
 
                 }
@@ -892,7 +946,180 @@ class FormList
         echo "</div>";
     }
 
-private function buildChoiceField($n,$f,$data=null)
+    private function buildDateField($n,$f,$data=null)
+    {
+        $fid = $n . "_id";
+        $divid = $n . "_divid";
+        $fname = $n ."_f";
+        $tag = 'input';
+
+        if (isset($this->config['form']))
+        {
+            $form = $this->config['form'];
+            if (isset($form['classes']))
+            {
+                $formclasses = $form['classes'];
+                if (isset($formclasses['div']))
+                    $formclassesdiv = $formclasses['div'];
+            }
+        }
+
+        if (isset($f['tag']))
+            $tag = $f['tag'];
+
+        echo "<div id='{$divid}'";
+        if ($formclassesdiv && isset($formclassesdiv['inputtext']))
+            echo " class='{$formclassesdiv['inputtext']}'";
+        echo ">";
+
+        $prefix = "";
+        if (isset($f ['form'] ['required']) && $f ['form'] ['required'])
+            $prefix="* ";
+        if (isset($f ['form'] ['formlabel']))
+            echo "<label for='{$fid}'>{$prefix}{$f ['form'] ['formlabel']}</label>";
+
+        //Default values
+        if (! isset ($f['value']))
+        {
+            if (isset($f['form'] ['default']))
+            {
+                if ($this->isVariable($f['form'] ['default']) )
+                {
+                    $f['value'] = $this->getVariable($data,$f['form'] ['default']);
+                }
+                else
+                    $f['value'] = $f['form'] ['default'];
+            }
+        }
+
+        $subtag = "date";
+        echo "<input class='date";
+        if (isset($f['error']) && $f['error'])
+            echo " err'";
+        else
+            echo "'";
+        echo "type='{$subtag}' id='{$fid}' name='{$fname}'";
+        if (isset ($f['value']))
+        {
+            $tz = 'UTC';
+            //This relies on the $_SESSION Variable tz or timezone
+            if (isset($_SESSION['tz']))
+                $tz = $_SESSION['tz'];
+            elseif (isset($_SESSION['timezone']))
+                $tz = $_SESSION['timezone'];
+
+            $v = classTimeHelpers::timeFormat($f['value'],'Y-m-d',$tz);
+
+            echo "value='{$v}' ";
+        }
+        if (isset($f['size']))
+            echo " size='{$f['size']}' ";
+        if (isset ($f['form'] ['title']) && strlen($f['form'] ['title'] ) > 0)
+            echo "title='{$f['form'] ['title']}' ";
+        echo " />";
+
+
+        //Check for post text
+        if ( isset ($f['form'] ['posttext']) && strlen($f['form'] ['posttext']) > 0)
+        {
+            $v = $f['form'] ['posttext'];
+            if ($data && $this->isVariable($v))
+            {
+                $v = $this->getVariable($data,$v);
+            }
+            echo "<span>{$v}</span>";
+        }
+
+        echo "</div>";
+    }
+
+    private function buildDateTimeField($n,$f,$data=null)
+    {
+        $fid = $n . "_id";
+        $divid = $n . "_divid";
+        $fname = $n ."_f";
+        $tag = 'input';
+
+        if (isset($this->config['form']))
+        {
+            $form = $this->config['form'];
+            if (isset($form['classes']))
+            {
+                $formclasses = $form['classes'];
+                if (isset($formclasses['div']))
+                    $formclassesdiv = $formclasses['div'];
+            }
+        }
+
+        if (isset($f['tag']))
+            $tag = $f['tag'];
+
+        echo "<div id='{$divid}'";
+        if ($formclassesdiv && isset($formclassesdiv['inputtext']))
+            echo " class='{$formclassesdiv['inputtext']}'";
+        echo ">";
+
+        $prefix = "";
+        if (isset($f ['form'] ['required']) && $f ['form'] ['required'])
+            $prefix="* ";
+        if (isset($f ['form'] ['formlabel']))
+            echo "<label for='{$fid}'>{$prefix}{$f ['form'] ['formlabel']}</label>";
+
+        //Default values
+        if (! isset ($f['value']))
+        {
+            if (isset($f['form'] ['default']))
+            {
+                if ($this->isVariable($f['form'] ['default']) )
+                {
+                    $f['value'] = $this->getVariable($data,$f['form'] ['default']);
+                }
+                else
+                    $f['value'] = $f['form'] ['default'];
+            }
+        }
+
+        $subtag = "datetime-local";
+        echo "<input class='date";
+        if (isset($f['error']) && $f['error'])
+            echo " err'";
+        else
+            echo "'";
+        echo "type='{$subtag}' id='{$fid}' name='{$fname}'";
+        if (isset ($f['value']))
+        {
+            $tz = 'UTC';
+            //This relies on the $_SESSION Variable tz or timezone
+            if (isset($_SESSION['tz']))
+                $tz = $_SESSION['tz'];
+            elseif (isset($_SESSION['timezone']))
+                $tz = $_SESSION['timezone'];
+
+            $v = classTimeHelpers::timeFormatDateTimeLocal($f['value'],$tz);
+
+            echo "value='{$v}' ";
+        }
+        if (isset($f['size']))
+            echo " size='{$f['size']}' ";
+        if (isset ($f['form'] ['title']) && strlen($f['form'] ['title'] ) > 0)
+            echo "title='{$f['form'] ['title']}' ";
+        echo " />";
+
+
+        //Check for post text
+        if ( isset ($f['form'] ['posttext']) && strlen($f['form'] ['posttext']) > 0)
+        {
+            $v = $f['form'] ['posttext'];
+            if ($data && $this->isVariable($v))
+            {
+                $v = $this->getVariable($data,$v);
+            }
+            echo "<span>{$v}</span>";
+        }
+
+        echo "</div>";
+    }
+    private function buildChoiceField($n,$f,$data=null)
     {
         $fid = $n . "_id";
         $divid = $n . "_divid";
@@ -1101,6 +1328,66 @@ private function buildChoiceField($n,$f,$data=null)
         echo "</div>";
     }
 
+    private function buildHiddenField($n,$f,$data=null)
+    {
+        $fid = $n . "_id";
+        $divid = $n . "_divid";
+        $fname = $n ."_f";
+        $tag = 'input';
+
+        if (isset($this->config['form']))
+        {
+            $form = $this->config['form'];
+            if (isset($form['classes']))
+            {
+                $formclasses = $form['classes'];
+                if (isset($formclasses['div']))
+                    $formclassesdiv = $formclasses['div'];
+            }
+        }
+
+        //Default values
+        if (isset($f['form'] ['default']))
+        {
+            //For hidden fields we encrypt
+            $defValue =null;
+            if ($this->isVariable($f['form'] ['default']) )
+            {
+                $defValue = $this->getVariable($data,$f['form'] ['default']);
+            }
+            else
+            {
+                $defValue = $f['form'] ['default'];
+            }
+            $defValue = "hidden={$defValue}";
+            $f['value'] = FormList::encryptParam($defValue);
+        }
+
+        $subtag = "hidden";
+        echo "<input ";
+        echo "type='{$subtag}' id='{$fid}' name='{$fname}'";
+        if (isset ($f['value']))
+        {
+            $v = $f['value'];
+            echo "value='{$v}' ";
+        }
+        echo " />";
+
+
+
+        //Check for post text
+        if ( isset ($f['form'] ['posttext']) && strlen($f['form'] ['posttext']) > 0)
+        {
+            $v = $f['form'] ['posttext'];
+            if ($data && $this->isVariable($v))
+            {
+                $v = $this->getVariable($data,$v);
+            }
+            echo "<span>{$v}</span>";
+        }
+
+    }
+
     public function getTableData($DB,$recid)
     {
         if (! $this->config)
@@ -1220,6 +1507,12 @@ private function buildChoiceField($n,$f,$data=null)
                     case "currency":
                         $this->buildCurrencyField($name,$field);
                         break;
+                    case "date":
+                        $this->buildDateField($name,$field);
+                        break;
+                    case "datetime":
+                        $this->buildDateTimeField($name,$field);
+                        break;
                     case "percent":
                         $this->buildPercentField($name,$field);
                         break;
@@ -1234,6 +1527,9 @@ private function buildChoiceField($n,$f,$data=null)
                         break;
                     case "fk":
                         $this->buildFKField($name,$field,$data,$DB);
+                        break;
+                    case "hidden":
+                        $this->buildHiddenField($name,$field,$data,$DB);
                         break;
                     default:
                         break;
@@ -1435,6 +1731,22 @@ private function buildChoiceField($n,$f,$data=null)
                                         $decimals = intval($field['decimalplaces']);
                                     $strData = number_format($v,$decimals) . "%";
                                     break;
+                                case 'date':
+                                    $tz = 'UTC';
+                                    if (isset($_SESSION['tz']))
+                                        $tz = $_SESSION['tz'];
+                                    elseif (isset($_SESSION['timezone']))
+                                        $tz = $_SESSION['timezone'];
+                                    $strData = classTimeHelpers::timeFormatnthDate($d[$name],$tz);
+                                    break;
+                                case 'datetime':
+                                    $tz = 'UTC';
+                                    if (isset($_SESSION['tz']))
+                                        $tz = $_SESSION['tz'];
+                                    elseif (isset($_SESSION['timezone']))
+                                        $tz = $_SESSION['timezone'];
+                                    $strData = classTimeHelpers::timeFormatnthDateTime1($d[$name],$tz);
+                                    break;
                                 case 'fk':
                                     $v = intval($d[$name]);
                                     $d2 = $DB->getFromTable($field['fk_table'],$field['fk_index'],$v);
@@ -1472,6 +1784,27 @@ private function buildChoiceField($n,$f,$data=null)
 
     }
 
+    static function buildSelectEntry($tablename,$formdata)
+    {
+        $strText = '';
+        if (isset($formdata[$tablename] ['global'] ['selector_text'] ))
+        {
+            $strText = htmlspecialchars($formdata[$tablename] ['global'] ['selector_text']);
+        }
+        if (strlen($strText) == 0)
+            $strText = $tablename;
+
+        echo "<li id='sel{$tablename}' class='liselector' onclick='selectRight(this,\"{$tablename}\")'>{$strText}</li>";
+    }
+
+    static function buildAllSelectEntries($FormTables,$formdata)
+    {
+        foreach ($FormTables as $t)
+        {
+            FormList::buildSelectEntry($t,$formdata);
+        }
+    }
+
     static public function buildPanel($DB,$data,$tablename,$formdata,$first=false)
     {
         echo "<div id='{$tablename}' class='rtEntity";
@@ -1479,9 +1812,60 @@ private function buildChoiceField($n,$f,$data=null)
             echo " first";
         echo "'>";
         echo "<div id='list{$tablename}'>";
-        (new FormList($formdata[$tablename]))->buildList($DB,$data);    
+        (new FormList($formdata[$tablename]))->buildList($DB,$data);
         echo "</div>";
         echo "</div>";
+    }
+
+
+    static public function buildAllPanels($DB,$data,$FormTables,$formdata)
+    {
+        $first = true;
+        foreach ($FormTables as $t)
+        {
+            FormList::buildPanel($DB,$data,$t,$formdata,$first);
+            $first = false;
+        }
+    }
+
+    static public function buildForm($DB,$data,$tablename,$formdata,$pageData)
+    {
+        echo "<div id='{$tablename}form' class='detailEntity'>";
+            echo "<div class='form'>";
+            echo "<form method='POST' action='" . htmlspecialchars($_SERVER["PHP_SELF"]) . "'>";
+                if ($pageData ['select'] == $tablename)
+                {
+                    $FL = new FormList($formdata[$tablename]);
+                    if ($pageData ['form'] ['mode'] == "edit")
+                        $FL->getTableData($DB,$pageData ['form'] ['recid']);
+                    $FL->buildFormFields($data,$DB);
+                    echo "<div class='submit'>";
+                    if ($pageData ['form'] ['mode'] == "edit")
+                    {
+                        $v = FormList::encryptParam("table={$tablename}&action=change&recid={$pageData ['form'] ['recid']}");
+                        echo "<input type='hidden' name='v' value='{$v}' />";
+                        echo "<input type='submit' name='_server_change' value='CONFIRM CHANGE' />";
+                    }
+                    else
+                    {
+                        $v = FormList::encryptParam("table={$tablename}&action=create");
+                        echo "<input type='hidden' name='v' value='{$v}' />";
+                        echo "<input type='submit' name='_server_new' value='CREATE NEW' />";
+                    }
+                    echo "</div>";
+                }
+            echo "</form>";
+            echo "</div>";
+        echo "</div>";
+    }
+
+    static public function buildAllForms($DB,$data,$FormTables,$formdata,$pageData)
+    {
+        foreach ($FormTables as $t)
+        {
+            FormList::buildForm($DB,$data,$t,$formdata,$pageData);
+        }
+
     }
 
     static public function encryptParam($v)
