@@ -208,7 +208,7 @@ function buildDefault()
                 case FIELD_TYPE_TINYINT:
                     $fdata['type'] = 'boolean';
                     $fdata['tag'] = "input";
-                    $fdata['sub-tag'] = "chekbox";
+                    $fdata['sub-tag'] = "checkbox";
                     break;
 
                 case FIELD_TYPE_SMALLINT:
