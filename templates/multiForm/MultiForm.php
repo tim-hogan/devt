@@ -35,7 +35,7 @@ if (isset($_SESSION['userid']))
 Secure::CheckPage2($user,SECURITY_ADMIN);
 
 $pageData = array();
-$pageData ['select'] = 'global';
+$pageData ['select'] = '**EDITglobal';
 $pageData ['form'] = array();
 $pageData ['form'] ['display'] = false;
 $pageData ['form'] ['mode'] = "";
@@ -94,6 +94,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
         }
     }
 }
+
+//Build any global data
+$g_data = array();
+////**EDIT**  $g_data['global_val;'] = :global value:;
+
+
+//Declare all tables to be managed
+//**EDIT** $g_FormTables = ['tablename_1','tablename_2','tablename_3'];
+
 ?>
 
 <!DOCTYPE HTML>
@@ -102,14 +111,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
     <meta name="viewport" content="width=device-width" />
     <meta name="viewport" content="initial-scale=1.0" />
     <title>**EDIT**</title>
+    <link rel='stylesheet' type='text/css' href='css/scheme.css' />
     <link rel='stylesheet' type='text/css' href='css/base.css' />
     <link rel='stylesheet' type='text/css' href='css/heading.css' />
     <link rel='stylesheet' type='text/css' href='css/menu.css' />
     <link rel='stylesheet' type='text/css' href='css/main.css' />
+    <link rel='stylesheet' type='text/css' href='css/framework.css' />
     <link rel='stylesheet' type='text/css' href='css/form.css' />
     <link rel='stylesheet' type='text/css' href='css/list.css' />
     <link rel='stylesheet' type='text/css' href='css/**EDIT**.css' />
     **EDIT**<script src="/js/MultiForm.js"></script>
+    <script>
+        var g_pageState = JSON.parse('<?php echo json_encode($pageData);?>');
+    </script>
 </head>
 <body onload="start()">
     <div id="container">
@@ -126,92 +140,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
                     <div class="panel">
                         <p class="lefttitle">**EDIT**</p>
                         <ul>
-                            <li id="selglobal" class="liselector" onclick="selectRight(this,'global')">**EDIT**Global Parameters</li>
-                            <li id="selserver" class="liselector" onclick="selectRight(this,'server')">**EDIT**Servers</li>
+                            <?php FormList::buildAllSelectEntries($g_FormTables,$formdata); ?>
                         </ul>
                     </div>
                 </div>
                 <div id="right">
                     <div class="minimiser" expanded="1" minsize="20" onclick="minmaxwinddow(this)"><<</div>
                     <div class="panel">
-                        <div id="global" class="rtEntity">
-                            <div id="listglobals">
-                                <?php
-                                $FL = new FormList($formdata['global']);
-                                $FL->buildList($DB,null);
-                                ?>
-                            </div>
-                        </div>
-                        <div id="server" class="rtEntity">
-                            <div id="listservers">
-                                <?php
-                                $FL = new FormList($formdata['server']);
-                                $FL->buildList($DB,null);
-                                ?>
-                            </div>
-                        </div>
+                        <?php FormList::buildAllPanels($DB,$g_data,$g_FormTables,$formdata); ?>
                     </div>
                 </div>
                 <div id="rightdetail">
                     <div class="hider" expanded="1" minsize="20" onclick="hidewinddow(this)">X</div>
                     <div class="panel">
-                        <div id="globalform" class="detailEntity">
-                            <div class="form">
-                            <form method="POST" autocomplete="off" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">
-                                <?php
-                                if ($pageData ['select'] == 'global')
-                                {
-                                    $FL = new FormList($formdata['global']);
-                                    if ($pageData ['form'] ['mode'] == "edit")
-                                        $FL->getTableData($DB,$pageData ['form'] ['recid']);
-                                    $FL->buildFormFields(null,$DB);
-                                    echo "<div class='submit'>";
-                                    if ($pageData ['form'] ['mode'] == "edit")
-                                    {
-                                        $v = FormList::encryptParam("table=globalr&action=change&recid={$pageData ['form'] ['recid']}");
-                                        echo "<input type='hidden' name='v' value='{$v}' />";
-                                        echo "<input type='submit' name='_server_change' value='CONFIRM CHANGE' />";
-                                    }
-                                    else
-                                    {
-                                        $v = FormList::encryptParam("table=global&action=create");
-                                        echo "<input type='hidden' name='v' value='{$v}' />";
-                                        echo "<input type='submit' name='_server_new' value='CREATE NEW' />";
-                                    }
-                                    echo "</div>";
-                                }
-                                ?>
-                            </form>
-                            </div>
-                        </div>
-                        <div id="serverform" class="detailEntity">
-                            <div class="form">
-                            <form method="POST" autocomplete="off" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">
-                                <?php
-                                if ($pageData ['select'] == 'server')
-                                {
-                                    $FL = new FormList($formdata['server']);
-                                    if ($pageData ['form'] ['mode'] == "edit")
-                                        $FL->getTableData($DB,$pageData ['form'] ['recid']);
-                                    $FL->buildFormFields(null,$DB);
-                                    echo "<div class='submit'>";
-                                    if ($pageData ['form'] ['mode'] == "edit")
-                                    {
-                                        $v = FormList::encryptParam("table=server&action=change&recid={$pageData ['form'] ['recid']}");
-                                        echo "<input type='hidden' name='v' value='{$v}' />";
-                                        echo "<input type='submit' name='_server_change' value='CONFIRM CHANGE' />";
-                                    }
-                                    else
-                                    {
-                                        $v = FormList::encryptParam("table=server&action=create");
-                                        echo "<input type='hidden' name='v' value='{$v}' />";
-                                        echo "<input type='submit' name='_server_new' value='CREATE NEW' />";
-                                    }
-                                    echo "</div>";
-                                }
-                                ?>
-                            </form>
-                            </div>
+                        <div class="panel2">
+                            <?php FormList::buildAllForms($DB,$g_data,$g_FormTables,$formdata,$pageData); ?>
                         </div>
                     </div>
                 </div>
