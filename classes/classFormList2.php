@@ -1147,8 +1147,6 @@ class FormList
         {
             case "input":
                 $subtag = "radio";
-                if (isset($f['sub-tag']))
-                    $subtag = $f['sub-tag'];
 
                 switch ($subtag)
                 {
