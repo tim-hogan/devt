@@ -436,9 +436,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
             updateTextFieldListInfo($table,$field,"displayoption");
 
 
-            //Loop here lloking for choice fields
+            //Loop here looking for choice fields
             if (isset($_POST["{$table}_{$field}_type"]) && $_POST["{$table}_{$field}_type"] == "choice")
             {
+                error_log("We ave a choice field to edit");
                 $g_def[$table] ['fields'] [$field] ['choice'] = array();
 
                 for ($cnt = 0; $cnt < 50; $cnt++)
