@@ -439,17 +439,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
             //Loop here looking for choice fields
             if (isset($_POST["{$table}_{$field}_type"]) && $_POST["{$table}_{$field}_type"] == "choice")
             {
-                error_log("We ave a choice field to edit");
+                error_log("We have a choice field to edit");
                 $g_def[$table] ['fields'] [$field] ['choice'] = array();
 
                 for ($cnt = 0; $cnt < 50; $cnt++)
                 {
                     if (isset($_POST["{$table}_{$field}_form_choice_text{$cnt}"]) )
                     {
+                        error_log(" the text filed for item {$cnt} is set");
                         $ch = array();
                         $ch ['text'] = $_POST["{$table}_{$field}_form_choice_text{$cnt}"];
                         $ch ['value'] = $_POST["{$table}_{$field}_form_choice_value{$cnt}"];
                         $ch ['selected'] = $_POST["{$table}_{$field}_form_choice_selected{$cnt}"];
+                        error_log(" pushing new array for item {$cnt}");
+
                         array_push($g_def[$table] ['fields'] [$field] ['choice'] ,$ch);
                     }
                 }
