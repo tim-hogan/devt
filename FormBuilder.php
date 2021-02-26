@@ -216,6 +216,16 @@ function updateTextFieldInfo($table,$field,$attribute)
         $g_def[$table] ['fields'] [$field] [$attribute] = $_POST["{$table}_{$field}_{$attribute}"];
 }
 
+function updateBooleanFieldInfo($table,$field,$attribute)
+{
+    global $g_def;
+    if (isset($_POST["{$table}_{$field}_{$attribute}"]) )
+    {
+        $b = boolval(FormList::getCheckboxField("{$table}_{$field}_{$attribute}"));
+        $g_def[$table] ['fields'] [$field]  [$attribute] = $b;
+    }
+}
+
 function updateIntegerFieldInfo($table,$field,$attribute)
 {
     global $g_def;
@@ -409,7 +419,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
             updateTextFieldInfo($table,$field,"errname");
             updateIntegerFieldInfo($table,$field,"decimalplaces");
             updateTextFieldInfo($table,$field,"currency_symbol");
-            updateBooleanFieldFormInfo($table,$field,"readonly");
+            updateBooleanFieldInfo($table,$field,"readonly");
             updateIntegerFieldInfo($table,$field,"security_view");
             updateIntegerFieldInfo($table,$field,"security_edit");
             updateTextFieldInfo($table,$field,"fk_table");
