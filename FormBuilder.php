@@ -224,6 +224,10 @@ function updateBooleanFieldInfo($table,$field,$attribute)
         $b = boolval(FormList::getCheckboxField("{$table}_{$field}_{$attribute}"));
         $g_def[$table] ['fields'] [$field]  [$attribute] = $b;
     }
+    else
+    {
+        $g_def[$table] ['fields'] [$field]  [$attribute] = false;
+    }
 }
 
 function updateIntegerFieldInfo($table,$field,$attribute)
