@@ -725,9 +725,9 @@ if (isset($_SESSION['filename']))
                         bTF('errname',"{$g_table}_{$g_field}_errname",$fields[$g_field] ['errname']);
                         bIF('decimalplaces',"{$g_table}_{$g_field}_decimalplaces",$fields[$g_field] ['decimalplaces'],2);
                         bTF('currency_symbol',"{$g_table}_{$g_field}_currency_symbol",$fields[$g_field] ['currency_symbol'],1);
-                        if (! isset($g_table[$params['fields']] [$g_field] ['readonly'] ) )
+                        if (! isset($g_def[$g_table] ['fields'] [$g_field] ['readonly'] ) )
                         {
-                            $g_table[$params['fields']] [$g_field] ['readonly'] = false;
+                            $g_def[$g_table] ['fields'] [$g_field] ['readonly'] = false;
                             $fields[$g_field] ['readonly'] = false;
                         }
                         bBF('readonly',"{$g_table}_{$g_field}_readonly",$fields[$g_field] ['readonly']);
