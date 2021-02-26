@@ -409,6 +409,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
             updateTextFieldInfo($table,$field,"errname");
             updateIntegerFieldInfo($table,$field,"decimalplaces");
             updateTextFieldInfo($table,$field,"currency_symbol");
+            updateBooleanFieldFormInfo($table,$field,"readonly");
             updateIntegerFieldInfo($table,$field,"security_view");
             updateIntegerFieldInfo($table,$field,"security_edit");
             updateTextFieldInfo($table,$field,"fk_table");
@@ -724,6 +725,7 @@ if (isset($_SESSION['filename']))
                         bTF('errname',"{$g_table}_{$g_field}_errname",$fields[$g_field] ['errname']);
                         bIF('decimalplaces',"{$g_table}_{$g_field}_decimalplaces",$fields[$g_field] ['decimalplaces'],2);
                         bTF('currency_symbol',"{$g_table}_{$g_field}_currency_symbol",$fields[$g_field] ['currency_symbol'],1);
+                        bBF('readonly',"{$g_table}_{$g_field}_readonly",$fields[$g_field] ['readonly']);
                         bIF('security_view',"{$g_table}_{$g_field}_secuity_view",$fields[$g_field] ['security_view']);
                         bIF('security_edit',"{$g_table}_{$g_field}_security_edit",$fields[$g_field] ['security_edit']);
                         echo "</table>";

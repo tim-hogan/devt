@@ -56,6 +56,7 @@ $formparams = [
             "errname" => "Prefix",
             "decimalplaces" => 2,
             "currency_symbol" => "$",
+            "readonly => true",
             "form" => [
                 "display" => true | false,
                 "formlabel" => "<label name>",
