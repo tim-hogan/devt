@@ -149,6 +149,7 @@ function buildDefault()
             $fdata["errname"] = $field->name;
             $fdata["decimalplaces"] = 2;
             $fdata["currency_symbol"] = "$";
+            $fdata["readonly"] = false;
             $fdata["security_view"] = 0;
             $fdata["security_edit"] = 0;
 
