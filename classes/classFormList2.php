@@ -1311,6 +1311,12 @@ class FormList
 
                 if (isset($f['readonly']) && $f['readonly'])
                 {
+                    $where = '';
+                    $order = '';
+                    if (isset($f['fk_where']))
+                        $where = trim($where);
+                    if (isset($f['fk_order']))
+                        $order = trim($order);
                     $d = $DB->every($f['fk_table'],$where,$order);
                     foreach ($d as $a)
                     {
@@ -1333,7 +1339,7 @@ class FormList
                         if (isset($f['fk_where']))
                             $where = trim($where);
                         if (isset($f['fk_order']))
-                            $where = trim($order);
+                            $order = trim($order);
                         if ( ! isset($form['required']) ||  ! $form['required'])
                             echo "<option value='0'></option>";
                         if ($DB)

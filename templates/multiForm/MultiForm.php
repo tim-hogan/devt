@@ -65,6 +65,14 @@ if (isset($_GET['v']))
                 else
                     $pageData ['form'] ['recid'] = $a['id'];
                 break;
+            case "actionit":
+                //$a['table']
+                if (function_exists($a['call']) )
+                {
+                    $callwho = $a['call'];
+                    $callwho($a['table'],$a['id']);
+                }
+                break;
         }
     }
 }
