@@ -93,7 +93,8 @@ function selectRight(n, name) {
 
 function actionStations(n) {
     var v = n.value;
-    window.location = window.location + "?v=" + v;
+    var l = window.location.origin + window.location.pathname + "?v=" + v;
+    window.location = l;
 }
 
 function start() {
