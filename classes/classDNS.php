@@ -146,13 +146,59 @@ class dns
         return $rslt;
     }
 
+    public function deleteARecord($domain,$subdomain)
+    {
+        $rslt = array();
+        $params = array();
+        $params['type'] = "A";
+        $params['domain'] = $domain;
+        $params['name'] = $subdomain;
+
+        $url = "https://{$this->_dnsServer}/api/v1/json/delete";
+
+
+        try
+        {
+            $r = $this->curl($url,"POST",$params);
+        }
+
+        catch (Exception $e)
+        {
+            error_log("dns::addArecord [". __LINE__ . "] Exception thrown: {$e}");
+            $rslt['status'] = false;
+            $rslt['error'] = "dns::addArecord [__LINE__] Exception thrown: {$e}";
+            return $rslt;
+        }
+
+        if (!$r || !isset($r['meta']) || !isset($r['meta'] ['status']) )
+        {
+            error_log("dns::addArecord [". __LINE__ . "] Null rslt returned");
+            $rslt['status'] = false;
+            $rslt['error'] = "dns::addArecord [". __LINE__ . "] Null rslt returned";
+            return $rslt;
+
+        }
+
+        if ($r['meta'] ['status'])
+        {
+            $rslt['status'] = true;
+        }
+        else
+        {
+            $rslt['status'] = false;
+            $rslt['error'] = $r['meta'] ['errormsg'];
+        }
+
+        return $rslt;
+    }
+
     public function haveARecord($domain,$subdomain)
     {
 
         $rslt = array();
 
         $url = "https://{$this->_dnsServer}/api/v1/json/havearecord/{$domain}/{$subdomain}";
-        
+
         try
         {
             $r = $this->curl($url,"GET");
@@ -166,7 +212,7 @@ class dns
 
         if ($r['meta'] ['status'] && $r['data'] ['have'])
             return true;
-        
+
         return false;
 
     }
