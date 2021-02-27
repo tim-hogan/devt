@@ -43,6 +43,34 @@
 .form input[type='email'].err {background-color: antiquewhite;}
 .form input[type='radio'] {}
 .form input[type='radio'].err {background-color: antiquewhite;}
+
+    .form input[type='date'] {
+        border: none;
+        border-bottom: solid 1pt var(--field-border-color-botton);
+        padding-top: 10px;
+        padding-left: 10px;
+        font-size: 14pt;
+        color: #666;
+    }
+    .form input[type='datetime-local'] {
+        border: none;
+        border-bottom: solid 1pt var(--field-border-color-botton);
+        padding-top: 10px;
+        padding-left: 10px;
+        font-size: 14pt;
+        color: #666;
+    }
+    .form input[type='time'] {
+        border: none;
+        border-bottom: solid 1pt var(--field-border-color-botton);
+        padding-top: 10px;
+        padding-left: 10px;
+        font-size: 14pt;
+        color: #666;
+    }
+
+
+
 .form input[type='submit'] {}
 .form label {display: block;font-size: 9pt;color: #888;}
 .form span {margin-left: 8px;}

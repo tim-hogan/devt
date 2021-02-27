@@ -1317,7 +1317,7 @@ class FormList
                         if (isset($f['value']) && $f['value'] == $a[$f['fk_index']])
                         {
                             $strV = htmlspecialchars($a[$f['fk_display']]);
-                            echo "<input id='{$fid}' name='invalid_{$fname}' value='{$strV}' readonly disbaled / >";
+                            echo "<input id='{$fid}' type='text' name='invalid_{$fname}' value='{$strV}' readonly disbaled / >";
                             echo "<input type='hidden' name='{$fname}' value='{$a[$f['fk_index']]}' />";
                         }
                     }
