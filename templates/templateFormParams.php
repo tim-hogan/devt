@@ -59,6 +59,15 @@ $formparams = [
             "decimalplaces" => 2,
             "currency_symbol" => "$",
             "readonly => true",
+            "dropdownvalues" => [
+                ["text" => "INDEFINITE", "value" => 0],
+                ["text" => "1 MONTH", "value" => 1],
+                ["text" => "2 MONTHS", "value" => 2],
+                ["text" => "3 MONTHS", "value" => 3],
+                ["text" => "6 MONTHS", "value" => 6],
+                ["text" => "1 YEAR", "value" => 12],
+                ["text" => "2 YEARS", "value" => 24],
+            ],
             "form" => [
                 "display" => true | false,
                 "formlabel" => "<label name>",
