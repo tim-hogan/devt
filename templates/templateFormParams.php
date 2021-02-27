@@ -37,6 +37,8 @@ $formparams = [
         "introduction" => "",
         "default_order" => "",
         "default_where" => "",
+        "actions" => [
+            "disable" => ["display" => "DISABLE", "action" => "disableSubscription"],
     ],
     "fields" => [
         "<field name>" => [
@@ -77,6 +79,7 @@ $formparams = [
                 "heading" => "<tabel heading name>",
                 "anchor" => true,  // This is the field that has a link to click of edit
                 "displayoption" => "tick | ",
+                ],
             ],
             "secruity_view" => integer,
             "security_edit" => integer

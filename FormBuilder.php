@@ -341,6 +341,25 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
         }
     }
 
+    if (isset($_POST['addaction']))
+    {
+        $g_table = $_POST['table'];
+        if ($g_table)
+        {
+            $newname = "newaction" . strval($cnt);
+            while (isset($g_def[$g_table] ['list'] ['actions'] [$newname]))
+            {
+                $cnt++;
+                $newname = "newgroup" . strval($cnt);
+            }
+
+            $g_def[$g_table] ['list'] ['actions'] [$newname] = array();
+            $g_def[$g_table] ['form'] ['actions'] [$newname] ["display"] = "";
+            $g_def[$g_table] ['form'] ['actions'] [$newname] ["action"] = "";
+        }
+    }
+
+
     if (isset($_POST['tableupdate']))
     {
         if ($g_def)
@@ -685,6 +704,7 @@ if (isset($_SESSION['filename']))
                                     echo "<input type='submit' name='addgroup' value='ADD GROUP' />";
                                     echo "</div>";
                                 echo "</div>";
+
                                 echo "<div class='section'>";
                                 echo "<p class='secheading'>LIST</p>";
                                 echo "<table>";
@@ -695,7 +715,26 @@ if (isset($_SESSION['filename']))
                                 bTF('default_order',"list_default_order",$list['default_order']);
                                 bTF('default_where',"list_default_where",$list['default_where']);
                                 echo "</table>";
+
+                                echo "<div class='section'>";
+                                echo "<p class='secheading'>ACTIONS</p>";
+                                foreach($list['actions'] as $name => $action)
+                                {
+                                    echo "<div class='section'>";
+                                    echo "<p class='secheading'>{$name}</p>";
+                                    echo "<table>";
+                                    bTF('ActionName',"list_actions_{$name}",$name);
+                                    bTF('display',"list_actions_{$name}_display",$action['display'],30);
+                                    bTF('action',"list_actions_{$name}_action",$action['action'],30);
+                                    echo "</table>";
+                                    echo "</div>";
+
+                                }
                                 echo "</div>";
+                                echo "<input type='submit' name='addaction' value='ADD ACTION' />";
+                                echo "</div>";
+
+
                                 echo "<div class='section'>";
                                 echo "<p class='secheading'>FIELDS</p>";
                                 echo "<table>";
