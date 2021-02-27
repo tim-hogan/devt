@@ -1318,7 +1318,7 @@ class FormList
                         {
                             $strV = htmlspecialchars($a[$f['fk_display']]);
                             echo "<input id='{$fid}' name='invalid_{$fname}' value='{$strV}' readonly disbaled / >";
-                            echo "<input type='hidden' name='{$fname}' value='{$a[$f['fk_index']]' />";
+                            echo "<input type='hidden' name='{$fname}' value='{$a[$f['fk_index']]}' />";
                         }
                     }
                 }
