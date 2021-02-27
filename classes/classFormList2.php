@@ -508,6 +508,8 @@ class FormList
                     echo " size='{$f['size']}' ";
                 if (isset ($f['form'] ['title']) && strlen($f['form'] ['title'] ) > 0)
                     echo "title='{$f['form'] ['title']}' ";
+                if ($f['readonly'])
+                    echo "readonly ";
                 echo " />";
                 break;
             case "textarea":
@@ -518,6 +520,8 @@ class FormList
                     echo " rows='{$f['rows']}' ";
                 if (isset ($f['form'] ['title']) && strlen($f['form'] ['title'] ) > 0)
                     echo "title='{$f['form'] ['title']}' ";
+                if ($f['readonly'])
+                    echo "readonly ";
                 echo " >";
                 if (isset ($f['value']))
                 {
@@ -600,6 +604,8 @@ class FormList
                 {
                     echo "checked ";
                 }
+                if ($f['readonly'])
+                    echo "readonly ";
                 echo " />";
                 if (isset($f ['form'] ['formlabel']))
                     echo "<span>{$f ['form'] ['formlabel']}</span>";
@@ -672,6 +678,8 @@ class FormList
             echo " size='{$f['size']}' ";
         if (isset ($f['form'] ['title']) && strlen($f['form'] ['title'] ) > 0)
             echo "title='{$f['form'] ['title']}' ";
+        if ($f['readonly'])
+            echo "readonly ";
         echo " />";
 
 
@@ -757,6 +765,8 @@ class FormList
             echo " size='{$f['size']}' ";
         if (isset ($f['form'] ['title']) && strlen($f['form'] ['title'] ) > 0)
             echo "title='{$f['form'] ['title']}' ";
+        if ($f['readonly'])
+            echo "readonly ";
         echo " />";
 
 
@@ -842,6 +852,8 @@ class FormList
             echo " size='{$f['size']}' ";
         if (isset ($f['form'] ['title']) && strlen($f['form'] ['title'] ) > 0)
             echo "title='{$f['form'] ['title']}' ";
+        if ($f['readonly'])
+            echo "readonly ";
         echo " />";
 
 
@@ -930,6 +942,8 @@ class FormList
             echo " size='{$f['size']}' ";
         if (isset ($f['form'] ['title']) && strlen($f['form'] ['title'] ) > 0)
             echo "title='{$f['form'] ['title']}' ";
+        if ($f['readonly'])
+            echo "readonly ";
         echo " />";
 
 
@@ -1017,6 +1031,8 @@ class FormList
             echo " size='{$f['size']}' ";
         if (isset ($f['form'] ['title']) && strlen($f['form'] ['title'] ) > 0)
             echo "title='{$f['form'] ['title']}' ";
+        if ($f['readonly'])
+            echo "readonly ";
         echo " />";
 
 
@@ -1104,6 +1120,8 @@ class FormList
             echo " size='{$f['size']}' ";
         if (isset ($f['form'] ['title']) && strlen($f['form'] ['title'] ) > 0)
             echo "title='{$f['form'] ['title']}' ";
+        if ($f['readonly'])
+            echo "readonly ";
         echo " />";
 
 
