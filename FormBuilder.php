@@ -420,7 +420,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
                     if ($_POST["list_actions_{$name}"] != $name)
                     {
                         //The name has changed
-                        $newname = $_POST["form_group_{$name}"];
+                        $newname = $_POST["list_actions_{$name}"];
                         $g_def[$g_table] ['list'] ['actions'] [$newname] = array();
                         updateTextrec($g_def[$g_table] ['list'] ['actions'] [$newname] ['display'],"list_actions_{$name}_display");
                         updateTextrec($g_def[$g_table] ['list'] ['actions'] [$newname] ['action'],"list_actions_{$name}_action");
@@ -434,7 +434,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
                     }
                 }
             }
-            
+
             $fields = $g_def[$g_table] ['fields'];
             foreach($fields as $name => $field)
             {
