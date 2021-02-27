@@ -1795,7 +1795,7 @@ class FormList
 
                 if (isset($list['actions']) )
                 {
-                    foreach($list['actions'] $name => $action)
+                    foreach($list['actions'] as $name => $action)
                     {
                         $actionvalue = FormList::encryptParam("table={$table}&id={$d[$global['primary_key']]}&action=actionit&call={$action['action']}");
                         echo "<td><button value='{$actionvalue'}>{$action['display']}</button></td>";
