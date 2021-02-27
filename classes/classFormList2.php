@@ -1309,37 +1309,54 @@ class FormList
                     echo "<label for='{$fid}'>{$strLabel}</label>";
                 }
 
-                echo "<select id='{$fid}' class='{$classid}' name='{$fname}'>";
-                if (isset($f['fk_table']) && isset($f['fk_index']) && isset($f['fk_display']))
+                if ($f['readonly'])
                 {
-                    $where = '';
-                    $order = '';
-                    if (isset($f['fk_where']))
-                        $where = trim($where);
-                    if (isset($f['fk_order']))
-                        $where = trim($order);
-                    if ( ! isset($form['required']) ||  ! $form['required'])
-                        echo "<option value='0'></option>";
-                    if ($DB)
+                    $d = $DB->every($f['fk_table'],$where,$order);
+                    foreach ($d as $a)
                     {
-                        $where = '';
-                        $order = '';
-                        if (isset($f['fk_where']) && strlen($f['fk_where']) > 0)
-                            $where = $f['fk_where'];
-                        if (isset($f['fk_order']) && strlen($f['fk_order']) > 0)
-                            $order = $f['fk_order'];
-                        $d = $DB->every($f['fk_table'],$where,$order);
-                        foreach ($d as $a)
+                        if (isset($f['value']) && $f['value'] == $a[$f['fk_index']])
                         {
-                            $selected = '';
-                            if (isset($f['value']) && $f['value'] == $a[$f['fk_index']])
-                                $selected = 'selected';
                             $strV = htmlspecialchars($a[$f['fk_display']]);
-                            echo "<option value='{$a[$f['fk_index']]}' {$selected}>{$strV}</option>";
+                            echo "<input id='{$fid}' name='invalid_{$fname}' value='{$strV}' readonly disbaled / >";
+                            echo "<input type='hidden' name='{$fname}' value='{$a[$f['fk_index']]' />";
                         }
                     }
                 }
-                echo "</select>";
+                else
+                {
+
+                    echo "<select id='{$fid}' class='{$classid}' name='{$fname}'>";
+                    if (isset($f['fk_table']) && isset($f['fk_index']) && isset($f['fk_display']))
+                    {
+                        $where = '';
+                        $order = '';
+                        if (isset($f['fk_where']))
+                            $where = trim($where);
+                        if (isset($f['fk_order']))
+                            $where = trim($order);
+                        if ( ! isset($form['required']) ||  ! $form['required'])
+                            echo "<option value='0'></option>";
+                        if ($DB)
+                        {
+                            $where = '';
+                            $order = '';
+                            if (isset($f['fk_where']) && strlen($f['fk_where']) > 0)
+                                $where = $f['fk_where'];
+                            if (isset($f['fk_order']) && strlen($f['fk_order']) > 0)
+                                $order = $f['fk_order'];
+                            $d = $DB->every($f['fk_table'],$where,$order);
+                            foreach ($d as $a)
+                            {
+                                $selected = '';
+                                if (isset($f['value']) && $f['value'] == $a[$f['fk_index']])
+                                    $selected = 'selected';
+                                $strV = htmlspecialchars($a[$f['fk_display']]);
+                                echo "<option value='{$a[$f['fk_index']]}' {$selected}>{$strV}</option>";
+                            }
+                        }
+                    }
+                    echo "</select>";
+                }
             }
         }
         echo "</div>";
