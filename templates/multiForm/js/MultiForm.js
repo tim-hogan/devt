@@ -90,6 +90,12 @@ function selectRight(n, name) {
         }
     }
 }
+
+function actionStations(n) {
+    var v = n.value;
+    window.location = window.location + "?v=" + v;
+}
+
 function start() {
     var n = document.getElementById('sel' + g_pageState.select);
     selectRight(n, g_pageState.select);
