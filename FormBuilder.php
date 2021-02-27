@@ -413,6 +413,28 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
             updateTextrec($g_def[$g_table] ['list'] ['default_order'] ,'list_default_order');
             updateTextrec($g_def[$g_table] ['list'] ['default_where'] ,'list_default_where');
 
+            foreach($g_def[$g_table] ['list'] ['actions'] as $name => $action)
+            {
+                if (isset($_POST["list_actions_{$name}"]) )
+                {
+                    if ($_POST["list_actions_{$name}"] != $name)
+                    {
+                        //The name has changed
+                        $newname = $_POST["form_group_{$name}"];
+                        $g_def[$g_table] ['list'] ['actions'] [$newname] = array();
+                        updateTextrec($g_def[$g_table] ['list'] ['actions'] [$newname] ['display'],"list_actions_{$name}_display");
+                        updateTextrec($g_def[$g_table] ['list'] ['actions'] [$newname] ['action'],"list_actions_{$name}_action");
+                        unset($g_def[$g_table] ['list'] ['actions'] [$name]);
+                    }
+                    else
+                    {
+                        updateTextrec($g_def[$g_table] ['list'] ['actions'] [$name] ['display'],"list_actions_{$name}_display");
+                        updateTextrec($g_def[$g_table] ['list'] ['actions'] [$name] ['action'],"list_actions_{$name}_action");
+
+                    }
+                }
+            }
+            
             $fields = $g_def[$g_table] ['fields'];
             foreach($fields as $name => $field)
             {
