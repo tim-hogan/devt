@@ -1660,6 +1660,14 @@ class FormList
                     echo "</th>";
                 }
             }
+            if (isset($list['actions']) )
+            {
+                foreach($list['actions'] as $name => $action)
+                {
+                    echo "<th></th>";
+                }
+            }
+
             echo "</tr>";
 
             while ($d = $r->fetch_array(MYSQLI_ASSOC))
