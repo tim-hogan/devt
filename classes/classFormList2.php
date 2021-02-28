@@ -1317,14 +1317,17 @@ class FormList
                         $where = trim($where);
                     if (isset($f['fk_order']))
                         $order = trim($order);
-                    $d = $DB->every($f['fk_table'],$where,$order);
-                    foreach ($d as $a)
+                    if ($DB)
                     {
-                        if (isset($f['value']) && $f['value'] == $a[$f['fk_index']])
+                        $d = $DB->every($f['fk_table'],$where,$order);
+                        foreach ($d as $a)
                         {
-                            $strV = htmlspecialchars($a[$f['fk_display']]);
-                            echo "<input id='{$fid}' type='text' name='invalid_{$fname}' value='{$strV}' readonly disbaled / >";
-                            echo "<input type='hidden' name='{$fname}' value='{$a[$f['fk_index']]}' />";
+                            if (isset($f['value']) && $f['value'] == $a[$f['fk_index']])
+                            {
+                                $strV = htmlspecialchars($a[$f['fk_display']]);
+                                echo "<input id='{$fid}' type='text' name='invalid_{$fname}' value='{$strV}' readonly disbaled / >";
+                                echo "<input type='hidden' name='{$fname}' value='{$a[$f['fk_index']]}' />";
+                            }
                         }
                     }
                 }
