@@ -167,7 +167,7 @@ function bDDF($txt,$fn,$v,$list)
 {
     echo "<tr>";
     echo "<td>{$txt}</td>";
-    echo "<td><select name='{$fn}' onchange='fieldChange(this)' whatfield='{$txt}'>";
+    echo "<td><select name='{$fn}' onchange='fieldChange(this)'  onload='fieldChange(this)'whatfield='{$txt}'>";
     foreach($list as $val)
     {
         echo "<option value='{$val}'";
@@ -613,6 +613,14 @@ if (isset($_SESSION['filename']))
         function fieldChange(n) {
             var what = n.getAttribute('whatfield');
             console.log('fieldChange name: ' + what + ' value: ' + n.value);
+            if (what == "type") {
+                if (n.value == "choice") {
+                    document.getElementById('choicesection').display = 'block';
+                }
+                else {
+                    document.getElementById('choicesection').display = 'none';
+                }
+            }
         }
 
         function start() {
@@ -845,7 +853,7 @@ if (isset($_SESSION['filename']))
                         bTF('group',"{$g_table}_{$g_field}_form_group",$fields[$g_field] ['form'] ['group']);
                         echo "</table>";
 
-                        echo "<div class='section'>";
+                        echo "<div id='choicesection' class='section'>";
                         echo "<p class='secheading'>CHOICE</p>";
                         $cnt = 0;
                         foreach($fields[$g_field] ['form'] ['choice'] as $ca)
