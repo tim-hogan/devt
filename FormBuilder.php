@@ -167,7 +167,7 @@ function bDDF($txt,$fn,$v,$list)
 {
     echo "<tr>";
     echo "<td>{$txt}</td>";
-    echo "<td><select name='{$fn}'>";
+    echo "<td><select name='{$fn}' onchange='fieldChange(this)'>";
     foreach($list as $val)
     {
         echo "<option value='{$val}'";
@@ -499,7 +499,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
             //Loop here looking for choice fields
             if (isset($_POST["{$table}_{$field}_type"]) && $_POST["{$table}_{$field}_type"] == "choice")
             {
-                error_log("We have a choice field to edit");
                 $g_def[$table] ['fields'] [$field] ['form'] ['choice'] = array();
 
                 for ($cnt = 0; $cnt < 50; $cnt++)
@@ -610,6 +609,11 @@ if (isset($_SESSION['filename']))
             echo "var g_mode = null;";
         }
                         ?>
+
+        function fieldChange(n) {
+            console_log('fieldChange ' + n.name);
+        }
+
         function start() {
             if (g_mode == 'loadfile') {
                 document.getElementById('fileload').style.display = 'block';
