@@ -615,10 +615,10 @@ if (isset($_SESSION['filename']))
             console.log('fieldChange name: ' + what + ' value: ' + n.value);
             if (what == "type") {
                 if (n.value == "choice") {
-                    document.getElementById('choicesection').display = 'block';
+                    document.getElementById('choicesection').style.display = 'block';
                 }
                 else {
-                    document.getElementById('choicesection').display = 'none';
+                    document.getElementById('choicesection').style.display = 'none';
                 }
             }
         }
