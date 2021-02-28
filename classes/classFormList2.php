@@ -1836,6 +1836,11 @@ class FormList
                     }
                 }
 
+                //Add any additional fields as seen fit
+                if (function_exists("listAdditionalFields"))
+                {
+                    listAdditionalFields($table,$d);
+                }
                 echo "</tr>";
             }
             echo "</table>";

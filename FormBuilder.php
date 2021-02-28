@@ -620,6 +620,12 @@ if (isset($_SESSION['filename']))
                 else {
                     document.getElementById('choicesection').style.display = 'none';
                 }
+                if (n.value == "fk") {
+                    document.getElementById('fksection').style.display = 'block';
+                }
+                else {
+                    document.getElementById('fksection').style.display = 'none';
+                }
             }
         }
 
@@ -832,7 +838,7 @@ if (isset($_SESSION['filename']))
                         bIF('security_edit',"{$g_table}_{$g_field}_security_edit",$fields[$g_field] ['security_edit']);
                         echo "</table>";
 
-                        $div = new \devt\HTML\htmlDiv(null,null,null,'section');
+                        $div = new \devt\HTML\htmlDiv(null,null,'fksection','section');
                         new \devt\HTML\htmlP($div,"FOREIGN KEYS",null,'secheading');
                         $tbl = new \devt\HTML\htmlTable($div);
 
