@@ -611,7 +611,7 @@ if (isset($_SESSION['filename']))
                         ?>
 
         function fieldChange(n) {
-            console_log('fieldChange ' + n.name);
+            console.log('fieldChange name: ' + n.name + ' value: ' + n.value);
         }
 
         function start() {
