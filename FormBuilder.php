@@ -167,7 +167,7 @@ function bDDF($txt,$fn,$v,$list)
 {
     echo "<tr>";
     echo "<td>{$txt}</td>";
-    echo "<td><select name='{$fn}' onchange='fieldChange(this)'>";
+    echo "<td><select name='{$fn}' onchange='fieldChange(this)' whatfield='{$txt}'>";
     foreach($list as $val)
     {
         echo "<option value='{$val}'";
@@ -611,7 +611,8 @@ if (isset($_SESSION['filename']))
                         ?>
 
         function fieldChange(n) {
-            console.log('fieldChange name: ' + n.name + ' value: ' + n.value);
+            var what = n.getAttribute('whatfield');
+            console.log('fieldChange name: ' + what + ' value: ' + n.value);
         }
 
         function start() {
