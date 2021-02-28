@@ -628,9 +628,14 @@ if (isset($_SESSION['filename']))
                 document.getElementById('fileload').style.display = 'block';
                 document.getElementById('flex').style.display = 'none';
             }
-             if (g_mode == 'savefile') {
+            if (g_mode == 'savefile') {
                 document.getElementById('filesave').style.display = 'block';
                 document.getElementById('flex').style.display = 'none';
+            }
+            var l = document.getElementsByTagName("SELECT");
+            for (var i = 0; i < l.length; i++) {
+                if (l[i].getAttribute("whatfield") == "type")
+                    fieldChange(l[i]);
             }
         }
     </script>
