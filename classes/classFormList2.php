@@ -1694,6 +1694,12 @@ class FormList
                 }
             }
 
+            //Add any additional fields as seen fit
+            if (function_exists("listAdditionalHeadings"))
+            {
+                listAdditionalHeadings($table);
+            }
+
             echo "</tr>";
 
             while ($d = $r->fetch_array(MYSQLI_ASSOC))
