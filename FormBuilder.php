@@ -493,6 +493,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
             updateBooleanFieldListInfo($table,$field,"display");
             updateTextFieldListInfo($table,$field,"heading");
             updateBooleanFieldListInfo($table,$field,"anchor");
+            updateTextFieldListInfo($table,$field,"translation");
             updateTextFieldListInfo($table,$field,"displayoption");
 
 
@@ -687,6 +688,11 @@ if (isset($_SESSION['filename']))
                 <div id="right1"><?php
                         if ($g_table)
                         {
+
+                            //Default values that may not be in place
+                            if (!isset($g_def[$g_table] ['fields'] [$g_field] ['list'] ['translation'] ))
+                                $g_def[$g_table] ['fields'] [$g_field] ['list'] ['translation'] = 'none';
+
                             $params = $g_def[$g_table];
                             $global = $params['global'];
                             $form = $params['form'];
@@ -888,6 +894,7 @@ if (isset($_SESSION['filename']))
                         bBF('display',"{$g_table}_{$g_field}_list_display",$fields[$g_field] ['list'] ['display']);
                         bTF('heading',"{$g_table}_{$g_field}_list_heading",$fields[$g_field] ['list'] ['heading']);
                         bBF('anchor',"{$g_table}_{$g_field}_list_anchor",$fields[$g_field] ['list'] ['anchor']);
+                        bDDF('translation',"{$g_table}_{$g_field}_list_translation",$fields[$g_field] ['list'] ['translation'],['none','upper','lower','firstupper']);
                         bDDF('displayoption',"{$g_table}_{$g_field}_list_displayoption",$fields[$g_field] ['list'] ['displayoption'],['none','tick']);
                         echo "</table>";
                         echo "</div>";

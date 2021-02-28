@@ -1820,6 +1820,24 @@ class FormList
 
                         }
 
+                        if (isset($list_attr['translation']))
+                        {
+                            switch ($list_attr['translation'])
+                            {
+                                case "upper":
+                                    $strData = strtoupper($strData);
+                                    break;
+                                case "upper":
+                                    $strData = strtolower($strData);
+                                    break;
+                                case "firstupper":
+                                    $strData = strtoupper(substr($strData,0,1)) . strtolower(substr($strData,1));
+                                    break;
+                                default:
+                                    break;
+                            }
+                        }
+                        
                         echo $strData;
 
                         if ($this->haveParameterBoolean($list_attr,'anchor'))
