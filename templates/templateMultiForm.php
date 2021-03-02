@@ -149,7 +149,7 @@ $g_FormTables = ['**EDIT** TABLE NAME','**EDIT** TABLE NAME'];
                         <?php FormList::buildAllPanels($DB,$g_data,$g_FormTables,$formdata); ?>
                     </div>
                 </div>
-                <div id="rightdetail">
+                <div id="formdetails">
                     <div class="hider" expanded="1" minsize="20" onclick="hidewinddow(this)">X</div>
                     <div class="panel">
                         <div id="**EDIT** table name + form  e.g. userform" class="detailEntity first">

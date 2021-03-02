@@ -158,7 +158,7 @@ $g_data = array();
                         <?php FormList::buildAllPanels($DB,$g_data,$g_FormTables,$formdata); ?>
                     </div>
                 </div>
-                <div id="rightdetail">
+                <div id="formdetails">
                     <div class="hider" expanded="1" minsize="20" onclick="hidewinddow(this)">X</div>
                     <div class="panel">
                         <div class="panel2">
