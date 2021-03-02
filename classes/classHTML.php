@@ -93,6 +93,18 @@ class htmlForm extends htmlElement
     }
 }
 
+class htmlLabel extends htmlElement
+{
+    function __construct($parent=null,$for=null,$value=null,$id=null,$class=null,$attributes=null)
+    {
+        parent::__construct("input",$parent,null,$id,$class,$attributes);
+        if ($value)
+            $this->addAttribute("value",$value);
+        if ($for)
+            $this->addAttribute("for",$for);
+    }
+}
+
 class htmlInput extends htmlElement
 {
     function __construct($type,$name,$parent=null,$value=null,$id=null,$class=null,$attributes=null)
