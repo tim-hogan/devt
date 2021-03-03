@@ -1203,7 +1203,7 @@ class FormList
                        $this->var_error_log($radio,"radio");
                        
                        
-                       if (isset($radio['onselected']) && strlen($radio['onselected']) > 0)
+                       if (isset($radio['selected']) && strlen($radio['selected']) > 0)
                        {
                            
                            error_log("Creating onselected");
