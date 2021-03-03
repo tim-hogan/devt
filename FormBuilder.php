@@ -792,6 +792,8 @@ if (isset($_SESSION['filename']))
                                 echo "<table>";
                                 echo "<tr><th></th><th colspan='2'>DISPLAY</th></tr>";
                                 echo "<tr><th>NAME</th><th>FORM</th><th>LIST</th></tr>";
+
+                                var_error_log($fields,'fields');
                                 foreach($fields as $name => $field)
                                 {
                                     echo "<tr>";
