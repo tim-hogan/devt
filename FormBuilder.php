@@ -793,9 +793,9 @@ if (isset($_SESSION['filename']))
                                 echo "<tr><th></th><th colspan='2'>DISPLAY</th></tr>";
                                 echo "<tr><th>NAME</th><th>FORM</th><th>LIST</th></tr>";
 
-                                var_error_log($fields,'fields');
                                 foreach($fields as $name => $field)
                                 {
+                                    var_error_log($field,'field');
                                     echo "<tr>";
                                     echo "<td><a href='FormBuilder.php?f={$g_table}:{$name}'>{$name}</a></td>";
                                     echo "<td><input type='checkbox' name='{$g_table}_{$name}_dispform'";
