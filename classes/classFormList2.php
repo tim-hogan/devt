@@ -1200,7 +1200,7 @@ class FormList
                        echo "<input id='{$fid}_{$cnt}' class='{$classid}' type='radio' name='{$fname}' value='{$radio['value']}'";
                        
                        
-                       var_error_log($radio,"radio");
+                       $this->var_error_log($radio,"radio");
                        
                        
                        if (isset($radio['onselected']) && strlen($radio['onselected']) > 0)
