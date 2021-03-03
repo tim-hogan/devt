@@ -690,8 +690,10 @@ if (isset($_SESSION['filename']))
                         {
 
                             //Default values that may not be in place
-                            if (!isset($g_def[$g_table] ['fields'] [$g_field] ['list'] ['translation'] ))
+                            if ($g_field && !isset($g_def[$g_table] ['fields'] [$g_field] ['list'] ['translation'] ))
+                            {
                                 $g_def[$g_table] ['fields'] [$g_field] ['list'] ['translation'] = 'none';
+                            }
 
                             $params = $g_def[$g_table];
                             $global = $params['global'];
@@ -795,7 +797,6 @@ if (isset($_SESSION['filename']))
 
                                 foreach($fields as $name => $field)
                                 {
-                                    var_error_log($field,"field {$name}");
                                     echo "<tr>";
                                     echo "<td><a href='FormBuilder.php?f={$g_table}:{$name}'>{$name}</a></td>";
                                     echo "<td><input type='checkbox' name='{$g_table}_{$name}_dispform'";
