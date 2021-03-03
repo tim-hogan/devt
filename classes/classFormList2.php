@@ -1198,8 +1198,15 @@ class FormList
                    foreach ($choice as $radio)
                    {
                        echo "<input id='{$fid}_{$cnt}' class='{$classid}' type='radio' name='{$fname}' value='{$radio['value']}'";
+                       
+                       
+                       var_error_log($radio,"radio");
+                       
+                       
                        if (isset($radio['onselected']) && strlen($radio['onselected']) > 0)
                        {
+                           
+                           error_log("Creating onselected");
                            echo " onchange='{$radio['onselected']}'";
                        }
                        if (! isset($f['value']) && $cnt == 0)
