@@ -461,7 +461,7 @@ class classTimeHelpers
         return $d3->getTimestamp() - $d1->getTimestamp();
     }
 
-    public static function everyCountryName()
+    public function everyCountryName()
     {
         $rslt = array();
         foreach($this->countries as $country)

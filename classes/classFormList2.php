@@ -19,6 +19,13 @@ class FormList
         error_log( "{$text} {$contents}" );
     }
 
+    public function getConfiguration()
+    {
+        if ($this->config)
+            return $this->config;
+        return null;
+    }
+
     private function isVariable($v)
     {
         $s = trim($v);
@@ -189,6 +196,20 @@ class FormList
         if (isset($fields[$f]) && isset($fields[$f] ['value']) )
             return $fields[$f] ['value'];
         return null;
+    }
+
+    public function setFieldValue($f,$v)
+    {
+        if (! $this->config)
+            throw new Exception(__FILE__ . "[" . __LINE__ ."] FormList has not been constructed with parameters" );
+
+        if (! isset ($this->config['fields']) )
+            throw new Exception(__FILE__ . "[" . __LINE__ ."] No fields are sepcified in parameters" );
+
+        if (!isset($this->config['fields'] [$f]) )
+            $this->config['fields'] [$f] = array();
+        $this->config['fields'] [$f] ['value'] = $v;
+
     }
 
     public function haserror($f)
@@ -1198,11 +1219,11 @@ class FormList
                    foreach ($choice as $radio)
                    {
                        echo "<input id='{$fid}_{$cnt}' class='{$classid}' type='radio' name='{$fname}' value='{$radio['value']}'";
-                       
-                       
+
+
                        if (isset($radio['selected']) && strlen($radio['selected']) > 0)
                        {
-                           
+
                            echo " onchange='{$radio['selected']}'";
                        }
                        if (! isset($f['value']) && $cnt == 0)
@@ -1840,7 +1861,7 @@ class FormList
                                     break;
                             }
                         }
-                        
+
                         echo $strData;
 
                         if ($this->haveParameterBoolean($list_attr,'anchor'))
