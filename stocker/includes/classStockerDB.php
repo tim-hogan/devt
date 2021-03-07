@@ -160,11 +160,13 @@ class stockerDB extends SQLPlus
 
     public function watchDone($idwatch)
     {
+        echo " Called watch done\n";
         return $this->p_update("update watch set watch_done = 1 where idwatch = ?","i",$idwatch);
     }
 
     public function watchTriggeredAbove($idwatch)
     {
+        echo "Called triggered above\n";
         $watch = getWatch($idwatch);
         if (! $watch['watch_once'])
         {
@@ -176,6 +178,7 @@ class stockerDB extends SQLPlus
 
     public function watchTriggeredBelow($idwatch)
     {
+        echo "Called triggered below\n";
         $watch = getWatch($idwatch);
         if (! $watch['watch_once'])
         {

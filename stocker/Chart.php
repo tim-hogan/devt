@@ -229,9 +229,11 @@ $DB = new stockerDB($devt_environment->getDatabaseParameters());
                                 if ($stock['portfolio_buysell'] == 'buy')
                                 {
                                     $summary[$stock['stock_code']] ['PURCHASE_VALUE'] = $NZDPurchaseValue;
+                                    $summary[$stock['stock_code']] ['SOLD_VALUE'] = 0.0;
                                 }
                                 else
                                 {
+                                    $summary[$stock['stock_code']] ['PURCHASE_VALUE'] = 0.0;
                                     $summary[$stock['stock_code']] ['SOLD_VALUE'] = $NZDPurchaseValue;
                                 }
                             }

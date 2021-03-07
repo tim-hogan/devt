@@ -26,8 +26,10 @@ function getPrice()
     return null;
 }
 
+echo "BitCoin Daemon Start\n";
 if ($data = getPrice() )
 {
+    
     $DB->createRecord('BTC',$data["timestamp"],$data["rate"]);
     //Check if price below or above target.
     $r = $DB->allWatchesForStock('BTC');
@@ -46,23 +48,23 @@ if ($data = getPrice() )
         }
 
 
-        if ($watch['watch_above'] != 0 && ! $watch['watch_above_triggered'] && floatval($data["rate"]) >  $watch['watch_above'] )
+        if (! $watch['watch_done'] && $watch['watch_above'] != 0 && ! $watch['watch_above_triggered'] && floatval($data["rate"]) >  $watch['watch_above'] )
         {
-            echo "Have watch ABOVE BTC";
+            echo "Have watch ABOVE BT\n";
             $msg = "Stock: {$dt->format('H:i')} BTC Has gone OVER {$watch['watch_above']} to {$data["rate"]}";
             $textmessage = new devt\TextMsg\TextMessage();
             $textmessage->send('+64272484626',$msg,'stocker');
 
             $DB->watchTriggeredAbove($watch['idwatch']);
         }
-        elseif ($watch['watch_below'] != 0 &&  ! $watch['watch_below_triggered'] && floatval($data["rate"]) <  $watch['watch_below'] )
+        elseif (! $watch['watch_done'] && $watch['watch_below'] != 0 &&  ! $watch['watch_below_triggered'] && floatval($data["rate"]) <  $watch['watch_below'] )
         {
-            echo "Have watch BELOW BTC";
+            echo "Have watch BELOW BT\n";
             $msg = "Stock: {$dt->format('H:i')} BTC Has gone UNDER {$watch['watch_below']} to {$data["rate"]}";
             $textmessage = new devt\TextMsg\TextMessage();
             $textmessage->send('+64272484626',$msg,'stocker');
 
-            $DB->watchTriggeredAbove($watch['idwatch']);
+            $DB->watchTriggeredBelow($watch['idwatch']);
         }
     }
 }
