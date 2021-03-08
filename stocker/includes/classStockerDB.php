@@ -96,14 +96,15 @@ class stockerDB extends SQLPlus
 
     }
 
-    public function firstOneDayBack($stock)
+    public function firstXHoursBach($stock,$hours)
     {
         if (gettype($stock) == "string")
             $idstock = $this->getStockIdFromCode($stock);
         else
             $idstock = $stock;
+
         $dt = new DateTime();
-        $dt->setTimestamp($dt->getTimestamp() - (3600*24));
+        $dt->setTimestamp($dt->getTimestamp() - (3600*$hours));
         $strTime = $dt->format('Y-m-d H:i:s');
         return $this->p_singlequery("select * from record where record_timestamp > ? and record_stock = ? order by record_timestamp limit 1","si",$strTime,$idstock);
     }
@@ -166,26 +167,36 @@ class stockerDB extends SQLPlus
 
     public function watchTriggeredAbove($idwatch)
     {
-        echo "Called triggered above\n";
-        $watch = getWatch($idwatch);
+        echo "Called triggered below id = {$idwatch}\n";
+        $watch = $this->getWatch($idwatch);
+        echo " got watch id = {$watch['idwatch']} watch_once = {$watch['watch_once']} \n";
         if (! $watch['watch_once'])
         {
+            echo " about to set watch_above_triggered\n";
             return $this->p_update("update watch set watch_above_triggered = 1 where idwatch = ?","i",$idwatch);
         }
         else
+        {
+            echo " about to set watch done\n";
             return $this->watchDone($idwatch);
+        }
     }
 
     public function watchTriggeredBelow($idwatch)
     {
-        echo "Called triggered below\n";
-        $watch = getWatch($idwatch);
+        echo "Called triggered below id = {$idwatch}\n";
+        $watch = $this->getWatch($idwatch);
+        echo " got watch id = {$watch['idwatch']} watch_once = {$watch['watch_once']} \n";
         if (! $watch['watch_once'])
         {
+            echo " about to set watch_below_triggered\n";
             return $this->p_update("update watch set watch_below_triggered = 1 where idwatch = ?","i",$idwatch);
         }
         else
+        {
+            echo " about to set watch done\n";
             return $this->watchDone($idwatch);
+        }
     }
 
     public function watchUnTriggerAbove($idwatch)

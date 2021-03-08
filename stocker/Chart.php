@@ -146,6 +146,7 @@ $DB = new stockerDB($devt_environment->getDatabaseParameters());
                     $rec1 = $DB->firstXDaysBach('BTC',1);
                     $rec2 = $DB->firstXDaysBach('BTC',7);
                     $rec3 = $DB->firstXDaysBach('BTC',28);
+                    $rec4 = $DB->firstXHoursBach('BTC',1);
                     $last = $DB->getLastRecord('BTC');
                     $exch = $DB->getLastRecord('NZD');
                     if ($rec1 && $last)
@@ -153,9 +154,11 @@ $DB = new stockerDB($devt_environment->getDatabaseParameters());
                         $change1 = (($last['record_value'] / $rec1['record_value']) - 1)*100.0;
                         $change2 = (($last['record_value'] / $rec2['record_value']) - 1)*100.0;
                         $change3 = (($last['record_value'] / $rec3['record_value']) - 1)*100.0;
+                        $change4 = (($last['record_value'] / $rec4['record_value']) - 1)*100.0;
                         $strchange1 = number_format($change1,2) . "%";
                         $strchange2 = number_format($change2,2) . "%";
                         $strchange3 = number_format($change3,2) . "%";
+                        $strchange4 = number_format($change4,2) . "%";
                         $current = number_format($last['record_value'],2);
                         $class='g';
                         if ($change1 < 0)
@@ -182,9 +185,15 @@ $DB = new stockerDB($devt_environment->getDatabaseParameters());
                         //Month
                         $class='green';
                         if ($change3 < 0)
-                            $class ='rred';
+                            $class ='red';
                         echo "<tr><td>28 DAYS</td><td class='r {$class}'>{$strchange3}</td></tr>";
 
+                        //Hour
+                        $class='green';
+                        if ($change4 < 0)
+                            $class ='red';
+                        echo "<tr><td>LAST HOUR</td><td class='r {$class}'>{$strchange4}</td></tr>";
+                        
                         if ($exch)
                         {
                             $strexch = number_format(1.0 / $exch['record_value'],4);
