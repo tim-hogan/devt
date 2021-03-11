@@ -16,6 +16,16 @@ class WindcavePayment
         {
             if (isset($params['host']))
                 $this->_host = $params['host'];
+            if (isset($params['callbacks']))
+            {
+                $callbacks = $params['callbacks'];
+                if (isset($callbacks['approved']))
+                    $this->_callback_approved = $callbacks['approved'];
+                if (isset($callbacks['declined']))
+                    $this->_callback_declined = $callbacks['declined'];
+                if (isset($callbacks['approved']))
+                    $this->_callback_cancelled = $callbacks['cancelled'];
+            }
         }
     }
 
