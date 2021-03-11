@@ -165,6 +165,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
                                 $NZDModifiedvalue = $NZDCurrentValue * 0.98;
 
                                 $change2 = (pow($NZDModifiedvalue / $NZDPurchaseValue, (1.0/$years)) - 1.0) * 100.0;
+                                error_log("RTI Modvalue {$NZDModifiedvalue} Puchvalue {$NZDPurchaseValue} Years {$years}");
+
+
                                 $strchange2 = number_format($change2,2) . "%";
                                 if ($port['portfolio_buysell'] == "buy")
                                     echo "<td class='r {$class}'>{$strchange2}</td>";

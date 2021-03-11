@@ -29,6 +29,10 @@ class WindcavePayment
         $str = json_encode($params);
         curl_setopt($ch, CURLOPT_POSTFIELDS,$str);
         $result = curl_exec($ch);
+        if(curl_errno($ch))
+        {
+            error_log("classWindcave::postCUTL [".__LINE__."] Error posting to {$url}: Error: " . curl_error($ch));
+        }
         if ($result)
             $result = json_decode($result,true);
         return $result;
@@ -46,6 +50,8 @@ class WindcavePayment
         $params['callbackUrls'] ['declined'] = $this->_callback_declined;
         $params['callbackUrls'] ['cancelled'] = $this->_callback_cancelled;
         $params['notificationUrl'] = $this->_notificationUrl;
+
+        error_log("WindCave about to curl transaction");
 
         return $this->postCURL("api/v1/sessions",$params);
     }
