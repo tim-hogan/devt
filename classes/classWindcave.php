@@ -61,8 +61,6 @@ class WindcavePayment
         $params['callbackUrls'] ['cancelled'] = $this->_callback_cancelled;
         $params['notificationUrl'] = $this->_notificationUrl;
 
-        error_log("WindCave about to curl transaction");
-
         return $this->postCURL("api/v1/sessions",$params);
     }
 }
