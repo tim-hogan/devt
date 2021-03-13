@@ -1285,7 +1285,10 @@ class FormList
                     $drop_values = $f['dropdownvalues'];
                     foreach ($drop_values as $dropv)
                     {
-                        echo "<option value='{$dropv['value']}'>{$dropv['text']}</option>";
+                        $selected="";
+                        if (isset($f['value']) && $f['value'] == $dropv['value'])
+                            $selected="selected";
+                        echo "<option value='{$dropv['value']}' {$selected}>{$dropv['text']}</option>";
                     }
                 }
                 echo "</select>";
