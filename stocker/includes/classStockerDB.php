@@ -27,6 +27,11 @@ class stockerDB extends SQLPlus
     //*********************************************************************
     // Stock
     //*********************************************************************
+    public function getStock($code)
+    {
+        return $this->p_singlequery("select * from stock where stock_code = ?","s",$code);
+    }
+
     public function getStockIdFromCode($stock)
     {
         if ($rec = $this->p_singlequery("select * from stock where stock_code = ?","s",$stock) )
@@ -117,7 +122,20 @@ class stockerDB extends SQLPlus
         return $this->all("select * from portfolio left join stock on idstock = portfolio_stock order by portfolio_timestamp");
     }
 
+    public function allPortfolioBuyForUser($userid)
+    {
+        return $this->all("select * from portfolio left join stock on idstock = portfolio_stock where portfolio_user = {$userid} and portfolio_buysell = 'buy' order by portfolio_stock,portfolio_timestamp");
+    }
 
+    public function allPortfolioSellForUser($userid)
+    {
+        return $this->all("select * from portfolio left join stock on idstock = portfolio_stock where portfolio_user = {$userid} and portfolio_buysell = 'sell' order by portfolio_stock,portfolio_timestamp");
+    }
+
+    public function allPortfolioDividendsForUser($userid)
+    {
+        return $this->all("select * from portfolio left join stock on idstock = portfolio_stock where portfolio_user = {$userid} and portfolio_buysell = 'div' order by portfolio_stock,portfolio_timestamp");
+    }
 
     public function portfolioSummary()
     {

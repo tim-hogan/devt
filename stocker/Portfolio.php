@@ -74,6 +74,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
             .red {color: red;}
             .green {color: green;}
             .b {font-weight: bold;}
+            .small {font-size: 8pt;}
         </style>
     </head>
     <body>
@@ -83,13 +84,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
                     <h1>PORTFOLIO</h1>
                     <div id="listtable">
                         <table>
-                            <tr><th>TIMESTAMP</th><th>STOCK</th><th></th><th class="'r'">QTY</th><th class="r">UNIT PRICE</th><th class="r">VALUE</th><th class="r">CURRENT VALUE</th><th class="r">GAIN/LOSS</th><th class="r">CHANGE</th><th class="r">RTI</th></tr>
+                            <tr><th>TIMESTAMP</th><th>STOCK</th><th></th><th class="'r'">QTY</th><th class="r">UNIT PRICE</th><th class="r">VALUE</th><th class="r">CURRENT VALUE</th><th class="r">GAIN/LOSS</th><th class="r">CHANGE</th><th class="r">RTI<sup>1</sup></th></tr>
                             <?php
                             $exch = $DB->getLastRecord('NZD');
                             $toNZ = $exch['record_value'];
 
-                            $sum = array();
-
+                            $cashSum = 0.0;
                             $r = $DB->allPortFolio();
                             while ($port = $r->fetch_array(MYSQLI_ASSOC))
                             {
@@ -124,6 +124,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
 
 
                                 $NZDPurchaseValue = $port['portfolio_price'] * $qty;
+                                $cashSum += $NZDPurchaseValue;
                                 $strNZDPurchaseValue = number_format($NZDPurchaseValue,2);
                                 echo "<td class='r'>{$strNZDPurchaseValue}</td>";
 
@@ -177,61 +178,150 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
 
                                 echo "</tr>";
 
-                                if (!isset($sum[$port['stock_code']]) )
-                                {
-                                    $sum[$port['stock_code']] = array();
-                                    $sum[$port['stock_code']] ['QTY'] = $qty;
-                                    if ($port['portfolio_buysell'] == "buy")
-                                        $sum[$port['stock_code']] ['PURCHASE_VALUE'] = $NZDPurchaseValue;
-                                    else
-                                        $sum[$port['stock_code']] ['SOLD_VALUE'] = $NZDPurchaseValue;
-
-                                    $sum[$port['stock_code']] ['CURRENTPRICE'] = $currentPrice;
-                                }
-                                else
-                                {
-                                    $sum[$port['stock_code']] ['QTY'] += $qty;
-                                    if ($port['portfolio_buysell'] == "buy")
-                                        $sum[$port['stock_code']] ['PURCHASE_VALUE'] += $NZDPurchaseValue;
-                                    else
-                                        $sum[$port['stock_code']] ['SOLD_VALUE'] += $NZDPurchaseValue;
-
-                                }
-
-
-
 
                             }
 
+                            //Cash sum
+                            $strCashSum = "$". number_format($cashSum,2);
+                            echo "<tr><td>TOTAL CASH</td><td colspan='4'></td><td>{$strCashSum}</td><td colspan='4'></td></tr>";
+                            //Calculate portfolio worth
+                            $vsum1 = 0.0;
+                            $vsum2 = 0.0;
+                            $today = (new DateTime())->getTimestamp();
+
+                            $portfolio = array();
+                            $r = $DB->allPortfolioBuyForUser(1);
+                            while ($port = $r->fetch_array(MYSQLI_ASSOC))
+                            {
+                                if (! isset($portfolio[$port['portfolio_stock']]))
+                                {
+                                    $portfolio[$port['portfolio_stock']] = array(); 
+                                }
+                                array_push($portfolio[$port['portfolio_stock']],$port);
+                            }
+                            
+                            $havesold = false;
+                            $r = $DB->allPortfolioSellForUser(1);
+                            while ($port = $r->fetch_array(MYSQLI_ASSOC))
+                            {
+                                //Now calcualte returns on sold stock.
+                                if (!$havesold)
+                                {
+                                    echo "<tr><td colspan='10'></td></tr>";
+                                    echo "<tr>";
+                                    echo "<td class='b' colspan='9'>RETURNS ON SOLD STOCK</td>";
+                                    echo"</tr>";
+                                }
+                                $stockid = $port['portfolio_stock'];
+                                $qty = $port['portfolio_qty'];
+                                
+                                $cnt = 0;
+                                foreach($portfolio[$stockid] as $buy)
+                                {
+                                    if ($qty > 0)
+                                    {
+                                        
+                                        $v = min($qty,$buy['portfolio_qty']);
+                                        $buyprice = $buy['portfolio_price'] * $v;
+                                        $sellprice = $port['portfolio_price'] * $v;
+                                        $t = ($today - (new DateTime($buy['portfolio_timestamp']))->getTimestamp() ) / (3600*24*365);
+                                        $f = pow($sellprice/$buyprice,(1/$t)) * $buyprice;
+                                        $vsum1 += $buyprice;
+                                        $vsum2 += $f;
+                                        
+                                        $strtime = classTimeHelpers::timeFormatnthDateTime1($port['portfolio_timestamp'],"Pacific/Auckland");
+                                        $strBuy = "$" . number_format($buyprice,2);
+                                        $strSell = "$" . number_format($sellprice,2);
+                                        $strg1 = "$" . number_format($sellprice-$buyprice,2);
+                                        $strch = number_format((($sellprice/$buyprice)-1.0)*100.0,2) . "%";
+                                        $Gain = (pow($sellprice/$buyprice,(1/$t)) - 1) * 100.0;
+                                        $strGain = number_format($Gain,2) . "%";
+                                        echo "<tr><td>{$strtime}</td><td>{$port['stock_code']}</td><td></td><td>{$v}</td><td></td><td class='r'>{$strBuy}</td><td class='r'>{$strSell}</td><td class='r'>{$strg1}</td><td class='r'>{$strch}</td><td class='r'>{$strGain}</td></tr>";
+
+                                        $portfolio[$stockid] [$cnt] ['portfolio_qty'] -= $v;
+                                        $buy['portfolio_qty'] -= $v;
+                                        $qty -= $v;
+                                        $cnt++;
+                                    }
+                                }
+                                
+
+                            }
+                            
+                            //Now calcualte returns on each stock.
+                            echo "<tr><td colspan='10'></td></tr>";
+                            echo "<tr>";
+                            echo "<td class='b' colspan='9'>REMAINING STOCK</td>";
+                            echo"</tr>";
+
+                            
+                            $exch = $DB->getLastRecord('NZD');
+                            $toNZ = $exch['record_value'];
+
+                            
+                            foreach ($portfolio as $name => $stock)
+                            {
+                                foreach($stock as $buy)
+                                {
+                                    $last = $DB->getLastRecord($buy['stock_code']);
+                                    $currentPrice = $last['record_value'] * $toNZ;
+                                    $t = ($today - (new DateTime($buy['portfolio_timestamp']))->getTimestamp() ) / (3600*24*365);
+                                    if ($buy['portfolio_qty'] > 0 )
+                                    {
+                                        $v1 = $buy['portfolio_qty'] * $buy['portfolio_price'];
+                                        $vsum1 += $v1;
+                                        $v2 = $buy['portfolio_qty'] * $currentPrice;
+                                        $f = pow($v2/$v1,(1/$t)) * $v1;
+                                        $vsum2 += $f;
+
+                                        $strtime = classTimeHelpers::timeFormatnthDateTime1($buy['portfolio_timestamp'],"Pacific/Auckland");
+                                        $strv1 = "$" . number_format($v1,2);
+                                        $strv2 = "$" . number_format($v2,2);
+                                        $strG = "$" . number_format($v2-$v1,2);
+                                        $strP =  number_format((($v2/$v1)-1)*100.0,2) . "%";
+                                        $v3=$v2*0.98;
+                                        $f1 = (pow($v3/$v1,(1/$t)) -1.0)*100.0;
+                                        $strrti = number_format($f1,2) . "%";
+                                        echo "<tr><td>{$strtime}</td><td>{$buy['stock_code']}</td><td></td><td class='r'>{$buy['portfolio_qty']}</td><td></td><td class='r'>{$strv1}</td><td class='r'>{$strv2}</td><td class='r'>{$strG}</td><td class='r'>{$strP}</td><td class='r'>{$strrti}</td></tr>";
+                                    }
+                                }
+                            }
+
+                            //Now we need to add all the sales
+
+                            
+                            $gn = (($vsum2 / $vsum1) - 1.0) * 100.0;
+                            $gn = number_format($gn,2) . "%";
+
+                            //Dividend summary
+                            echo "<tr><td colspan='10'></td></tr>";
+                            echo "<tr>";
+                            echo "<td class='b' colspan='9'>DIVIDENDS</td>";
+                            echo"</tr>";
+
+                            $r = $DB->allPortfolioDividendsForUser(1);
+                            while ($port = $r->fetch_array(MYSQLI_ASSOC))
+                            {
+                                $strtime = classTimeHelpers::timeFormatnthDateTime1($port['portfolio_timestamp'],"Pacific/Auckland");
+                                echo "<tr><td>{$strtime}</td><td>{$port['stock_code']}</td><td>DIV</td></tr>";    
+                            }
+                            
+                            
+                            
+                            
                             //Summary
 
                             echo "<tr><td colspan='10'></td></tr>";
                             echo "<tr>";
-                            echo "<td class='b' colspan='9'>SUMMARY</td>";
+                            echo "<td class='b' colspan='9'>TOTAL PORTFOLIO RETURN</td>";
                             echo"</tr>";
+                            echo "<tr><td colspan='9'></td><td class='b r'>{$gn}</td></tr>";
 
-                            foreach($sum as $code => $v)
-                            {
 
-                                $NZDCurrentValue = $v['CURRENTPRICE'] * $v['QTY'];
-                                $strNZDCurrentValue = "$" . number_format($NZDCurrentValue,2);
-                                $NZDPurchaseValue = $v['PURCHASE_VALUE'];
-                                $NZDSoldValue  = $v['SOLD_VALUE'];
-                                
-                                $strNZDPurchaseValue = "$" . number_format($NZDPurchaseValue,2);
-                                $strNZDSoldValue = "$" . number_format($NZDSoldValue,2);
-                                
-                                $gain = $NZDCurrentValue - ($NZDPurchaseValue + $NZDSoldValue);
-                                $strgain = "$" . number_format($gain,2);
-                                
-                                $class='green';
-                                if ($gain < 0.0)
-                                    $class='red';
-                                
-                                echo "<tr>";
-                                echo "<td></td><td>{$code}</td><td></td><td>{$v['QTY']}</td><td></td><td></td><td class='r'>{$strNZDCurrentValue}</td><td class='r {$class}'>{$strgain}</td><td></td><td></td>";
-                                echo "</tr>";
-                            }
+
+                            //Notes:
+                            echo "<tr><td colspan='10' class='small' ><sup>1</sup> Note: The RTI calculation assumes a 2% cost of sale in commission</td></tr>";
+
                             ?>
                         </table>
                     </div>
@@ -247,10 +337,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
                                 }
                                 ?>
                             </select>
-                            <label for='buysellid'>BUY/SELL</label>
+                            <label for='buysellid'>BUY / SELL / DIVIDEND</label>
                             <select id="buysellid" name='buysell'>
                                     <option value="buy">BUY</option>
                                     <option value="sell">SELL</option>
+                                    <option value="div">DIVIDEND</option>
                             </select>
                             
                             <label for='priceid'>PRICE</label>

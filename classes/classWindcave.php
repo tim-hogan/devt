@@ -29,6 +29,23 @@ class WindcavePayment
         }
     }
 
+    private function getCURL($api)
+    {
+        $url = "https://{$this->_host}/{$api}";
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "GET");
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, ["Content-Type: application/json","Authorization: Basic ABC123"]);
+        $result = curl_exec($ch);
+        if(curl_errno($ch))
+        {
+            error_log("classWindcave::postCUTL [".__LINE__."] Error posting to {$url}: Error: " . curl_error($ch));
+        }
+        if ($result)
+            $result = json_decode($result,true);
+        return $result;
+    }
+
     private function postCURL($api,$params)
     {
         $url = "https://{$this->_host}/{$api}";
@@ -62,6 +79,11 @@ class WindcavePayment
         $params['notificationUrl'] = $this->_notificationUrl;
 
         return $this->postCURL("api/v1/sessions",$params);
+    }
+
+    public function querySession($sessionId)
+    {
+        return $this->getCURL("api/v1/sessions/{$sessionId}");
     }
 }
 ?>

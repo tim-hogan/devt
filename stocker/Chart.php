@@ -41,26 +41,29 @@ $DB = new stockerDB($devt_environment->getDatabaseParameters());
             var g_data = {
                 "BTC": {
                     "1": [
-                        ["Time", "Value"],
+                          [{ "label": "Time", "type": "date" }, "Value"], 
+                        //["Time", "Value"],
                     <?php
                     $r = $DB->LastRecordsForStock('BTC',1);
                     while ($record = $r->fetch_array(MYSQLI_ASSOC))
                     {
                         $dt = new DateTime($record['record_timestamp']);
-                        $x = $dt->getTimestamp() / (3600*24);
-                        echo "[{$x},{$record['record_value']}],";
+                        $dt->setTimezone(new DateTimeZone('Pacific/Auckland'));
+                        $strDate = $dt->format("Y,m,d,H,i,s");
+                        echo "[new Date({$strDate}),{$record['record_value']}],";
                     }
                     ?>
                     ],
                     "7": [
-                        ["Time", "Value"],
+                          [{ "label": "Time", "type": "date" }, "Value"], 
                     <?php
                     $r = $DB->LastRecordsForStock('BTC',7);
                     while ($record = $r->fetch_array(MYSQLI_ASSOC))
                     {
                         $dt = new DateTime($record['record_timestamp']);
-                        $x = $dt->getTimestamp() / (3600*24);
-                        echo "[{$x},{$record['record_value']}],";
+                        $dt->setTimezone(new DateTimeZone('Pacific/Auckland'));
+                        $strDate = $dt->format("Y,m,d,H,i,s");
+                        echo "[new Date({$strDate}),{$record['record_value']}],";
                     }
                     ?>
                     ]
