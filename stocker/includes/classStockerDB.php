@@ -47,14 +47,14 @@ class stockerDB extends SQLPlus
     //*********************************************************************
     // Record
     //*********************************************************************
-    public function createRecord($stock,$strTimstamp,$value)
+    public function createRecord($stock,$strTimstamp,$value,$currency='USD')
     {
         if (gettype($stock) == "string")
             $idstock = $this->getStockIdFromCode($stock);
         else
             $idstock = $stock;
 
-        return $this->p_create("insert into record (record_timestamp,record_stock,record_value) values (?,?,?)","sid",$strTimstamp,$idstock,$value);
+        return $this->p_create("insert into record (record_timestamp,record_stock,record_value,record_currency) values (?,?,?,?)","sids",$strTimstamp,$idstock,$value,$currency);
     }
 
     public function AllRecordsForStock($stock)
@@ -117,9 +117,9 @@ class stockerDB extends SQLPlus
     //*********************************************************************
     // portfolio
     //*********************************************************************
-    public function allPortFolio()
+    public function allPortFolio($userid)
     {
-        return $this->all("select * from portfolio left join stock on idstock = portfolio_stock order by portfolio_timestamp");
+        return $this->all("select * from portfolio left join stock on idstock = portfolio_stock where portfolio_user = {$userid} order by portfolio_timestamp");
     }
 
     public function allPortfolioBuyForUser($userid)

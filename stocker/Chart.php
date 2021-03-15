@@ -1,9 +1,12 @@
 <?php
+session_start();
 require_once dirname(__FILE__) . "/includes/classSecure.php";
 require_once dirname(__FILE__) . "/includes/classTime.php";
 require_once dirname(__FILE__) . "/includes/classStockerDB.php";
 $DB = new stockerDB($devt_environment->getDatabaseParameters());
 
+if (! isset($_SESSION['currentstock']))
+    $_SESSION['currentstock'] = "BTC";
 ?>
 <!DOCTYPE HTML>
 <html>
@@ -34,72 +37,33 @@ $DB = new stockerDB($devt_environment->getDatabaseParameters());
             .c {text-align: center;}
             .r {text-align: right;}
         </style>
+        <script type="text/javascript" src="/js/apiClass.js"></script>
         <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
         <script>
-            var g_graphDuration = "1";
-            var g_graphStock = "BTC";
-            var g_data = {
-                "BTC": {
-                    "1": [
-                          [{ "label": "Time", "type": "date" }, "Value"], 
-                        //["Time", "Value"],
-                    <?php
-                    $r = $DB->LastRecordsForStock('BTC',1);
-                    while ($record = $r->fetch_array(MYSQLI_ASSOC))
-                    {
-                        $dt = new DateTime($record['record_timestamp']);
-                        $dt->setTimezone(new DateTimeZone('Pacific/Auckland'));
-                        $strDate = $dt->format("Y,m,d,H,i,s");
-                        echo "[new Date({$strDate}),{$record['record_value']}],";
+            var api = new apiJSON("stocker.devt.nz", "stockerApi.php?r=", "", true);
+            api.parseReply = function (d) {
+                console.log("Reply from API"); 
+                if (d.meta.status) {
+                    switch (d.meta.req) {
+                        case 'graphdata':
+                            drawChart(d.data);
+                            break;
                     }
-                    ?>
-                    ],
-                    "7": [
-                          [{ "label": "Time", "type": "date" }, "Value"], 
-                    <?php
-                    $r = $DB->LastRecordsForStock('BTC',7);
-                    while ($record = $r->fetch_array(MYSQLI_ASSOC))
-                    {
-                        $dt = new DateTime($record['record_timestamp']);
-                        $dt->setTimezone(new DateTimeZone('Pacific/Auckland'));
-                        $strDate = $dt->format("Y,m,d,H,i,s");
-                        echo "[new Date({$strDate}),{$record['record_value']}],";
-                    }
-                    ?>
-                    ]
-                },
-                "NZD": {
-                    "1": [
-                        ["Time", "Value"],
-                    <?php
-                    $r = $DB->LastRecordsForStock('NZD',1);
-                    while ($record = $r->fetch_array(MYSQLI_ASSOC))
-                    {
-                        $dt = new DateTime($record['record_timestamp']);
-                        $x = $dt->getTimestamp() / (3600*24);
-                        echo "[{$x},{$record['record_value']}],";
-                    }
-                    ?>
-                    ],
-                    "7": [
-                        ["Time", "Value"],
-                    <?php
-                    $r = $DB->LastRecordsForStock('NZD',7);
-                    while ($record = $r->fetch_array(MYSQLI_ASSOC))
-                    {
-                        $dt = new DateTime($record['record_timestamp']);
-                        $x = $dt->getTimestamp() / (3600*24);
-                        echo "[{$x},{$record['record_value']}],";
-                    }
-                    ?>
-                    ]
                 }
-            };
+            }
+            var g_graphDuration = "1";
+            var g_graphStock = '<?php echo $_SESSION['currentstock'];?>';
             google.charts.load('current', { 'packages': ['corechart'] });
             function drawChart(d) {
-                var data = google.visualization.arrayToDataTable(d);
+                var d2 = d.graphdata;
+                for (var i = 0; i < d2.length; i++) {
+                    if (i > 0) {
+                        d2[i][0] = new Date(d2[i][0]);
+                    }
+                }
+                var data = google.visualization.arrayToDataTable(d2);
                 var options = {
-                  title: 'BitCoin $US',
+                  title: d.title,
                   curveType: 'function',
                   height: 800,
                   width: 1600,
@@ -120,13 +84,14 @@ $DB = new stockerDB($devt_environment->getDatabaseParameters());
             function stockChange(n) {
                 console.log("Stock change value " + n.value);
                 g_graphStock = n.value;
-                drawChart(g_data[g_graphStock] [g_graphDuration]);
+                setSession('currentstock', g_graphStock);
+                api.queueReq("GET", "graphdata/" + g_graphStock + "/" + g_graphDuration);
             }
 
             function selectGraph(n) {
                 if (n.checked) {
                     g_graphDuration = String(n.value);
-                    drawChart(g_data[g_graphStock] [g_graphDuration]);
+                    api.queueReq("GET", "graphdata/" + g_graphStock + "/" + g_graphDuration);
                 }
             }
 
@@ -135,9 +100,14 @@ $DB = new stockerDB($devt_environment->getDatabaseParameters());
                 window.location = "Chart.php";
             }
 
+            function setSession(n, v) {
+                var p = { name: n, value: v };
+                api.queueReq("POST", "setsession",p);
+            }
+
             function start() {
                 setInterval(tick, 300000);
-                drawChart(g_data[g_graphStock] [g_graphDuration]);
+                api.queueReq("GET", "graphdata/" + g_graphStock + "/" + g_graphDuration);
             }
         </script>
     </head>
@@ -146,11 +116,11 @@ $DB = new stockerDB($devt_environment->getDatabaseParameters());
         <div id="flexme">
             <div id="stats1">
                 <?php
-                    $rec1 = $DB->firstXDaysBach('BTC',1);
-                    $rec2 = $DB->firstXDaysBach('BTC',7);
-                    $rec3 = $DB->firstXDaysBach('BTC',28);
-                    $rec4 = $DB->firstXHoursBach('BTC',1);
-                    $last = $DB->getLastRecord('BTC');
+                    $rec1 = $DB->firstXDaysBach($_SESSION['currentstock'],1);
+                    $rec2 = $DB->firstXDaysBach($_SESSION['currentstock'],7);
+                    $rec3 = $DB->firstXDaysBach($_SESSION['currentstock'],28);
+                    $rec4 = $DB->firstXHoursBach($_SESSION['currentstock'],1);
+                    $last = $DB->getLastRecord($_SESSION['currentstock']);
                     $exch = $DB->getLastRecord('NZD');
                     if ($rec1 && $last)
                     {
@@ -196,7 +166,7 @@ $DB = new stockerDB($devt_environment->getDatabaseParameters());
                         if ($change4 < 0)
                             $class ='red';
                         echo "<tr><td>LAST HOUR</td><td class='r {$class}'>{$strchange4}</td></tr>";
-                        
+
                         if ($exch)
                         {
                             $strexch = number_format(1.0 / $exch['record_value'],4);
@@ -218,12 +188,16 @@ $DB = new stockerDB($devt_environment->getDatabaseParameters());
                         $toNZ = $exch['record_value'];
 
 
-                        $r = $DB->allPortFolio();
+                        $r = $DB->allPortFolio(1);
                         while ($stock = $r->fetch_array())
                         {
 
                             $last = $DB->getLastRecord($stock['stock_code']);
-                            $currentPrice = $last['record_value'] * $toNZ;
+                            if ($last['record_currency'] != 'NZD')
+                                $currentPrice = $last['record_value'] * $toNZ;
+                            else
+                                $currentPrice = $last['record_value'];
+
 
                             $qty = 0.0;
                             if ($stock['portfolio_buysell'] == 'buy')
@@ -309,7 +283,10 @@ $DB = new stockerDB($devt_environment->getDatabaseParameters());
                         $r = $DB->allStock();
                         while ($stock = $r->fetch_array(MYSQLI_ASSOC))
                         {
-                            echo "<option value='{$stock['stock_code']}'>{$stock['stock_code']}</option>";
+                            echo "<option value='{$stock['stock_code']}'";
+                            if ($_SESSION['currentstock'] == $stock['stock_code'])
+                                echo " selected";
+                            echo ">{$stock['stock_code']}</option>";
                         }
                         ?>
                     </select>

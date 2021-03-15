@@ -39,16 +39,28 @@
         if (this.reqQueue.length >= 1) {
             entry = this.reqQueue[0];
             if (entry['method'].toUpperCase() == 'GET') {
-                this.http.open("GET", this.strHttp + this.host + "/" + this.base + "/" + this.key + "/" + entry['command'], true);
+                if (this.key.length > 0)
+                    this.http.open("GET", this.strHttp + this.host + "/" + this.base + "/" + this.key + "/" + entry['command'], true);
+                else
+                    this.http.open("GET", this.strHttp + this.host + "/" + this.base +  entry['command'], true);
+
                 this.http.send();
             }
             if (entry['method'].toUpperCase() == 'POST') {
-                this.http.open("POST", this.strHttp + this.host + "/api/v1/json/" + this.key + "/" + entry['command'], true);
+                if (this.key.length > 0)
+                    this.http.open("POST", this.strHttp + this.host + "/" + this.base + "/" + this.key + "/" + entry['command'], true);
+                else
+                    this.http.open("POST", this.strHttp + this.host + "/" + this.base + entry['command'], true);
+
                 this.http.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
                 this.http.send(JSON.stringify(entry['params']));
             }
             if (entry['method'].toUpperCase() == 'PUT') {
-                this.http.open("PUT", this.strHttp + this.host + "/api/v1/json/" + this.key + "/" + entry['command'], true);
+                if (this.key.length > 0)
+                    this.http.open("PUT", this.strHttp + this.host + "/" + this.base + "/" + this.key + "/" + entry['command'], true);
+                else
+                    this.http.open("PUT", this.strHttp + this.host + "/" + this.base + entry['command'], true);
+
                 this.http.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
                 this.http.send(JSON.stringify(entry['params']));
             }

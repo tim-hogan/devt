@@ -30,16 +30,17 @@ function getPrice($code)
 
 echo "Stcok quote Daemon Start\n";
 
-$lookupcodes = ['AIR'];
-
+$lookupcodes = ['AIR','SPK','ZEL'];
+$exch = $DB->getLastRecord('NZD');
 foreach($lookupcodes as $code)
 {
     $stock = $DB->getStock($code);
     $data = getPrice($stock['stock_international_code']);
     if ($data)
     {
-        $DB->createRecord($stock['stcok_code'],$data["timestamp"],$data["rate"]);
-        $r = $DB->allWatchesForStock($stock['stcok_code']);
+        $v = $data["rate"] * $exch['record_value'];
+        $DB->createRecord($stock['stock_code'],$data["timestamp"],$v,'NZD');
+        $r = $DB->allWatchesForStock($stock['stock_code']);
         while ($watch = $r->fetch_array(MYSQLI_ASSOC))
         {
             $dt = new DateTime();

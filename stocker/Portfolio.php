@@ -90,7 +90,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
                             $toNZ = $exch['record_value'];
 
                             $cashSum = 0.0;
-                            $r = $DB->allPortFolio();
+                            $r = $DB->allPortFolio(1);
                             while ($port = $r->fetch_array(MYSQLI_ASSOC))
                             {
                                 $last = $DB->getLastRecord($port['stock_code']);
@@ -128,7 +128,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
                                 $strNZDPurchaseValue = number_format($NZDPurchaseValue,2);
                                 echo "<td class='r'>{$strNZDPurchaseValue}</td>";
 
-                                $currentPrice = $last['record_value'] * $toNZ;
+                                if ($last['record_currency'] != 'NZD')
+                                    $currentPrice = $last['record_value'] * $toNZ;
+                                else
+                                    $currentPrice = $last['record_value'];
 
                                 $class='green';
                                 if ($currentPrice < $port['portfolio_price'])
@@ -163,7 +166,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
 
                                 $years = floatval($dtNow->getTimestamp() - $dtBuy->getTimestamp()) / (3600.0*24.0*365.0);
                                 //Take 2% off current value
-                                $NZDModifiedvalue = $NZDCurrentValue * 0.98;
+                                $NZDModifiedvalue = $NZDCurrentValue * (1.0 - $port['stock_margin'] );
 
                                 $change2 = (pow($NZDModifiedvalue / $NZDPurchaseValue, (1.0/$years)) - 1.0) * 100.0;
                                 error_log("RTI Modvalue {$NZDModifiedvalue} Puchvalue {$NZDPurchaseValue} Years {$years}");
@@ -264,7 +267,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
                                 foreach($stock as $buy)
                                 {
                                     $last = $DB->getLastRecord($buy['stock_code']);
-                                    $currentPrice = $last['record_value'] * $toNZ;
+                                    if ($last['record_currency'] != 'NZD')
+                                        $currentPrice = $last['record_value'] * $toNZ;
+                                    else
+                                        $currentPrice = $last['record_value'];
+
                                     $t = ($today - (new DateTime($buy['portfolio_timestamp']))->getTimestamp() ) / (3600*24*365);
                                     if ($buy['portfolio_qty'] > 0 )
                                     {
@@ -279,7 +286,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
                                         $strv2 = "$" . number_format($v2,2);
                                         $strG = "$" . number_format($v2-$v1,2);
                                         $strP =  number_format((($v2/$v1)-1)*100.0,2) . "%";
-                                        $v3=$v2*0.98;
+                                        $v3=$v2*(1.0 - $buy['stock_margin']);
                                         $f1 = (pow($v3/$v1,(1/$t)) -1.0)*100.0;
                                         $strrti = number_format($f1,2) . "%";
                                         echo "<tr><td>{$strtime}</td><td>{$buy['stock_code']}</td><td></td><td class='r'>{$buy['portfolio_qty']}</td><td></td><td class='r'>{$strv1}</td><td class='r'>{$strv2}</td><td class='r'>{$strG}</td><td class='r'>{$strP}</td><td class='r'>{$strrti}</td></tr>";
