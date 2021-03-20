@@ -7,6 +7,19 @@ $DB = new stockerDB($devt_environment->getDatabaseParameters());
 
 if (! isset($_SESSION['currentstock']))
     $_SESSION['currentstock'] = "BTC";
+
+$user = null;
+if (isset($_SESSION['userid']))
+{
+    $user = $DB->getUser($_SESSION['userid']);
+    Secure::CheckPage2($user,SECURITY_ADMIN);
+}
+else
+{
+    header("Location: Signin.php");
+}
+
+
 ?>
 <!DOCTYPE HTML>
 <html>
@@ -47,12 +60,42 @@ if (! isset($_SESSION['currentstock']))
                     switch (d.meta.req) {
                         case 'graphdata':
                             drawChart(d.data);
+                            updateCurrent(d.data)
                             break;
                     }
                 }
             }
             var g_graphDuration = "1";
             var g_graphStock = '<?php echo $_SESSION['currentstock'];?>';
+
+            function updateCurrent(d) {
+                document.getElementById('_current').innerHTML = d.history.strings.LAST;
+                document.getElementById('_day').innerHTML = d.history.change.strings.D1;
+                if (d.history.change.values.D1 >= 0)
+                    document.getElementById('_day').className = 'r green';
+                else
+                   document.getElementById('_day').className = 'r red';
+
+                document.getElementById('_week').innerHTML = d.history.change.strings.D7;
+                if (d.history.change.values.D7 >= 0)
+                    document.getElementById('_week').className = 'r green';
+                else
+                    document.getElementById('_week').className = 'r red';
+
+                document.getElementById('_month').innerHTML = d.history.change.strings.D28;
+                if (d.history.change.values.D28 >= 0)
+                    document.getElementById('_month').className = 'r green';
+                else
+                    document.getElementById('_month').className = 'r red';
+                            document.getElementById('_month').innerHTML = d.history.change.strings.D28;
+
+                document.getElementById('_hour').innerHTML = d.history.change.strings.H1;
+                if (d.history.change.values.H1 >= 0)
+                    document.getElementById('_hour').className = 'r green';
+                else
+                    document.getElementById('_hour').className = 'r red';
+            }
+
             google.charts.load('current', { 'packages': ['corechart'] });
             function drawChart(d) {
                 var d2 = d.graphdata;
@@ -141,31 +184,31 @@ if (! isset($_SESSION['currentstock']))
                         echo "<table>";
                         $strWhen  = classTimeHelpers::timeFormat($last['record_timestamp'],"H:i","Pacific/Auckland");
                         echo "<tr><td>LAST UPDATE</td><td class='r'>{$strWhen}</td></tr>";
-                        echo "<tr><td>CURRENT</td><td class='{$class}'>{$current}</td></tr>";
+                        echo "<tr><td>CURRENT</td><td id='_current' class='{$class}'>{$current}</td></tr>";
 
                         //Day
                         $class='green';
                         if ($change1 < 0)
                             $class ='red';
-                        echo "<tr><td>DAY</td><td class='r {$class}'>{$strchange1}</td></tr>";
+                        echo "<tr><td>DAY</td><td id='_day' class='r {$class}'>{$strchange1}</td></tr>";
 
                         //Week
                         $class='green';
                         if ($change2 < 0)
                             $class ='red';
-                        echo "<tr><td>WEEK</td><td class='r {$class}'>{$strchange2}</td></tr>";
+                        echo "<tr><td>WEEK</td><td id='_week' class='r {$class}'>{$strchange2}</td></tr>";
 
                         //Month
                         $class='green';
                         if ($change3 < 0)
                             $class ='red';
-                        echo "<tr><td>28 DAYS</td><td class='r {$class}'>{$strchange3}</td></tr>";
+                        echo "<tr><td>28 DAYS</td><td id='_month' class='r {$class}'>{$strchange3}</td></tr>";
 
                         //Hour
                         $class='green';
                         if ($change4 < 0)
                             $class ='red';
-                        echo "<tr><td>LAST HOUR</td><td class='r {$class}'>{$strchange4}</td></tr>";
+                        echo "<tr><td>LAST HOUR</td><td id='_hour' class='r {$class}'>{$strchange4}</td></tr>";
 
                         if ($exch)
                         {
@@ -188,7 +231,7 @@ if (! isset($_SESSION['currentstock']))
                         $toNZ = $exch['record_value'];
 
 
-                        $r = $DB->allPortFolio(1);
+                        $r = $DB->allPortFolio($user['iduser']);
                         while ($stock = $r->fetch_array())
                         {
 
@@ -292,6 +335,7 @@ if (! isset($_SESSION['currentstock']))
                     </select>
                     <div><input type="radio" name="graphSpan[]" value="1" checked onchange="selectGraph(this)" /><span>1D</span></div>
                     <div><input type="radio" name="graphSpan[]" value="7" onchange="selectGraph(this)" /><span>7D</span></div>
+                    <div><input type="radio" name="graphSpan[]" value="28" onchange="selectGraph(this)" /><span>28D</span></div>
                 </div>
             </div>
             <div id="curve_chart"></div>

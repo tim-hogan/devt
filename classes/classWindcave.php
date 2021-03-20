@@ -71,6 +71,8 @@ class WindcavePayment
         $params["type"] = $type;
         $params["amount"] = strval(trim($amount));
         $params["currency"] = $currency;
+        $params["storeCard"] = true;
+        $params["storedCardIndicator"] = 'recurringinitial';
         $params["merchantReference"] = $reference;
         $params['callbackUrls'] = array();
         $params['callbackUrls'] ['approved'] = $this->_callback_approved;

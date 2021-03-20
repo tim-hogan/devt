@@ -6,6 +6,7 @@ header('Content-Type: application/json');
 require_once dirname(__FILE__) . "/includes/classEnv.php";
 require_once dirname(__FILE__) . "/includes/classStockerDB.php";
 require_once dirname(__FILE__) . "/includes/classTextMsgNonApache.php";
+require_once dirname(__FILE__) . "/includes/classFinance.php";
 
 $env = new Environment('stocker',"220759");
 
@@ -111,6 +112,9 @@ function getGraphData($req,$stock,$days)
     $data['history'] = array();
     $data['history'] ['values'] = array();
     $data['history'] ['strings'] = array();
+    $data['history'] ['change'] = array();
+    $data['history'] ['change'] ['values'] = array();
+    $data['history'] ['change'] ['strings'] = array();
 
     $data['history'] ['values'] ['1D'] = ($DB->firstXDaysBach($stock,1)) ['record_value'];
     $data['history'] ['values'] ['7D'] = ($DB->firstXDaysBach($stock,7)) ['record_value'];
@@ -124,10 +128,120 @@ function getGraphData($req,$stock,$days)
     $data['history'] ['strings'] ['1H'] = "$" . number_format($data['history'] ['values'] ['1H'],3);
     $data['history'] ['strings'] ['LAST'] = "$" . number_format($data['history'] ['values'] ['LAST'],3);
 
-    $data['history'] ['change'] ['1D'] = number_format((($data['history'] ['values'] ['LAST'] / $data['history'] ['values'] ['1D'])-1.0)*100.0,2) . "%";
-    $data['history'] ['change'] ['7D'] = number_format((($data['history'] ['values'] ['LAST'] / $data['history'] ['values'] ['7D'])-1.0)*100.0,2) . "%";
-    $data['history'] ['change'] ['28D'] = number_format((($data['history'] ['values'] ['LAST'] / $data['history'] ['values'] ['28D'])-1.0)*100.0,2) . "%";
-    $data['history'] ['change'] ['1H'] = number_format((($data['history'] ['values'] ['LAST'] / $data['history'] ['values'] ['1H'])-1.0)*100.0,2) . "%";
+    if ($data['history'] ['values'] ['1D'])
+    {
+        $data['history'] ['change'] ['values'] ['D1'] = ($data['history'] ['values'] ['LAST'] / $data['history'] ['values'] ['1D']) -1.0;
+        $data['history'] ['change'] ['strings'] ['D1'] = number_format((($data['history'] ['values'] ['LAST'] / $data['history'] ['values'] ['1D'])-1.0)*100.0,2) . "%";
+    }
+    else
+    {
+        $data['history'] ['change'] ['values'] ['D1'] = 0.0;
+        $data['history'] ['change'] ['strings'] ['D1'] = "0.0%";
+    }
+
+    if ($data['history'] ['values'] ['7D'])
+    {
+        $data['history'] ['change'] ['values'] ['D7'] = ($data['history'] ['values'] ['LAST'] / $data['history'] ['values'] ['7D']) -1.0;
+        $data['history'] ['change'] ['strings'] ['D7'] = number_format((($data['history'] ['values'] ['LAST'] / $data['history'] ['values'] ['7D'])-1.0)*100.0,2) . "%";
+    }
+    else
+    {
+        $data['history'] ['change'] ['values'] ['D7'] = 0.0;
+        $data['history'] ['change'] ['strings'] ['D7'] = "0.0%";
+    }
+
+    if ($data['history'] ['values'] ['28D'])
+    {
+        $data['history'] ['change'] ['values'] ['D28'] = ($data['history'] ['values'] ['LAST'] / $data['history'] ['values'] ['28D']) -1.0;
+        $data['history'] ['change'] ['strings'] ['D28'] = number_format((($data['history'] ['values'] ['LAST'] / $data['history'] ['values'] ['28D'])-1.0)*100.0,2) . "%";
+    }
+    else
+    {
+        $data['history'] ['change'] ['values'] ['D28'] = 0.0;
+        $data['history'] ['change'] ['strings'] ['D28'] = "0.0%";
+    }
+
+    if ($data['history'] ['values'] ['1H'])
+    {
+        $data['history'] ['change'] ['values'] ['H1'] = ($data['history'] ['values'] ['LAST'] / $data['history'] ['values'] ['1H']) -1.0;
+        $data['history'] ['change'] ['strings'] ['H1'] = number_format((($data['history'] ['values'] ['LAST'] / $data['history'] ['values'] ['1H'])-1.0)*100.0,2) . "%";
+    }
+    else
+    {
+        $data['history'] ['change'] ['values'] ['H1'] = 0.0;
+        $data['history'] ['change'] ['strings'] ['H1'] = "0.0%";
+    }
+
+    $data['graphdata'] = $graphdata;
+
+    $ret = array();
+    $ret['meta'] = newOKMetaHdr($req);
+    $ret['data'] = $data;
+    echo json_encode($ret);
+    exit();
+
+}
+
+function getFutureData($req,$stock,$daysback,$daysfwd,$buyprice,$buydate,$desiredRti,$comissionrate)
+{
+
+    global $DB;
+    $data = array();
+
+    $stockrecord = $DB->getStock($stock);
+    $exch = $DB->getLastRecord('NZD');
+    $toUS = 1.0/$exch['record_value'];
+    $dtbuy = new DateTime($buydate);
+    $dtbuy->setTimezone(new DateTimeZone('Pacific/Auckland'));
+
+    $graphdata = array();
+    array_push($graphdata,[["label" => "Time", "type" => "date" ], "Value","Required"]);
+
+
+    $r = $DB->LastRecordsForStock($stock,$daysback);
+    while ($record = $r->fetch_array(MYSQLI_ASSOC))
+    {
+        $conversion = 1.0;
+        if ($record['record_currency'] != 'NZD')
+            $conversion = $toUS;
+
+        $dt = new DateTime($record['record_timestamp']);
+        $dt->setTimezone(new DateTimeZone('Pacific/Auckland'));
+
+        $strDate = $dt->format("Y,m,d,H,i,s");
+        $entry = array();
+        $entry[0] = $dt->getTimestamp() * 1000;
+        $entry[1] = $record['record_value'];
+        $entry[2] = null;
+        if ($dt > $dtbuy)
+        {
+            $years = ($dt->getTimestamp() - $dtbuy->getTimestamp()) / (3600*24*365);
+            $v = devt\finance\Finance::futureValue($buyprice,$desiredRti,$years,$comissionrate);
+            $entry[2] = $v * $conversion;
+        }
+
+
+        array_push($graphdata,$entry);
+    }
+
+    $dtnow = new DateTime();
+    $dtnow->setTimezone(new DateTimeZone('Pacific/Auckland'));
+
+    $dtend = new DateTime();
+    $dtend->setTimezone(new DateTimeZone('Pacific/Auckland'));
+    $dtend->setTimestamp($dtend->getTimestamp() + (3600*24*$daysfwd) );
+
+
+    while ($dtnow < $dtend)
+    {
+        $dtnow->setTimestamp($dtnow->getTimestamp() + (3600*24) );
+        $entry = array();
+        $entry[0] = $dtnow->getTimestamp() * 1000;
+        $entry[1] = null;
+        $years = ($dtnow->getTimestamp() - $dtbuy->getTimestamp()) / (3600*24*365);
+        $entry[2] = devt\finance\Finance::futureValue($buyprice,$desiredRti,$years,$comissionrate) * $conversion;
+        array_push($graphdata,$entry);
+    }
 
     $data['graphdata'] = $graphdata;
 
@@ -157,6 +271,76 @@ function setSessionData($req,$params)
     exit();
 }
 
+function enableWatch($req,$params)
+{
+    global $DB;
+    $data = array();
+
+    $watchid = $params['watch'];
+    $value = $params['value'];
+
+    $DB->setWatch($watchid,$value);
+
+    $ret = array();
+    $ret['meta'] = newOKMetaHdr($req);
+    $ret['data'] = $data;
+    echo json_encode($ret);
+    exit();
+}
+
+function setWatchBelow($req,$params)
+{
+    global $DB;
+    $data = array();
+
+    $watchid = $params['watch'];
+    $value = $params['value'];
+
+    $DB->setWatchBelow($watchid,$value);
+
+    $ret = array();
+    $ret['meta'] = newOKMetaHdr($req);
+    $ret['data'] = $data;
+    echo json_encode($ret);
+    exit();
+
+}
+
+function setWatchAbove($req,$params)
+{
+    global $DB;
+    $data = array();
+
+    $watchid = $params['watch'];
+    $value = $params['value'];
+
+    $DB->setWatchAbove($watchid,$value);
+
+    $ret = array();
+    $ret['meta'] = newOKMetaHdr($req);
+    $ret['data'] = $data;
+    echo json_encode($ret);
+    exit();
+
+}
+
+function archivePortfolio($req,$params)
+{
+    global $DB;
+    $data = array();
+
+    $portid = $params['tranid'];
+    $value = $params['value'];
+
+    $DB->setPortfolioArchive($portid,$value);
+
+    $ret = array();
+    $ret['meta'] = newOKMetaHdr($req);
+    $ret['data'] = $data;
+    echo json_encode($ret);
+    exit();
+
+}
 
 //Start
 if (!isset($_GET['r']))
@@ -198,8 +382,30 @@ if ($_SERVER['REQUEST_METHOD'] == 'PUT'  || $_SERVER['REQUEST_METHOD'] == 'POST'
 
     switch (strtolower($req))
     {
+        case 'future':
+            $stock = $params['stock'];
+            $daysback = $params['backdays'];
+            $daysfwd = $params['fwddays'];
+            $buyprice = $params['buyprice'];
+            $buydate = $params['buydate'];
+            $desiredRti = $params['rti'];
+            $comissionrate = $params['ratecommision'];
+            getFutureData($req,$stock,$daysback,$daysfwd,$buyprice,$buydate,$desiredRti,$comissionrate);
+            break;
     case 'setsession':
         setSessionData($req,$params);
+        break;
+    case 'enablewatch':
+        enableWatch($req,$params);
+        break;
+    case 'setwatchbelow':
+        setWatchBelow($req,$params);
+        break;
+    case 'setwatchabove':
+        setWatchAbove($req,$params);
+        break;
+    case 'archivetran':
+        archivePortfolio($req,$params);
         break;
     default:
         returnError($req,1000,"Invalid parameter");

@@ -30,7 +30,7 @@ function getPrice($code)
 
 echo "Stcok quote Daemon Start\n";
 
-$lookupcodes = ['AIR','SPK','ZEL'];
+$lookupcodes = ['UIS','TSLA'];
 $exch = $DB->getLastRecord('NZD');
 foreach($lookupcodes as $code)
 {
@@ -38,13 +38,17 @@ foreach($lookupcodes as $code)
     $data = getPrice($stock['stock_international_code']);
     if ($data)
     {
-        $v = $data["rate"] * $exch['record_value'];
-        $DB->createRecord($stock['stock_code'],$data["timestamp"],$v,'NZD');
+        //If we need to cponvert then
+        //$v = $data["rate"] * $exch['record_value'];
+        $v = $data["rate"];
+        $DB->createRecord($stock['stock_code'],$data["timestamp"],$v,'USD');
         $r = $DB->allWatchesForStock($stock['stock_code']);
         while ($watch = $r->fetch_array(MYSQLI_ASSOC))
         {
             $dt = new DateTime();
             $dt->setTimezone(new DateTimeZone('Pacific/Auckland'));
+            $user = $DB->getUser($watch['watch_user']);
+            $phone = trim($user['user_phone1']);
 
             //Hvae they been triggered and now we reset
             if (! $watch['watch_once'])
@@ -60,8 +64,12 @@ foreach($lookupcodes as $code)
             {
                 echo "Have watch ABOVE BT\n";
                 $msg = "Stock: {$dt->format('H:i')} {$stock['stcok_code']} Has gone OVER {$watch['watch_above']} to {$data["rate"]}";
-                $textmessage = new devt\TextMsg\TextMessage();
-                $textmessage->send('+64272484626',$msg,'stocker');
+                if ($phone && strlen($phone) > 0)
+                {
+                    $textmessage = new devt\TextMsg\TextMessage();
+                    $textmessage->send($phone,$msg,'stocker');
+                }
+
 
                 $DB->watchTriggeredAbove($watch['idwatch']);
             }
@@ -69,8 +77,12 @@ foreach($lookupcodes as $code)
             {
                 echo "Have watch BELOW BT\n";
                 $msg = "Stock: {$dt->format('H:i')} {$stock['stcok_code']} Has gone UNDER {$watch['watch_below']} to {$data["rate"]}";
-                $textmessage = new devt\TextMsg\TextMessage();
-                $textmessage->send('+64272484626',$msg,'stocker');
+                if ($phone && strlen($phone) > 0)
+                {
+                    $textmessage = new devt\TextMsg\TextMessage();
+                    $textmessage->send($phone,$msg,'stocker');
+                }
+
 
                 $DB->watchTriggeredBelow($watch['idwatch']);
             }

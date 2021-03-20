@@ -29,7 +29,7 @@ function getPrice()
 echo "BitCoin Daemon Start\n";
 if ($data = getPrice() )
 {
-    
+
     $DB->createRecord('BTC',$data["timestamp"],$data["rate"]);
     //Check if price below or above target.
     $r = $DB->allWatchesForStock('BTC');
@@ -37,6 +37,8 @@ if ($data = getPrice() )
     {
         $dt = new DateTime();
         $dt->setTimezone(new DateTimeZone('Pacific/Auckland'));
+        $user = $DB->getUser($watch['watch_user']);
+        $phone = trim($user['user_phone1']);
 
         //Hvae they been triggered and now we reset
         if (! $watch['watch_once'])
@@ -52,8 +54,11 @@ if ($data = getPrice() )
         {
             echo "Have watch ABOVE BT\n";
             $msg = "Stock: {$dt->format('H:i')} BTC Has gone OVER {$watch['watch_above']} to {$data["rate"]}";
-            $textmessage = new devt\TextMsg\TextMessage();
-            $textmessage->send('+64272484626',$msg,'stocker');
+            if ($phone && strlen($phone) > 0)
+            {
+                $textmessage = new devt\TextMsg\TextMessage();
+                $textmessage->send($phone,$msg,'stocker');
+            }
 
             $DB->watchTriggeredAbove($watch['idwatch']);
         }
@@ -61,8 +66,11 @@ if ($data = getPrice() )
         {
             echo "Have watch BELOW BT\n";
             $msg = "Stock: {$dt->format('H:i')} BTC Has gone UNDER {$watch['watch_below']} to {$data["rate"]}";
-            $textmessage = new devt\TextMsg\TextMessage();
-            $textmessage->send('+64272484626',$msg,'stocker');
+            if ($phone && strlen($phone) > 0)
+            {
+                $textmessage = new devt\TextMsg\TextMessage();
+                $textmessage->send($phone,$msg,'stocker');
+            }
 
             $DB->watchTriggeredBelow($watch['idwatch']);
         }

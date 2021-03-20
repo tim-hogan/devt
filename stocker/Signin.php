@@ -10,15 +10,12 @@
 session_start(); 
 ?>
 <?php
-require './includes/classSecure.php';
-require_once "./includes/classRolling.php";
+require_once dirname(__FILE__) . "/includes/classSecure.php";
+require_once dirname(__FILE__) . "/includes/classTime.php";
+require_once dirname(__FILE__) . "/includes/classRolling.php";
+require_once dirname(__FILE__) . "/includes/classStockerDB.php";
+$DB = new stockerDB($devt_environment->getDatabaseParameters());
 
-
-/*
-edit
-require './includes/classDATABASE.php";
-$DB = new classDATABASE($devt_environment->getDatabaseParameters());
-*/
 
 /**
  * Summary of resetSession
@@ -221,23 +218,23 @@ $_SESSION['csrf_key_signin']=base64_encode(openssl_random_pseudo_bytes(32));
 <head>
 <meta name="viewport" content="width=device-width" />
 <meta name="viewport" content="initial-scale=1.0" />
-<title>[EDIT]</title>
+<title>STOCKER</title>
 <link rel='stylesheet' type='text/css' href='css/base.css' /> 
 <link rel='stylesheet' type='text/css' href='css/heading.css' />
 <link rel='stylesheet' type='text/css' href='css/main.css' />
-<link rel='stylesheet' type='text/css' href='css/SignIn.css' />
+<link rel='stylesheet' type='text/css' href='css/Signin.css' />
 </head>
 <body>
     <div id="container">
         <div id="heading">
-            <p>edit the heading</p>
+            <p>STOCKER</p>
         </div>
         <div id="main">
             <div id="form">
                 <form method = "POST" autocomplete="off" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">
                     <table>
                         <tr><td>USERNAME</td><td><input name="username" maxlength="100" autocomplete="off" autofocus /></td></tr>
-                        <tr><td>PASSWORD</td><td><input id="p1" type="password" name="password" autocomplete="off" ><img src="/images/Eye.png" onclick="t(this)"/></td></tr>
+                        <tr><td>PASSWORD</td><td><input id="p1" type="password" name="password" autocomplete="off" ></td></tr>
                     </table>
                     <p class="errMsg"><?php if ($err) echo $errormessage;?></p>
                     <?php echo "<input type='hidden' name='formtoken' value='{$_SESSION['csrf_key_signin']}'>"; ?>

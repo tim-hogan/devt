@@ -7,83 +7,121 @@ $env = new Environment('stocker',"220759");
 
 $DB = new stockerDB($env->getDatabaseParameters());
 
-function getPrice($code)
+
+function getData()
 {
     $url="https://www.nzx.com/markets/NZSX";
     $ch = curl_init($url);
     curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'GET');
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-    //curl_setopt($ch, CURLOPT_HTTPHEADER, array("Content-Type: application/json"));
+    $header = ["user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.82 Safari/537.36",
+               "accept-encoding: identity",
+               "cache-control: no-cache",
+               "pragma: no-cache",
+               "sec-ch-ua: \"Google Chrome\";v=\"89\", \"Chromium\";v=\"89\", \";Not A Brand\";v=\"99\"",
+               "sec-ch-ua-mobile: ?0",
+               "sec-fetch-dest: document",
+               "sec-fetch-mode: navigate",
+               "sec-fetch-site: none",
+               "sec-fetch-user: ?1",
+               "upgrade-insecure-requests: 1",
+               "accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
+               ":authority: www.nzx.com",
+               ":method: GET",
+               ":path: /markets/NZSX",
+               ":scheme: https"
+        ];
+    curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
     $result = curl_exec($ch);
-    var_dump($result);
 
     $doc = new DOMDocument();
     $doc->loadHTML($result);
 
+    return $doc;
+}
+
+function getPrice($doc,$code)
+{
     $list = $doc->getElementsByTagName("tr");
-    echo "Count of TR items is {$list->count()}\n";
-    for ($c = 0; $c < $list->count(); $c++)
+    foreach($list as $tr)
     {
-        $n = $list->item($c);
-        $map = $n->DOMNamedNodeMap;
-        for ($a = 0; $a < $map->count(); $a++)
+        $attr = $tr->attributes;
+        $node = $attr->getNamedItem('title');
+        if ($node && $node->nodeValue == $code)
         {
-            $at = $map->index($a);
-            if ($at->nodeName == 'title' && $at->nodeValue == $code)
+            echo "Found TR\n";
+            $tds = $tr->getElementsByTagName("td");
+            foreach($tds as $td)
             {
-                echo "Found table row for {$code}\n";
+                 $tattr = $td->attributes;
+                 $tnode = $tattr->getNamedItem('data-title');
+                 if ($tnode && $tnode->nodeValue == 'Price')
+                 {
+                     $v = $td->nodeValue;
+                     $v = str_replace("$","",$v);
+                     $v = floatval($v);
+                     return $v;
+                 }
             }
         }
     }
-
+    return null;
 }
 
-echo "Stcok quote Daemon Start\n";
+echo "Stock quote Daemon Start\n";
 
-$lookupcodes = ['AIR'];
+$lookupcodes = ['AIR','AMP','IFT','MEL','NZK','NZO','SPK','ZEL'];
 $exch = $DB->getLastRecord('NZD');
+$doc = getData();
 foreach($lookupcodes as $code)
 {
     $stock = $DB->getStock($code);
-    getPrice($code);
-    exit();
-
-    //$data = getPrice($stock['stock_international_code']);
-    if ($data)
+    $value = getPrice($doc,$code);
+    if ($value)
     {
-        $v = $data["rate"] * $exch['record_value'];
-        $DB->createRecord($stock['stock_code'],$data["timestamp"],$v,'NZD');
+        $strTime = (new DateTime())->format('Y-m-d H:i:s');
+        $DB->createRecord($code,$strTime,$value,'NZD');
+
         $r = $DB->allWatchesForStock($stock['stock_code']);
         while ($watch = $r->fetch_array(MYSQLI_ASSOC))
         {
             $dt = new DateTime();
             $dt->setTimezone(new DateTimeZone('Pacific/Auckland'));
+            $user = $DB->getUser($watch['watch_user']);
+            $phone = trim($user['user_phone1']);
 
             //Hvae they been triggered and now we reset
             if (! $watch['watch_once'])
             {
-                if ($watch['watch_above_triggered'] && floatval($data["rate"]) < $watch['watch_above'])
+                if ($watch['watch_above_triggered'] && $value < $watch['watch_above'])
                     $DB->watchUnTriggerAbove($watch['idwatch']);
-                if ($watch['watch_below_triggered'] && floatval($data["rate"]) > $watch['watch_below'])
+                if ($watch['watch_below_triggered'] && $value > $watch['watch_below'])
                     $DB->watchUnTriggerBelow($watch['idwatch']);
             }
 
 
-            if (! $watch['watch_done'] && $watch['watch_above'] != 0 && ! $watch['watch_above_triggered'] && floatval($data["rate"]) >  $watch['watch_above'] )
+            if (! $watch['watch_done'] && $watch['watch_above'] != 0 && ! $watch['watch_above_triggered'] && $value >  $watch['watch_above'] )
             {
-                echo "Have watch ABOVE BT\n";
-                $msg = "Stock: {$dt->format('H:i')} {$stock['stcok_code']} Has gone OVER {$watch['watch_above']} to {$data["rate"]}";
-                $textmessage = new devt\TextMsg\TextMessage();
-                $textmessage->send('+64272484626',$msg,'stocker');
+                $msg = "Stock: {$dt->format('H:i')} {$stock['stcok_code']} Has gone OVER {$watch['watch_above']} to {$value}";
+
+                if ($phone && strlen($phone) > 0)
+                {
+                    $textmessage = new devt\TextMsg\TextMessage();
+                    $textmessage->send($phone,$msg,'stocker');
+                }
 
                 $DB->watchTriggeredAbove($watch['idwatch']);
             }
-            elseif (! $watch['watch_done'] && $watch['watch_below'] != 0 &&  ! $watch['watch_below_triggered'] && floatval($data["rate"]) <  $watch['watch_below'] )
+            elseif (! $watch['watch_done'] && $watch['watch_below'] != 0 &&  ! $watch['watch_below_triggered'] && $value <  $watch['watch_below'] )
             {
                 echo "Have watch BELOW BT\n";
-                $msg = "Stock: {$dt->format('H:i')} {$stock['stcok_code']} Has gone UNDER {$watch['watch_below']} to {$data["rate"]}";
-                $textmessage = new devt\TextMsg\TextMessage();
-                $textmessage->send('+64272484626',$msg,'stocker');
+                $msg = "Stock: {$dt->format('H:i')} {$stock['stcok_code']} Has gone UNDER {$watch['watch_below']} to {$value}";
+                
+                if ($phone && strlen($phone) > 0)
+                {
+                    $textmessage = new devt\TextMsg\TextMessage();
+                    $textmessage->send($phone,$msg,'stocker');
+                }
 
                 $DB->watchTriggeredBelow($watch['idwatch']);
             }
