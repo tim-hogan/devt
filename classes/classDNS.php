@@ -211,7 +211,7 @@ class dns
             return ["status" => false, "error" => "Invalid response from DNS server"];
 
 
-        if ($r['meta'] ['status'] && $r['data'] ['have'])
+        if ($r['meta'] ['status'])
             return ["status" => true, "error" => null, "have" => $r['data'] ['have']];
 
         return ["status" => false, "error" => "Exception"];
