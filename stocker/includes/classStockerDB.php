@@ -368,12 +368,12 @@ class stockerDB extends SQLPlus
 
     public function allActiveWatches()
     {
-        return $this->all("select * from watch where watch_done = 0");
+        return $this->all("select * from watch left join stock on idstock = watch_stock where watch_done = 0");
     }
 
     public function allActiveWatchesWithUser()
     {
-        return $this->all("select * from watch left join user on iduser = watch_user where watch_done = 0");
+        return $this->all("select * from watch left join user on iduser = watch_user left join stock on idstock = watch_stock watch_done = 0");
     }
 
     public function allWatchesForStock($stock)
@@ -383,7 +383,7 @@ class stockerDB extends SQLPlus
         else
             $idstock = $stock;
 
-        return $this->p_all("select * from watch where watch_stock = ? and watch_done = 0","i",$idstock);
+        return $this->p_all("select * from watch left join stock on idstock = watch_stock where watch_stock = ? and watch_done = 0","i",$idstock);
     }
 
     public function allWatchesForUser($userid)

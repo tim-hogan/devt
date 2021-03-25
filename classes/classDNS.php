@@ -194,9 +194,6 @@ class dns
 
     public function haveARecord($domain,$subdomain)
     {
-
-        $rslt = array();
-
         $url = "https://{$this->_dnsServer}/api/v1/json/havearecord/{$domain}/{$subdomain}";
 
         try
@@ -207,13 +204,17 @@ class dns
         catch (Exception $e)
         {
             error_log("dns::haveArecord [". __LINE__ . "] Exception thrown: {$e}");
-            return false;
+            return ["status" => false, "error" => "Exception: {$e->getMessage}"];
         }
 
-        if ($r['meta'] ['status'] && $r['data'] ['have'])
-            return true;
+        if (!$r)
+            return ["status" => false, "error" => "Invalid response from DNS server"];
 
-        return false;
+
+        if ($r['meta'] ['status'] && $r['data'] ['have'])
+            return ["status" => true, "error" => null, "have" => $r['data'] ['have']];
+
+        return ["status" => false, "error" => "Exception"];
 
     }
 }

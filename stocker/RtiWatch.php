@@ -36,7 +36,7 @@ while ($watch = $r->fetch_array(MYSQLI_ASSOC))
                     $strrti = number_format($rti*100.0,0) . "%";
                     $phone = trim($watch['user_phone1']);
 
-                    $msg = "Stock **SELL**: {$dt->format('H:i')} {$watch['stock_name']} has a RTI of {$strrti}";
+                    $msg = "Stock **SELL** {$dt->format('H:i')} {$watch['stock_code']} has a RTI of {$strrti}";
 
                     if ($phone && strlen($phone) > 0)
                     {
