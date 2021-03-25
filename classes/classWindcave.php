@@ -85,7 +85,7 @@ class WindcavePayment
 
     public function querySession($sessionId)
     {
-        return $this->getCURL("api/v1/sessions/{$sessionId}");
+        return $this->postCURL("api/v1/sessions/{$sessionId}",[]);
     }
 }
 ?>
