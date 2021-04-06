@@ -543,7 +543,7 @@ class vault
 
     public function deleteKey($shelf,$key_name)
     {
-         $this->lasterror = null;
+        $this->lasterror = null;
         if (!$this->vault)
         if (!$this->vault)
         {

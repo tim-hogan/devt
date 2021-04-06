@@ -300,6 +300,20 @@ class stockerDB extends SQLPlus
         return $this->p_singlequery("select * from record where record_timestamp > ? and record_stock = ? order by record_timestamp limit 1","si",$strTime,$idstock);
     }
 
+    public function range($stock,$days)
+    {
+        if (gettype($stock) == "string")
+            $idstock = $this->getStockIdFromCode($stock);
+        else
+            $idstock = $stock;
+
+        $dt = new DateTime();
+        $dt->setTimestamp($dt->getTimestamp() - (3600*24*$days));
+        $strTime = $dt->format('Y-m-d H:i:s');
+        
+        return $this->p_singlequery("select max(record_value) as max , min(record_value) as min from record where record_timestamp > ? and record_stock = ? ","si",$strTime,$idstock);
+    }
+
     //*********************************************************************
     // portfolio
     //*********************************************************************

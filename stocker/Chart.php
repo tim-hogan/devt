@@ -164,6 +164,7 @@ else
                     $rec3 = $DB->firstXDaysBach($_SESSION['currentstock'],28);
                     $rec4 = $DB->firstXHoursBach($_SESSION['currentstock'],1);
                     $last = $DB->getLastRecord($_SESSION['currentstock']);
+                    $range = $DB->range($_SESSION['currentstock'],28);
                     $exch = $DB->getLastRecord('NZD');
                     if ($rec1 && $last)
                     {
@@ -176,6 +177,9 @@ else
                         $strchange3 = number_format($change3,2) . "%";
                         $strchange4 = number_format($change4,2) . "%";
                         $current = number_format($last['record_value'],2);
+                        $strRange = "";
+                        if ($range && isset($range['min']) && $range['min'] > 0)
+                            $strRange = number_format((($range['max'] / $range['min']) - 1.0) * 100.0,2) . "%";
                         $class='g';
                         if ($change1 < 0)
                               $class ='r';
@@ -209,6 +213,8 @@ else
                         if ($change4 < 0)
                             $class ='red';
                         echo "<tr><td>LAST HOUR</td><td id='_hour' class='r {$class}'>{$strchange4}</td></tr>";
+                        $class='green';
+                        echo "<tr><td>28 DAY CHANGE</td><td id='_change' class='r {$class}'>{$strRange}</td></tr>";
 
                         if ($exch)
                         {
