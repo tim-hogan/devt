@@ -178,6 +178,7 @@ else
                         $strchange4 = number_format($change4,2) . "%";
                         $current = number_format($last['record_value'],2);
                         $strRange = "";
+
                         if ($range && isset($range['min']) && $range['min'] > 0)
                             $strRange = number_format((($range['max'] / $range['min']) - 1.0) * 100.0,2) . "%";
                         $class='g';
