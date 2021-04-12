@@ -70,7 +70,7 @@ function getPrice($doc,$code)
 
 echo "Stock quote Daemon Start\n";
 
-$lookupcodes = ['AIR','AMP','IFT','MEL','NZK','NZO','SPK','ZEL'];
+$lookupcodes = ['AIR','AMP','IFT','MEL','NZK','NZO','RYM','SPK','SML','ZEL'];
 $exch = $DB->getLastRecord('NZD');
 $doc = getData();
 foreach($lookupcodes as $code)
