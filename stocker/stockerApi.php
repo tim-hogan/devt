@@ -71,7 +71,6 @@ function returnError($req,$code,$desc)
 {
    $rslt = array();
    $meta = newErrorMetaHdr($req,$code,$desc);
-   $data = array();
    $rslt['meta'] = $meta;
    $rslt['data'] = array();
    echo json_encode($rslt);
@@ -93,8 +92,10 @@ function getGraphData($req,$stock,$days)
 
 
     $graphdata = array();
-    array_push($graphdata,[["label" => "Time", "type" => "date" ], "Value"]);
-
+    array_push($graphdata,[["label" => "Time", "type" => "date" ], "Value","Fib 1","Fib 2"]);
+    $range = $DB->range($stock,$days);
+    $fib1 = $range['max'] - (0.618*($range['max'] - $range['min']));
+    $fib2 = $range['max'] - (0.382*($range['max'] - $range['min']));
     $r = $DB->LastRecordsForStock($stock,$days);
     while ($record = $r->fetch_array(MYSQLI_ASSOC))
     {
@@ -104,15 +105,21 @@ function getGraphData($req,$stock,$days)
         $entry = array();
         $entry[0] = $dt->getTimestamp() * 1000;
         $entry[1] = $record['record_value'];
+        $entry[2] = $fib1;
+        $entry[3] = $fib2;
         array_push($graphdata,$entry);
     }
 
+    $range = $DB->range($stock,28);
+
     $data['stock'] = $stock;
     $data['title'] = $stockrecord['stock_name'];
+
     $data['history'] = array();
     $data['history'] ['values'] = array();
     $data['history'] ['strings'] = array();
     $data['history'] ['change'] = array();
+    $data['history'] ['ranges'] = array();
     $data['history'] ['change'] ['values'] = array();
     $data['history'] ['change'] ['strings'] = array();
 
@@ -171,6 +178,13 @@ function getGraphData($req,$stock,$days)
         $data['history'] ['change'] ['values'] ['H1'] = 0.0;
         $data['history'] ['change'] ['strings'] ['H1'] = "0.0%";
     }
+
+    $range = $DB->range($stock,28);
+
+    $data['history'] ['ranges'] ['28'] ['min'] = $range['min'];
+    $data['history'] ['ranges'] ['28'] ['max'] = $range['max'];
+    $data['history'] ['ranges'] ['28'] ['fib1'] = $range['max'] - (0.618 * ($range['max']-$range['min']));
+    $data['history'] ['ranges'] ['28'] ['fib2'] = $range['max'] - (0.382 * ($range['max']-$range['min']));
 
     $data['graphdata'] = $graphdata;
 

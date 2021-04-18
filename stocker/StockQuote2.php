@@ -102,7 +102,7 @@ foreach($lookupcodes as $code)
 
             if (! $watch['watch_done'] && $watch['watch_above'] != 0 && ! $watch['watch_above_triggered'] && $value >  $watch['watch_above'] )
             {
-                $msg = "Stock: {$dt->format('H:i')} {$stock['stcok_code']} Has gone OVER {$watch['watch_above']} to {$value}";
+                $msg = "Stock: {$dt->format('H:i')} {$stock['stock_code']} Has gone OVER {$watch['watch_above']} to {$value}";
 
                 if ($phone && strlen($phone) > 0)
                 {

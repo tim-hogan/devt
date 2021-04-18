@@ -308,7 +308,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
                                 //Each $port record is a sell record
                                 //$portfolio['stockid'] are all the buy records
                                 
-                                //First we search all vbuy records to see if we have one of the exact qty sold.
+                                //First we search all buy records to see if we have one of the exact qty sold.
                                 $exactfound = false;
                                 $cnt = 0;
                                 
@@ -351,28 +351,30 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
                                     {
                                         if ($qty > 0)
                                         {
-                                            
-                                            $v = min($qty,$buy['portfolio_qty']);
-                                            $buyprice = $buy['portfolio_price'] * $v;
-                                            $sellprice = $port['portfolio_price'] * $v;
-                                            $t = ($soldtime - (new DateTime($buy['portfolio_timestamp']))->getTimestamp() ) / (3600*24*365);
-                                            $f = pow($sellprice/$buyprice,(1/$t)) * $buyprice;
-                                            $vsum1 += $buyprice;
-                                            $vsum2 += $f;
-                                            
-                                            $strtime = classTimeHelpers::timeFormatnthDateTime1($port['portfolio_timestamp'],"Pacific/Auckland");
-                                            $strBuy = "$" . number_format($buyprice,2);
-                                            $strSell = "$" . number_format($sellprice,2);
-                                            $strg1 = "$" . number_format($sellprice-$buyprice,2);
-                                            $strch = number_format((($sellprice/$buyprice)-1.0)*100.0,2) . "%";
-                                            $Gain = (pow($sellprice/$buyprice,(1/$t)) - 1) * 100.0;
-                                            $strGain = number_format($Gain,2) . "%";
-                                            echo "<tr><td>{$strtime}</td><td>{$port['stock_code']}</td><td></td><td>{$v}</td><td></td><td class='r'>{$strBuy}</td><td class='r'>{$strSell}</td><td class='r'>{$strg1}</td><td class='r'>{$strch}</td><td class='r'>{$strGain}</td></tr>";
+                                            if ($buy['portfolio_qty'] > 0)
+                                            {
+                                                $v = min($qty,$buy['portfolio_qty']);
+                                                $buyprice = $buy['portfolio_price'] * $v;
+                                                $sellprice = $port['portfolio_price'] * $v;
+                                                $t = ($soldtime - (new DateTime($buy['portfolio_timestamp']))->getTimestamp() ) / (3600*24*365);
+                                                $f = pow($sellprice/$buyprice,(1/$t)) * $buyprice;
+                                                $vsum1 += $buyprice;
+                                                $vsum2 += $f;
+                                                
+                                                $strtime = classTimeHelpers::timeFormatnthDateTime1($port['portfolio_timestamp'],"Pacific/Auckland");
+                                                $strBuy = "$" . number_format($buyprice,2);
+                                                $strSell = "$" . number_format($sellprice,2);
+                                                $strg1 = "$" . number_format($sellprice-$buyprice,2);
+                                                $strch = number_format((($sellprice/$buyprice)-1.0)*100.0,2) . "%";
+                                                $Gain = (pow($sellprice/$buyprice,(1/$t)) - 1) * 100.0;
+                                                $strGain = number_format($Gain,2) . "%";
+                                                echo "<tr><td>{$strtime}</td><td>{$port['stock_code']}</td><td></td><td>{$v}</td><td></td><td class='r'>{$strBuy}</td><td class='r'>{$strSell}</td><td class='r'>{$strg1}</td><td class='r'>{$strch}</td><td class='r'>{$strGain}</td></tr>";
 
-                                            $portfolio[$stockid] [$cnt] ['portfolio_qty'] -= $v;
-                                            $buy['portfolio_qty'] -= $v;
-                                            $qty -= $v;
-                                            $cnt++;
+                                                $portfolio[$stockid] [$cnt] ['portfolio_qty'] -= $v;
+                                                $buy['portfolio_qty'] -= $v;
+                                                $qty -= $v;
+                                                $cnt++;
+                                            }
                                         }
                                     }
                                 }
