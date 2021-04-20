@@ -252,7 +252,7 @@ else
                             $qty = 0.0;
                             if ($stock['portfolio_buysell'] == 'buy')
                                 $qty = $stock['portfolio_qty'];
-                            else
+                            elseif ($stock['portfolio_buysell'] == 'sell')
                                 $qty = -($stock['portfolio_qty']);
 
                             $NZDPurchaseValue = $stock['portfolio_price'] * $qty;
@@ -267,7 +267,7 @@ else
                                     $summary[$stock['stock_code']] ['PURCHASE_VALUE'] = $NZDPurchaseValue;
                                     $summary[$stock['stock_code']] ['SOLD_VALUE'] = 0.0;
                                 }
-                                else
+                                elseif ($stock['portfolio_buysell'] == 'sell')
                                 {
                                     $summary[$stock['stock_code']] ['PURCHASE_VALUE'] = 0.0;
                                     $summary[$stock['stock_code']] ['SOLD_VALUE'] = $NZDPurchaseValue;
