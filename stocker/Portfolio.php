@@ -312,13 +312,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
                                 $exactfound = false;
                                 $cnt = 0;
                                 
+
+
                                 foreach($portfolio[$stockid] as $buy)
                                 {
                                     if (! $exactfound)
                                     {
                                         if ($buy['portfolio_qty'] == $qty)
                                         {
-                                            error_log("Found buy price qty {$qty} price {$buy['portfolio_price']}  buyqty = {$buy['portfolio_qty']}");
                                             $buyprice = $buy['portfolio_price'] * $qty;
                                             $sellprice = $port['portfolio_price'] *$qty;
                                             $t = ($soldtime - (new DateTime($buy['portfolio_timestamp']))->getTimestamp() ) / (3600*24*365);
@@ -336,12 +337,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
                                             echo "<tr><td>{$strtime}</td><td>{$port['stock_code']}</td><td></td><td>{$qty}</td><td></td><td class='r'>{$strBuy}</td><td class='r'>{$strSell}</td><td class='r'>{$strg1}</td><td class='r'>{$strch}</td><td class='r'>{$strGain}</td></tr>";
                                             
                                             $portfolio[$stockid] [$cnt] ['portfolio_qty'] -= $qty;
-                                            $buy['portfolio_qty'] -= $qty;
                                             $exactfound = true;
-                                            error_log("Found exact");
                                         }
-                                        $cnt++;
                                     }
+                                    $cnt++;
                                 }
                                 
                                 if (! $exactfound)
@@ -370,16 +369,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
                                                 $strGain = number_format($Gain,2) . "%";
                                                 echo "<tr><td>{$strtime}</td><td>{$port['stock_code']}</td><td></td><td>{$v}</td><td></td><td class='r'>{$strBuy}</td><td class='r'>{$strSell}</td><td class='r'>{$strg1}</td><td class='r'>{$strch}</td><td class='r'>{$strGain}</td></tr>";
 
+
                                                 $portfolio[$stockid] [$cnt] ['portfolio_qty'] -= $v;
-                                                $buy['portfolio_qty'] -= $v;
-                                                $qty -= $v;
-                                                $cnt++;
+                                                //$buy['portfolio_qty'] -= $v;
+                                                $qty -= $v; 
                                             }
                                         }
+                                        $cnt++;
                                     }
                                 }
                                 
-
                             }
                             
                             //Now calcualte returns on each stock.
@@ -425,14 +424,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
                                         
                                         $totval1 += $v1;
                                         $totval2 += $v2;
-
-                                        echo "<tr><td>{$strtime}</td><td>{$buy['stock_code']}</td><td></td><td class='r'>{$buy['portfolio_qty']}</td><td></td><td class='r'>{$strv1}</td><td class='r'>{$strv2}</td><td class='r'>{$strG}</td><td class='r'>{$strP}</td><td class='r'>{$strrti}</td></tr>";
+                                        $classc = 'green';
+                                        if ($f1 < 0)
+                                            $classc = 'red';
+                                        echo "<tr><td>{$strtime}</td><td>{$buy['stock_code']}</td><td></td><td class='r'>{$buy['portfolio_qty']}</td><td></td><td class='r'>{$strv1}</td><td class='r {$classc}'>{$strv2}</td><td class='r {$classc}'>{$strG}</td><td class='r {$classc}'>{$strP}</td><td class='r {$classc}'>{$strrti}</td></tr>";
                                     }
                                 }
                             }
                             $strTotv1 = "$" . number_format($totval1,2);
                             $strTotv2 = "$" . number_format($totval2,2);
-                            echo "<tr><td>TOTAL</td><td></td><td></td><td></td><td></td><td class='r'>{$strTotv1}</td><td class='r'>{$strTotv2}</td><td></td><td></td><td></td></tr>";
+                            $strdiff = "$" . number_format($totval2-$totval1,2);
+                            $classc = 'green';
+                            if ($totval2-$totval1 < 0)
+                                $classc = 'red';
+                            echo "<tr><td>TOTAL</td><td></td><td></td><td></td><td></td><td class='r'>{$strTotv1}</td><td class='r'>{$strTotv2}</td><td class='r {$classc}'>{$strdiff}</td><td></td><td></td></tr>";
 
                             $gn = (($vsum2 / $vsum1) - 1.0) * 100.0;
                             //Now we need to add all the dividends
