@@ -6,7 +6,7 @@ require_once dirname(__FILE__) . "/includes/classTextMsgNonApache.php";
 $env = new Environment('stocker',"220759");
 
 $DB = new stockerDB($env->getDatabaseParameters());
-$whatcrytos = ["1027" =>"ETH","2010"=>'ADA'];
+$whatcrytos = ["1027" =>"ETH","2010"=>'ADA',"74"=>"DOGE","50"=>"EMD"];
 $quotes = array();
 
 function isoToDateTime($str)

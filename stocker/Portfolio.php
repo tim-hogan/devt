@@ -73,6 +73,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
     $DB->createPortfolioEntry($stock,$buysell,$price,$qty);
 }
 
+$today = (new DateTime())->getTimestamp();
+$portStartTimestmap = (new DateTime(($DB->firstPortfolioForUser($user['iduser'])) ['portfolio_timestamp']))->getTimestamp();
+$elpasedseconds = $today - $portStartTimestmap;
+$elpaseddays = $elpasedseconds / (3600*24);
+$elpasedyears = $elpasedseconds / (3600*24*365.25);
+$portLastSellTimestmap = (new DateTime(($DB->lastPortfolioSellForUser($user['iduser'])) ['portfolio_timestamp']))->getTimestamp();
+$elpasedlastsellseconds = $portLastSellTimestmap - $portStartTimestmap;
+$elpasedlastselldays = $elpasedlastsellseconds / (3600*24);
+$elpasedlastsellyears = $elpasedlastsellseconds / (3600*24*365.25);
+
 ?>
 <!DOCTYPE HTML>
 <html>
@@ -276,7 +286,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
                             //Calculate portfolio worth
                             $vsum1 = 0.0;
                             $vsum2 = 0.0;
-                            $today = (new DateTime())->getTimestamp();
 
                             $portfolio = array();
                             $r = $DB->allPortfolioBuyForUser($user['iduser']);
@@ -289,6 +298,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
                                 array_push($portfolio[$port['portfolio_stock']],$port);
                             }
                             
+                            $tot_buyprice = 0.0;
+                            $tot_sellprice = 0.0;
+
                             $havesold = false;
                             $r = $DB->allPortfolioSellForUser($user['iduser']);
                             while ($port = $r->fetch_array(MYSQLI_ASSOC))
@@ -313,7 +325,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
                                 $cnt = 0;
                                 
 
-
                                 foreach($portfolio[$stockid] as $buy)
                                 {
                                     if (! $exactfound)
@@ -334,6 +345,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
                                             $strch = number_format((($sellprice/$buyprice)-1.0)*100.0,2) . "%";
                                             $Gain = (pow($sellprice/$buyprice,(1/$t)) - 1) * 100.0;
                                             $strGain = number_format($Gain,2) . "%";
+                                            
+                                            $tot_buyprice += $buyprice;
+                                            $tot_sellprice += $sellprice;
+                                            
                                             echo "<tr><td>{$strtime}</td><td>{$port['stock_code']}</td><td></td><td>{$qty}</td><td></td><td class='r'>{$strBuy}</td><td class='r'>{$strSell}</td><td class='r'>{$strg1}</td><td class='r'>{$strch}</td><td class='r'>{$strGain}</td></tr>";
                                             
                                             $portfolio[$stockid] [$cnt] ['portfolio_qty'] -= $qty;
@@ -367,6 +382,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
                                                 $strch = number_format((($sellprice/$buyprice)-1.0)*100.0,2) . "%";
                                                 $Gain = (pow($sellprice/$buyprice,(1/$t)) - 1) * 100.0;
                                                 $strGain = number_format($Gain,2) . "%";
+                                                
+                                                $tot_buyprice += $buyprice;
+                                                $tot_sellprice += $sellprice;
+                                                
                                                 echo "<tr><td>{$strtime}</td><td>{$port['stock_code']}</td><td></td><td>{$v}</td><td></td><td class='r'>{$strBuy}</td><td class='r'>{$strSell}</td><td class='r'>{$strg1}</td><td class='r'>{$strch}</td><td class='r'>{$strGain}</td></tr>";
 
 
@@ -381,6 +400,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
                                 
                             }
                             
+                            $strTotBuy = "$" . number_format($tot_buyprice,2);
+                            $strTotSell = "$" . number_format($tot_sellprice,2);
+
+                            $strDiff = "$" . number_format($tot_sellprice-$tot_buyprice,2);
+                            $strGain1 = number_format(($tot_sellprice/$tot_buyprice-1.0) * 100.0,2) ."%";
+
+                            $classc = "green";
+                            if ($tot_sellprice < $tot_buyprice)
+                                $classc = 'red';
+                            
+                            echo "<tr><td></td><td></td><td></td><td></td><td></td><td class='r'>{$strTotBuy}</td><td class='r'>{$strTotSell}</td><td class='r {$classc}'>{$strDiff}</td><td class='r {$classc}'>{$strGain1}</td><td class='r'></td></tr>";
+
+
+                            $totals_sold = array();
+                            $totals_sold['dr'] = $tot_buyprice;
+                            $totals_sold['cr'] = $tot_sellprice;
+
+
                             //Now calcualte returns on each stock.
                             echo "<tr><td colspan='10'></td></tr>";
                             echo "<tr>";
@@ -439,6 +476,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
                                 $classc = 'red';
                             echo "<tr><td>TOTAL</td><td></td><td></td><td></td><td></td><td class='r'>{$strTotv1}</td><td class='r'>{$strTotv2}</td><td class='r {$classc}'>{$strdiff}</td><td></td><td></td></tr>";
 
+                            
+                            $totals_remaining = array();
+                            $totals_remaining['dr'] = $totval1;
+                            $totals_remaining['cr'] = $totval2;
+
+
+
                             $gn = (($vsum2 / $vsum1) - 1.0) * 100.0;
                             //Now we need to add all the dividends
                             $r = $DB->allPortfolioDividendsForUser($user['iduser']);
@@ -452,27 +496,77 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
                             //Dividend summary
                             echo "<tr><td colspan='10'></td></tr>";
                             echo "<tr>";
-                            echo "<td class='b' colspan='9'>DIVIDENDS</td>";
+                            echo "<td class='b' colspan='10'>DIVIDENDS</td>";
                             echo"</tr>";
 
+                            
+                            $totals_dividends = array();
+
+
+                            
                             $r = $DB->allPortfolioDividendsForUser($user['iduser']);
                             while ($port = $r->fetch_array(MYSQLI_ASSOC))
                             {
                                 $strtime = classTimeHelpers::timeFormatnthDateTime1($port['portfolio_timestamp'],"Pacific/Auckland");
                                 $v = $port['portfolio_qty'] * $port['portfolio_price'];
                                 $strDivValue = "$" . number_format($v,2);
-                                echo "<tr><td>{$strtime}</td><td>{$port['stock_code']}</td><td>DIV</td><td></td><td></td><td>{$strDivValue}</td></tr>";    
+                                
+                                if (!isset($totals_dividends['cr']))
+                                    $totals_dividends['cr'] = $v;
+                                else
+                                    $totals_dividends['cr'] += $v;
+
+                                echo "<tr><td>{$strtime}</td><td>{$port['stock_code']}</td><td>DIV</td><td></td><td></td><td></td><td class='r'>{$strDivValue}</td><td colspan='3'></td></tr>";    
                             }
-                            
-                            
                             
                             
                             //Summary
 
                             echo "<tr><td colspan='10'></td></tr>";
                             echo "<tr>";
-                            echo "<td class='b' colspan='9'>TOTAL PORTFOLIO RETURN</td>";
+                            echo "<td class='b' colspan='10'>TOTAL PORTFOLIO RETURN</td>";
                             echo"</tr>";
+                            
+                            
+                            $str1 = "$" . number_format($totals_sold['dr'],2);
+                            $str2 = "$" . number_format($totals_sold['cr'],2);
+                            $str3 = "$" . number_format($totals_sold['cr']-$totals_sold['dr'],2);
+                            $v4 = (($totals_sold['cr']/$totals_sold['dr'])-1.0)*100.0;
+                            $str4 = number_format($v4,2) . "%";
+
+                            $rti = (pow($totals_sold['cr']/$totals_sold['dr'], 1/($elpasedlastsellyears)) - 1.0) * 100.0;
+                            $str5 = number_format($rti,2) . "%";
+                            echo "<tr><td>STOCK SOLD</td><td colspan='4'></td><td class='r'>{$str1}</td><td class='r'>{$str2}</td><td class='r'>{$str3}</td><td class='r'>{$str4}</td><td class='r'>{$str5}</td></tr>";
+                            
+                            $str1 = "$" . number_format($totals_remaining['dr'],2);
+                            $str2 = "$" . number_format($totals_remaining['cr'],2);
+                            $str3 = "$" . number_format($totals_remaining['cr']-$totals_remaining['dr'],2);
+                            $v4 = (($totals_remaining['cr']/$totals_remaining['dr'])-1.0)*100.0;
+                            $str4 = number_format($v4,2) . "%";
+                            echo "<tr><td>REMAINING STOCK</td><td colspan='4'></td><td class='r'>{$str1}</td><td class='r'>{$str2}</td><td class='r'>{$str3}</td><td class='r'>{$str4}</td><td></td></tr>";
+                            
+                            
+                            $str2 = "$" . number_format($totals_dividends['cr'],2);
+                            echo "<tr><td>DIVIDENDS</td><td colspan='4'></td><td class='r'></td><td class='r'>{$str2}</td></tr>";
+                            
+                            $v1 = $totals_sold['dr'] + $totals_remaining['dr'];
+                            $v2 = $totals_sold['cr'] + $totals_remaining['cr']  + $totals_dividends['cr'];
+                            $v3 = $v2-$v1;
+                            $v4 = (($v2/$v1)-1.0)*100.0;
+                            
+                            $str1 = "$" . number_format($v1,2);
+                            $str2 = "$" . number_format($v2,2);
+                            $str3 = "$" . number_format($v3,2);
+                            $str4 = number_format($v4,2) . "%";
+                            
+                            $rti = (pow($v2/$v1, 1/($elpasedyears)) - 1.0) * 100.0;
+                            $str5 = number_format($rti,2) . "%";
+                            
+                            $classc = 'green';
+                            if ($v2 < $v1)
+                                $classc = 'red';
+                            echo "<tr><td>TOTAL</td><td colspan='4'></td><td class='r'>{$str1}</td><td class='r'>{$str2}</td><td class='r {$classc}'>{$str3}</td><td class='r {$classc}'>{$str4}</td><td class='b r {$classc}'>{$str5}</td></tr>";
+                            
                             echo "<tr><td colspan='9'></td><td class='b r'>{$gn}</td></tr>";
 
 

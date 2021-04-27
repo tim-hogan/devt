@@ -310,7 +310,7 @@ class stockerDB extends SQLPlus
         $dt = new DateTime();
         $dt->setTimestamp($dt->getTimestamp() - (3600*24*$days));
         $strTime = $dt->format('Y-m-d H:i:s');
-        
+
         return $this->p_singlequery("select max(record_value) as max , min(record_value) as min from record where record_timestamp > ? and record_stock = ? ","si",$strTime,$idstock);
     }
 
@@ -340,6 +340,16 @@ class stockerDB extends SQLPlus
     public function allPortfolioSellForUser($userid)
     {
         return $this->all("select * from portfolio left join stock on idstock = portfolio_stock where portfolio_user = {$userid} and portfolio_buysell = 'sell' order by portfolio_stock,portfolio_timestamp");
+    }
+
+    public function firstPortfolioForUser($userid)
+    {
+        return $this->singlequery("select * from portfolio left join stock on idstock = portfolio_stock where portfolio_user = {$userid} order by portfolio_timestamp limit 1");
+    }
+
+    public function lastPortfolioSellForUser($userid)
+    {
+        return $this->singlequery("select * from portfolio left join stock on idstock = portfolio_stock where portfolio_user = {$userid} and portfolio_buysell = 'sell' order by portfolio_timestamp desc limit 1");
     }
 
     public function allPortfolioDividendsForUser($userid)
