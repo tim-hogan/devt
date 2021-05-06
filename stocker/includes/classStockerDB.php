@@ -252,6 +252,24 @@ class stockerDB extends SQLPlus
          return $this->p_all("select * from record where record_stock = ? order by record_timestamp","i",$idstock);
     }
 
+    public function AllRecordsForStockFrom($stock,$strDateTime)
+    {
+        if (gettype($stock) == "string")
+            $idstock = $this->getStockIdFromCode($stock);
+        else
+            $idstock = $stock;
+        return $this->p_all("select * from record where record_stock = ? and record_timestamp >= ? order by record_timestamp","is",$idstock,$strDateTime);
+    }
+
+    public function FirstRecordForStock($stock)
+    {
+        if (gettype($stock) == "string")
+            $idstock = $this->getStockIdFromCode($stock);
+        else
+            $idstock = $stock;
+        return $this->p_singlequery("select * from record where record_stock = ? order by record_timestamp limit 1","i",$idstock);
+    }
+
     public function LastRecordsForStock($stock,$days)
     {
         if (gettype($stock) == "string")
@@ -312,6 +330,40 @@ class stockerDB extends SQLPlus
         $strTime = $dt->format('Y-m-d H:i:s');
 
         return $this->p_singlequery("select max(record_value) as max , min(record_value) as min from record where record_timestamp > ? and record_stock = ? ","si",$strTime,$idstock);
+    }
+
+    public function findNearestTimeWithin($stock,$timstamp,$timelimit=300)
+    {
+        if (gettype($stock) == "string")
+            $idstock = $this->getStockIdFromCode($stock);
+        else
+            $idstock = $stock;
+
+        $rec = $this->p_singlequery("select * from record where record_stock = ? order by abs(UNIX_TIMESTAMP(record_timestamp) - UNIX_TIMESTAMP('{$timstamp}')) limit 1","i",$idstock);
+        if ( abs((new DateTime($timstamp))->getTimestamp() - (new DateTime($rec['record_timestamp']))->getTimestamp()) <= $timelimit)
+            return $rec;
+        return null;
+    }
+
+    public function linearRegression($stock,$days)
+    {
+        if (gettype($stock) == "string")
+            $idstock = $this->getStockIdFromCode($stock);
+        else
+            $idstock = $stock;
+
+        $dt = new DateTime();
+        $dt->setTimestamp($dt->getTimestamp() - (3600*24*$days));
+        $strTime = $dt->format('Y-m-d H:i:s');
+
+        $a = $this->p_singlequery("select avg(UNIX_TIMESTAMP(record_timestamp)) as AVGX, avg(record_value) as AVGY from record where record_stock = ? and record_timestamp >= ?","is",$idstock,$strTime);
+        $sum1 = $this->p_singlequery("select sum((UNIX_TIMESTAMP(record_timestamp)-{$a['AVGX']})*(record_value-{$a['AVGY']})) as sum1 from record where record_stock = ? and record_timestamp >= ?","is",$idstock,$strTime);
+        $sum2 = $this->p_singlequery("select sum((UNIX_TIMESTAMP(record_timestamp)-{$a['AVGX']})*(UNIX_TIMESTAMP(record_timestamp)-{$a['AVGX']})) as sum2 from record where record_stock = ? and record_timestamp >= ?","is",$idstock,$strTime);
+        $b = $this->p_singlequery("select sum((UNIX_TIMESTAMP(record_timestamp)-{$a['AVGX']})*(record_value-{$a['AVGY']})) / sum((UNIX_TIMESTAMP(record_timestamp)-{$a['AVGX']})*(UNIX_TIMESTAMP(record_timestamp)-{$a['AVGX']})) as m from record where record_stock = ? and record_timestamp >= ?","is",$idstock,$strTime);
+        $c = $a['AVGY'] - ($b['m'] * $a['AVGX']);
+
+        return ["m"=>$b['m'],"c"=>$c,"avgx"=>$a['AVGX'],"avgy"=>$a['AVGY'],"sum1"=>$sum1['sum1'],"sum2"=>$sum2['sum2']];
+
     }
 
     //*********************************************************************

@@ -290,7 +290,11 @@ else
                             echo "<tr>";
                             echo "<td>{$name}</td>";
 
-                            echo "<td class='r'>{$v['QTY']}</td>";
+                            $qty = $v['QTY'];
+                            if ($qty < 0.0000001)
+                                $qty = 0;
+
+                            echo "<td class='r'>{$qty}</td>";
 
                             $NZDCurrentValue = $v['CURRENTPRICE'] * $v['QTY'];
                             $strNZDCurrentValue = "$" . number_format($NZDCurrentValue,2);
