@@ -418,6 +418,9 @@ class FormList
 
         $fields = $this->config['fields'];
         $row = array();
+        
+        $this->var_error_log($fields,"Fields to modify");
+
         foreach($fields as $name => $field)
         {
             if (! isset($field['dbfield']) || (isset($field['dbfield']) && $field['dbfield']) )
