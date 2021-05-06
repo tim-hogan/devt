@@ -292,6 +292,9 @@ class FormList
         if (! isset ($this->config['fields']) )
             throw new Exception(__FILE__ . "[" . __LINE__ ."] No fields are sepcified in parameters" );
 
+        $this->var_error_log($_POST,"post");
+        
+        
         $fields = $this->config['fields'];
         foreach($fields as $name => $field)
         {
