@@ -532,8 +532,8 @@ class FormList
                     echo "title='{$f['form'] ['title']}' ";
                 if (isset($f['readonly']) && $f['readonly'])
                     echo "readonly ";
-                if (isset($f['onchange']))
-                    echo "onchange='{$f['onchange']}' ";
+                if (isset($f['form'] ['onchange']))
+                    echo "onchange='{$f['form'] ['onchange']}' ";
                 echo " />";
                 break;
             case "textarea":
@@ -630,8 +630,8 @@ class FormList
                 }
                 if (isset($f['readonly']) && $f['readonly'])
                     echo "readonly ";
-                if (isset($f['onchange']))
-                    echo "onchange='{$f['onchange']}' ";
+                if (isset($f['form'] ['onchange']))
+                    echo "onchange='{$f['form'] ['onchange']}' ";
                 echo " />";
                 if (isset($f ['form'] ['formlabel']))
                     echo "<span>{$f ['form'] ['formlabel']}</span>";
@@ -706,8 +706,8 @@ class FormList
             echo "title='{$f['form'] ['title']}' ";
         if (isset($f['readonly']) && $f['readonly'])
             echo "readonly ";
-        if (isset($f['onchange']))
-            echo "onchange='{$f['onchange']}' ";
+        if (isset($f['form'] ['onchange']))
+            echo "onchange='{$f['form'] ['onchange']}' ";
         echo " />";
 
 
@@ -795,8 +795,8 @@ class FormList
             echo "title='{$f['form'] ['title']}' ";
         if (isset($f['readonly']) && $f['readonly'])
             echo "readonly ";
-        if (isset($f['onchange']))
-            echo "onchange='{$f['onchange']}' ";
+        if (isset($f['form'] ['onchange']))
+            echo "onchange='{$f['form'] ['onchange']}' ";
         echo " />";
 
 
@@ -884,8 +884,8 @@ class FormList
             echo "title='{$f['form'] ['title']}' ";
         if (isset($f['readonly']) && $f['readonly'])
             echo "readonly ";
-        if (isset($f['onchange']))
-            echo "onchange='{$f['onchange']}' ";
+        if (isset($f['form'] ['onchange']))
+            echo "onchange='{$f['form'] ['onchange']}' ";
         echo " />";
 
 
@@ -976,8 +976,8 @@ class FormList
             echo "title='{$f['form'] ['title']}' ";
         if (isset($f['readonly']) && $f['readonly'])
             echo "readonly ";
-        if (isset($f['onchange']))
-            echo "onchange='{$f['onchange']}' ";
+        if (isset($f['form'] ['onchange']))
+            echo "onchange='{$f['form'] ['onchange']}' ";
         echo " />";
 
 
@@ -1067,8 +1067,8 @@ class FormList
             echo "title='{$f['form'] ['title']}' ";
         if (isset($f['readonly']) && $f['readonly'])
             echo "readonly ";
-        if (isset($f['onchange']))
-            echo "onchange='{$f['onchange']}' ";
+        if (isset($f['form'] ['onchange']))
+            echo "onchange='{$f['form'] ['onchange']}' ";
         echo " />";
 
 
@@ -1158,8 +1158,8 @@ class FormList
             echo "title='{$f['form'] ['title']}' ";
         if (isset($f['readonly']) && $f['readonly'])
             echo "readonly ";
-        if (isset($f['onchange']))
-            echo "onchange='{$f['onchange']}' ";
+        if (isset($f['form'] ['onchange']))
+            echo "onchange='{$f['form'] ['onchange']}' ";
         echo " />";
 
 
