@@ -292,9 +292,6 @@ class FormList
         if (! isset ($this->config['fields']) )
             throw new Exception(__FILE__ . "[" . __LINE__ ."] No fields are sepcified in parameters" );
 
-        $this->var_error_log($_POST,"post");
-        
-        
         $fields = $this->config['fields'];
         foreach($fields as $name => $field)
         {
@@ -421,8 +418,6 @@ class FormList
 
         $fields = $this->config['fields'];
         $row = array();
-        
-        $this->var_error_log($fields['product_description'],"Field product_description");
 
         foreach($fields as $name => $field)
         {
@@ -542,7 +537,7 @@ class FormList
                 echo " />";
                 break;
             case "textarea":
-                echo "<textarea id='{$fid}'";
+                echo "<textarea id='{$fid}' name='{$fname}'";
                 if (isset($f['cols']))
                     echo " cols='{$f['cols']}' ";
                 if (isset($f['rows']))
