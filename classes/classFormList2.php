@@ -419,7 +419,7 @@ class FormList
         $fields = $this->config['fields'];
         $row = array();
         
-        $this->var_error_log($fields,"Fields to modify");
+        $this->var_error_log($fields['product_description'],"Field product_description");
 
         foreach($fields as $name => $field)
         {
