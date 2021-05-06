@@ -628,6 +628,17 @@ class FormList
                 {
                     echo "checked ";
                 }
+                else
+                {
+                    if (isset($f['form'] ['default']) && strlen($f['form'] ['default']) > 0)
+                    {
+                        $f['value'] = true;
+                        echo "checked ";
+                    }
+                }
+
+
+
                 if (isset($f['readonly']) && $f['readonly'])
                     echo "readonly ";
                 if (isset($f['form'] ['onchange']))
