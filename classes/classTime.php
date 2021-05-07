@@ -258,6 +258,57 @@ class classTimeHelpers
         "US" => "1",
         ];
 
+    private $tdllist =
+    [
+      //2D
+        //Australia
+        "com.au",
+        "net.au",
+        "org.au",
+        "gov.au",
+        "asn.au",
+        "id.au",
+        "csiro.au",
+
+        //New Zealand
+        "co.nz",
+        "govt.nz",
+        "net.nz",
+        "org.nz",
+        "ac.nz",
+        "school.nz",
+        "geek.nz",
+        "gen.nz",
+        "kiwi.nz",
+        "cri.nz",
+        "health.nz",
+        "iwi.nz",
+        "mil.nz",
+        "parliament.nz",
+
+    //1D
+
+        //Australia
+        "au",
+
+        //New Zealand
+        "nz",
+        "kiwi",
+
+        //World
+        "com",
+    ];
+
+    public function getTLD($strName)
+    {
+        foreach ($this->tdllist as $d)
+        {
+            if (strtoupper(substr($strName,-(strlen($d))) == strtoupper($d)) )
+                return $d;
+        }
+        return $strName;
+    }
+
     public static function timeFormat($Time,$strFormat,$strTimeZone = null)
     {
         $date = null;
