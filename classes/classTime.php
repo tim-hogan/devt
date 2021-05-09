@@ -319,7 +319,7 @@ class classTimeHelpers
     public static function getDNSNameIP($domain)
     {
         if (exec("dig +short {$domain} A",$out,$rslt) !== false)
-        if (strlen($out[0]) > 0)
+        if ($out && strlen($out[0]) > 0)
            return trim($out[0],".");
         return null;
     }
