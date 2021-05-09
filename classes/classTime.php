@@ -303,10 +303,25 @@ class classTimeHelpers
     {
         foreach ($this->tdllist as $d)
         {
-            if (strtoupper(substr($strName,-(strlen($d))) == strtoupper($d)) )
+            if (strtoupper(substr($strName,-(strlen($d)))) == strtoupper($d) )
                 return $d;
         }
         return $strName;
+    }
+
+    public static function getNameServers($domain)
+    {
+        if (exec("dig +short {$domain} NS",$out,$rslt) !== false)
+            return $out;
+        return null;
+    }
+
+    public static function getDNSNameIP($domain)
+    {
+        if (exec("dig +short {$domain} A",$out,$rslt) !== false)
+        if (strlen($out[0]) > 0)
+           return trim($out[0],".");
+        return null;
     }
 
     public static function timeFormat($Time,$strFormat,$strTimeZone = null)
