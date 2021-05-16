@@ -96,6 +96,10 @@ if  [[ -z $var ]] ; then
     echo "Variable is zero length"
 fi
 
+//test string length
+if [ $(#var) eq 10] ; then
+    echo "${var} string length is eql 10"
+fi
 #string is eql value
 if [ "$v" == "y" ] ; then
     echo "String is eql y"
