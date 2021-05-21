@@ -324,14 +324,14 @@ class FormList
                         $this->config['fields'] [$name] ["value"] = FormList::getCurrencyField($name . "_f",$trim,$symbol);
                         break;
                     case "percent":
-                        $this->config['fields'] [$name] ["value"] = FormList::getPercentField($name . "_f",$trim,$symbol);
+                        $this->config['fields'] [$name] ["value"] = FormList::getPercentField($name . "_f",$trim);
                         break;
                     case "date":
-                        $this->config['fields'] [$name] ["value"] = FormList::getDateField($name . "_f",$trim,$symbol);
+                        $this->config['fields'] [$name] ["value"] = FormList::getDateField($name . "_f",$trim);
                         error_log("Decoded date value from form is {$this->config['fields'] [$name] ["value"]}");
                         break;
                     case "datetime":
-                        $this->config['fields'] [$name] ["value"] = FormList::getDateTimeField($name . "_f",$trim,$symbol);
+                        $this->config['fields'] [$name] ["value"] = FormList::getDateTimeField($name . "_f",$trim);
                         error_log("Decoded date value from form is {$this->config['fields'] [$name] ["value"]}");
                         break;
                         break;
