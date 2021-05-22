@@ -146,7 +146,6 @@ class FormList
         if (isset($_POST[$f]))
         {
             $data = FormList::getField($f,$trimit);
-            error_log("POST DATA FOR DATE FIELD IS {$data} for timezone {$tz}");
             $date = new DateTime($data,new DateTimeZone($tz));
             $date->setTimezone(new DateTimeZone('UTC'));
             return $date->format('Y-m-d H:i:s');
@@ -165,7 +164,6 @@ class FormList
         if (isset($_POST[$f]))
         {
             $data = FormList::getField($f,$trimit);
-            error_log("POST DATA FOR DATETIME FIELD IS {$data} for timezone {$tz}");
             $date = new DateTime($data,new DateTimeZone($tz));
             $date->setTimezone(new DateTimeZone('UTC'));
             return $date->format('Y-m-d H:i:s');
@@ -328,11 +326,9 @@ class FormList
                         break;
                     case "date":
                         $this->config['fields'] [$name] ["value"] = FormList::getDateField($name . "_f",$trim);
-                        error_log("Decoded date value from form is {$this->config['fields'] [$name] ["value"]}");
                         break;
                     case "datetime":
                         $this->config['fields'] [$name] ["value"] = FormList::getDateTimeField($name . "_f",$trim);
-                        error_log("Decoded date value from form is {$this->config['fields'] [$name] ["value"]}");
                         break;
                     case "choice":
                         $this->config['fields'] [$name] ["value"] = FormList::getField($name . "_f",$trim);
@@ -424,7 +420,6 @@ class FormList
             {
                 if (isset($field['value']))
                 {
-                    error_log("Update field {$name} to {$field['value']}");
                     $row[$name] = $field['value'];
                 }
             }
