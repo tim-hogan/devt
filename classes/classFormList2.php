@@ -334,7 +334,6 @@ class FormList
                         $this->config['fields'] [$name] ["value"] = FormList::getDateTimeField($name . "_f",$trim);
                         error_log("Decoded date value from form is {$this->config['fields'] [$name] ["value"]}");
                         break;
-                        break;
                     case "choice":
                         $this->config['fields'] [$name] ["value"] = FormList::getField($name . "_f",$trim);
                         break;
