@@ -424,7 +424,10 @@ class FormList
             if (! isset($field['dbfield']) || (isset($field['dbfield']) && $field['dbfield']) )
             {
                 if (isset($field['value']))
+                {
+                    error_log("Update field {$name} to {$field['value']}");
                     $row[$name] = $field['value'];
+                }
             }
         }
         if ($id == -99)
