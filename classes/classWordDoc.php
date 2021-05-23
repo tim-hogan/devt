@@ -51,7 +51,7 @@ class WordDoc
     {
         $this->lasterror = 0;
         $this->_fileOpen = false;
-        $this->debug = false;
+        $this->_debug = false;
         $this->_templates = array();
         if ($working_dir)
         {
@@ -636,6 +636,10 @@ class WordDoc
             return null;
         }
         $this->lasterror = 0;
+
+        //Correct and text
+        $newtext2 = htmlspecialchars(htmlspecialchars_decode($newtext));
+
         $src = null;
         if (!$node)
             $src = $this->_body;
@@ -655,7 +659,7 @@ class WordDoc
                     {
                         if ($t->nodeValue == $serachtext)
                         {
-                            $t->nodeValue = $newtext;
+                            $t->nodeValue = $newtext2;
                             $this->deBug("WordDoc:replaceParagraphWithText New node value = {$t->nodeValue}");
                             return true;
                         }
@@ -703,6 +707,10 @@ class WordDoc
             return null;
         }
         $this->lasterror = 0;
+
+        //Correct and text
+        $newtext2 = htmlspecialchars(htmlspecialchars_decode($newtext));
+
         $src = null;
         if (!$node)
             $src = $this->_body;
@@ -719,9 +727,9 @@ class WordDoc
             {
                 $this->deBug("WordDoc:replaceText found searchtext = {$serachtext}");
                 $pos = strpos($txt,$serachtext);
-                $v =  substr($txt,0,$pos) .  $newtext . substr($txt,$pos+strlen($serachtext),strlen($txt)-($pos+strlen($serachtext)));
+                $v =  substr($txt,0,$pos) .  $newtext2 . substr($txt,$pos+strlen($serachtext),strlen($txt)-($pos+strlen($serachtext)));
                 $src->nodeValue = $v;
-                $this->deBug("WordDoc:replaceText replace searchtext with {$newtext}");
+                $this->deBug("WordDoc:replaceText replace searchtext with {$newtext2}");
                 return true;
             }
         }
@@ -734,7 +742,7 @@ class WordDoc
                 foreach ($l as $k)
                 {
                     $this->deBug("WordDoc:replaceText Recursive call with a node of name {$k->nodeName}");
-                    if ($this->replaceText($serachtext,$newtext,$k) )
+                    if ($this->replaceText($serachtext,$newtext2,$k) )
                         return true;
                 }
             }
@@ -783,10 +791,13 @@ class WordDoc
 
     public function newText($node,$text)
     {
+        //Correct and text
+        $newtext2 = htmlspecialchars(htmlspecialchars_decode($text));
+
         $e = $this->findFirstDownstreamElement("#text",$node);
         if ($e)
         {
-            $e->nodeValue = $text;
+            $e->nodeValue = $newtext2;
             return true;
         }
         return false;
@@ -812,12 +823,15 @@ class WordDoc
         //Newtext on its own creates new text for para
         if ($clonedfrom)
         {
+            //Correct and text
+            $newtext2 = htmlspecialchars(htmlspecialchars_decode($newtext));
+
             $p1 = $clonedfrom->cloneNode(true);
             if (strlen($replacetext) > 0)
-                $this->replaceText($replacetext,$newtext,$p1);
+                $this->replaceText($replacetext,$newtext2,$p1);
             else
-            if (strlen($newtext) > 0)
-                $this->newText($p1,$newtext);
+                if (strlen($newtext2) > 0)
+                    $this->newText($p1,$newtext2);
             $this->insertParagraphBefore($p1,$before);
             return $p1;
         }
