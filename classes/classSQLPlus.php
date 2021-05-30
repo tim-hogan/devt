@@ -701,6 +701,32 @@ class SQLPlus extends mysqli
         return true;
     }
 
+    //Fields
+    public function allFieldsFromTable($table)
+    {
+        $r = $this->query("select * from {$table} limit 1");
+        if ($r)
+            return $r->fetch_fields();
+        return null;
+    }
+
+    public function fieldLength($table,$field)
+    {
+        $r = $this->query("select * from {$table} limit 1");
+        try {
+            $fields = $r->fetch_fields();
+            foreach ($fields as $f)
+            {
+                if ($f->name == $field)
+                    return $f->length;
+            }
+        }
+        catch (Exception $e) {
+            return 0;
+        }
+        return 0;
+    }
+
 
     public function BeginTransaction()
     {
