@@ -217,5 +217,31 @@ class dns
         return ["status" => false, "error" => "Exception"];
 
     }
+
+    public function getSubdomains($domain)
+    {
+        $url = "https://{$this->_dnsServer}/api/v1/json/allsubdomains/{$domain}";
+
+        try
+        {
+            $r = $this->curl($url,"GET");
+        }
+
+        catch (Exception $e)
+        {
+            error_log("dns::getSubdomains [". __LINE__ . "] Exception thrown: {$e}");
+            return ["status" => false, "error" => "Exception: {$e->getMessage}"];
+        }
+
+        if (!$r)
+            return ["status" => false, "error" => "Invalid response from DNS server"];
+
+
+        if ($r['meta'] ['status'])
+            return ["status" => true, "error" => null, "subdomains" => $r['data'] ];
+
+        return ["status" => false, "error" => "Exception"];
+
+    }
 }
 ?>
