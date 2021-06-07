@@ -1308,10 +1308,15 @@ class FormList
                 if (isset($f['dropdownvalues']))
                 {
                     $drop_values = $f['dropdownvalues'];
+                    $ignoreDefault = false;
+                    if (isset($f['value']) )
+                        $ignoreDefault = true;
                     foreach ($drop_values as $dropv)
                     {
                         $selected="";
-                        if (isset($f['value']) && $f['value'] == $dropv['value'])
+                        if ($ignoreDefault && $f['value'] == $dropv['value'])
+                            $selected="selected";
+                        if (! $ignoreDefault && isset($dropv['default']) && $dropv['default'])
                             $selected="selected";
                         echo "<option value='{$dropv['value']}' {$selected}>{$dropv['text']}</option>";
                     }

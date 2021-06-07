@@ -42,7 +42,7 @@ $formparams = [
     ],
     "fields" => [
         "<field name>" => [
-            "type" => "text | boolean | integer | decimal | currency | percent | date | datetime | button | choice | fk | hidden",
+            "type" => "text | boolean | integer | decimal | currency | percent | date | datetime | button | choice | dropdown | fk | hidden",
             "fk_table" => "",
             "fk_index" => "",
             "fk_display" => "",
@@ -62,7 +62,7 @@ $formparams = [
             "dropdownvalues" => [
                 ["text" => "INDEFINITE", "value" => 0],
                 ["text" => "1 MONTH", "value" => 1],
-                ["text" => "2 MONTHS", "value" => 2],
+                ["text" => "2 MONTHS", "value" => 2, "default" => true],
                 ["text" => "3 MONTHS", "value" => 3],
                 ["text" => "6 MONTHS", "value" => 6],
                 ["text" => "1 YEAR", "value" => 12],
