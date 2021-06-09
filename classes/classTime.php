@@ -446,8 +446,7 @@ class classTimeHelpers
 
     public static function smartTimeDiff($dt)
     {
-        $dtNow = new DateTime('now');
-        $diff = $dtNow->getTimestamp() - $dt->getTimestamp();
+        $diff = abs((new DateTime('now'))->getTimestamp() - $dt->getTimestamp());
 
         if ($diff > (86400*2) )
             return floor($diff/86400) . " days";

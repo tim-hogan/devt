@@ -146,6 +146,54 @@ class dns
         return $rslt;
     }
 
+    public function editARecord($domain,$subdomain,$ttl,$ipaddress)
+    {
+        $rslt = array();
+        $params = array();
+        $params['type'] = "A";
+        $params['domain'] = $domain;
+        $params['name'] = $subdomain;
+        $params['ttl'] = $ttl;
+        $params['ipaddress'] = $ipaddress;
+
+        $url = "https://{$this->_dnsServer}/api/v1/json/edit";
+
+
+        try
+        {
+            $r = $this->curl($url,"POST",$params);
+        }
+
+        catch (Exception $e)
+        {
+            error_log("dns::editArecord [". __LINE__ . "] Exception thrown: {$e}");
+            $rslt['status'] = false;
+            $rslt['error'] = "dns::editArecord [__LINE__] Exception thrown: {$e}";
+            return $rslt;
+        }
+
+        if (!$r || !isset($r['meta']) || !isset($r['meta'] ['status']) )
+        {
+            error_log("dns::editArecord [". __LINE__ . "] Null rslt returned");
+            $rslt['status'] = false;
+            $rslt['error'] = "dns::editArecord [". __LINE__ . "] Null rslt returned";
+            return $rslt;
+
+        }
+
+        if ($r['meta'] ['status'])
+        {
+            $rslt['status'] = true;
+        }
+        else
+        {
+            $rslt['status'] = false;
+            $rslt['error'] = $r['meta'] ['errormsg'];
+        }
+
+        return $rslt;
+    }
+
     public function deleteARecord($domain,$subdomain)
     {
         $rslt = array();
