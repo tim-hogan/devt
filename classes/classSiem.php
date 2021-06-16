@@ -41,11 +41,12 @@ class siem
         return $result;
     }
 
-    function createEntry($type,$subtype,$severity,$source,$description="")
+    function createEntry($type,$subtype,$eventnum,$severity,$source,$description="")
     {
         $params = array();
         $params['type'] = $type;
         $params['subtype'] = $subtype;
+        $params['eventnum'] = intval($eventnum);
         $params['severity'] = $severity;
         $params['source'] = $source;
         $params['description'] = $description;
@@ -53,11 +54,23 @@ class siem
         return $this->curl("evant","POST",$params);
     }
 
-    function createSecurityEntry($subtype,$severity,$source,$description="")
+    function createSecurityEntry($subtype,$eventnum,$severity,$source,$description="")
     {
-        return $this->createEntry("security",$subtype,$severity,$source,$description);
+        return $this->createEntry("security",$subtype,$eventnum,$severity,$source,$description);
     }
 
 }
+
+
+//Categories
+//Severe
+define('SECURITY_RATE_SIGNIN',1001);
+//Major
+define('SECURITY_ATTEMPTS_USERNAME',2001);
+//Minor
+define('SECURITY_INVALID_USERNAME',3001);
+define('SECURITY_INVALID_PASSWORD',3002);
+//Information
+define('SECURITY_SIGNIN',4001);
 
 ?>
