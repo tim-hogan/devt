@@ -12,7 +12,7 @@ class siem
 
     private function curl($command,$type,$params=null)
     {
-        $url = "https://" . $this->_siemServer . "/apisiem.php/?r=" . $command;
+        $url = "https://" . $this->_siemServer . "/api/v1/json/" . $command;
 
         $method = strtoupper($type);
         $str = "";
@@ -51,7 +51,7 @@ class siem
         $params['source'] = $source;
         $params['description'] = $description;
 
-        return $this->curl("evant","POST",$params);
+        return $this->curl("event","POST",$params);
     }
 
     function createSecurityEntry($subtype,$eventnum,$severity,$source,$description="")
