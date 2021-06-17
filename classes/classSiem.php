@@ -12,7 +12,7 @@ class siem
 
     private function curl($command,$type,$params=null)
     {
-        $url = "https://" . $this->_siemServer . "/" . $command;
+        $url = "https://" . $this->_siemServer . "/apisiem.php/?r=" . $command;
 
         $method = strtoupper($type);
         $str = "";
