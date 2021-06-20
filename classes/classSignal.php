@@ -47,21 +47,25 @@ class Signal
     {
         if (! $this->_queue)
             $this->_queue = msg_get_queue($this->_port);
-        msg_send($this->_queue, 1, $data);
+        if ( msg_send($this->_queue, 1, $data) )
+            $this->trigger(1);
     }
 
     public function receive()
     {
         $data = null;
-        if (! $this->_queue)
-            $this->_queue = msg_get_queue($this->_port);
-        $stat = msg_stat_queue($this->_queue);
-        if ($stat['msg_qnum'] > 0)
+        while (true) 
         {
-            msg_receive($this->_queue, 1, $msgtype, 1024, $data);
-            return $data;
+            if (! $this->_queue)
+                $this->_queue = msg_get_queue($this->_port);
+            $stat = msg_stat_queue($this->_queue);
+            if ($stat['msg_qnum'] > 0)
+            {
+                msg_receive($this->_queue, 1, $msgtype, 1024, $data);
+                return $data;
+            }
+            $this->listen();
         }
-        return null;
     }
 }
 ?>
