@@ -41,7 +41,7 @@ class siem
         return $result;
     }
 
-    function createEntry($type,$subtype,$eventnum,$severity,$source,$description="")
+    public function createEntry($type,$subtype,$eventnum,$severity,$source,$description="")
     {
         $params = array();
         $params['type'] = $type;
@@ -54,9 +54,19 @@ class siem
         return $this->curl("event","POST",$params);
     }
 
-    function createSecurityEntry($subtype,$eventnum,$severity,$source,$description="")
+    public function createSecurityEntry($subtype,$eventnum,$severity,$source,$description="")
     {
         return $this->createEntry("security",$subtype,$eventnum,$severity,$source,$description);
+    }
+
+    public function createServerStatusEntry($server,$up,$utilisation)
+    {
+        $params = array();
+        $params['server'] = $server;
+        $params['up'] = $up;
+        $params['utilisation'] = $utilisation;
+
+        return $this->curl("serverstatus","POST",$params);
     }
 
 }
