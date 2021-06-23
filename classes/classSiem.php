@@ -59,12 +59,13 @@ class siem
         return $this->createEntry("security",$subtype,$eventnum,$severity,$source,$description);
     }
 
-    public function createServerStatusEntry($server,$up,$utilisation)
+    public function createServerStatusEntry($server,$up,$utilisations,$disks)
     {
         $params = array();
         $params['server'] = $server;
         $params['up'] = $up;
-        $params['utilisation'] = $utilisation;
+        $params['utilisations'] = $utilisations;
+        $params['disks'] = $disks;
 
         return $this->curl("serverstatus","POST",$params);
     }
