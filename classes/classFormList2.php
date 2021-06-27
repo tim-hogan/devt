@@ -1714,6 +1714,9 @@ class FormList
         echo "<button id='del{$table}' class='listDelete' disabled>DELETE</button>";
         echo "</div>";
 
+        echo "<div class='_list1'>";
+
+
         $n = $DB->rows_in_table($table,$where);
         if ($n == 0)
         {
@@ -1926,6 +1929,8 @@ class FormList
             }
             echo "</table>";
         }
+
+        echo "</div>";
 
         echo "</div>";
 
