@@ -364,6 +364,9 @@ class FormList
                     //title
                     if (isset($i['title']))
                         echo " title='".$i['title'] ."'";
+                    //onchange
+                    if (isset($i['onchange']))
+                        echo " onchange='{$i['onchange']}'";
                     if (isset($i['formvalue']))
                     {
                         $v = $i['formvalue'];
