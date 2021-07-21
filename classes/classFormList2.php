@@ -1957,6 +1957,28 @@ class FormList
         }
     }
 
+    static function buildAdditionalSelectEntry($entry)
+    {
+        $strText = '';
+        $strID = "";
+        if (isset($entry['name']) )
+        {
+            $strText = htmlspecialchars($entry['name']);
+            $strID = strtolower($entry['name']);
+        }
+
+        echo "<li id='seladd{$strID}' class='liselector' onclick='selectRight(this,\"{$strID}\")'>{$strText}</li>";
+    }
+
+    static function buildAllAdditionalSelectEntries($entries)
+    {
+        foreach ($entries as $t)
+        {
+            FormList::buildAdditionalSelectEntry($t);
+        }
+
+    }
+
     static public function buildPanel($DB,$data,$tablename,$formdata,$first=false)
     {
         echo "<div id='{$tablename}' class='rtEntity";
