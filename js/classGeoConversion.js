@@ -49,6 +49,120 @@ class geoConversion {
     static deg2rad = Math.PI / 180.0;
     static TWOPI = (2 * Math.PI);
 
+    static foot_point_lat(tm, m) {
+        var f = tm.f;
+        var a = tm.a;
+        var n;
+        var n2;
+        var n3;
+        var n4;
+        var g;
+        var sig;
+        var phio;
+
+        n = f / (2.0 - f);
+        n2 = n * n;
+        n3 = n2 * n;
+        n4 = n2 * n2;
+
+        g = a * (1.0 - n) * (1.0 - n2) * (1 + 9.0 * n2 / 4.0 + 225.0 * n4 / 64.0);
+        sig = m / g;
+
+        phio = sig + (3.0 * n / 2.0 - 27.0 * n3 / 32.0) * Math.sin(2.0 * sig)
+            + (21.0 * n2 / 16.0 - 55.0 * n4 / 32.0) * Math.sin(4.0 * sig)
+            + (151.0 * n3 / 96.0) * Math.sin(6.0 * sig)
+            + (1097.0 * n4 / 512.0) * Math.sin(8.0 * sig);
+
+        return phio;
+    }
+
+
+
+    static tm_geod(tm, ce, cn) {
+
+        var rslt = { lat: 0.0, lon: 0.0 };
+
+        var fn = tm.falsen;
+        var fe = tm.falsee;
+        var sf = tm.scalef;
+        var e2 = tm.e2;
+        var a = tm.a;
+        var cm = tm.meridian;
+        var om = tm.om;
+        var utom = tm.utom;
+        var cn1;
+        var fphi;
+        var slt;
+        var clt;
+        var eslt;
+        var eta;
+        var rho;
+        var psi;
+        var E;
+        var x;
+        var x2;
+        var t;
+        var t2;
+        var t4;
+        var trm1;
+        var trm2;
+        var trm3;
+        var trm4;
+
+        cn1 = (cn - fn) * utom / sf + om;
+        fphi = geoConversion.foot_point_lat(tm, cn1);
+        slt = Math.sin(fphi);
+        clt = Math.cos(fphi);
+
+        eslt = (1.0 - e2 * slt * slt);
+        eta = a / Math.sqrt(eslt);
+        rho = eta * (1.0 - e2) / eslt;
+        psi = eta / rho;
+
+        E = (ce - fe) * utom;
+        x = E / (eta * sf);
+        x2 = x * x;
+
+
+        t = slt / clt;
+        t2 = t * t;
+        t4 = t2 * t2;
+
+        trm1 = 1.0 / 2.0;
+
+        trm2 = ((-4.0 * psi
+            + 9.0 * (1 - t2)) * psi
+            + 12.0 * t2) / 24.0;
+
+        trm3 = ((((8.0 * (11.0 - 24.0 * t2) * psi
+            - 12.0 * (21.0 - 71.0 * t2)) * psi
+            + 15.0 * ((15.0 * t2 - 98.0) * t2 + 15)) * psi
+            + 180.0 * ((-3.0 * t2 + 5.0) * t2)) * psi + 360.0 * t4) / 720.0;
+
+        trm4 = (((1575.0 * t2 + 4095.0) * t2 + 3633.0) * t2 + 1385.0) / 40320.0;
+ 
+        rslt.lat = fphi + (t * x * E / (sf * rho)) * (((trm4 * x2 - trm3) * x2 + trm2) * x2 - trm1);
+
+        trm1 = 1.0;
+
+        trm2 = (psi + 2.0 * t2) / 6.0;
+
+        trm3 = (((-4.0 * (1.0 - 6.0 * t2) * psi
+            + (9.0 - 68.0 * t2)) * psi
+            + 72.0 * t2) * psi
+            + 24.0 * t4) / 120.0;
+
+        trm4 = (((720.0 * t2 + 1320.0) * t2 + 662.0) * t2 + 61.0) / 5040.0;
+ 
+        rslt.lon = cm - (x / clt) * (((trm4 * x2 - trm3) * x2 + trm2) * x2 - trm1);
+
+        rslt.lat = rslt.lat * geoConversion.rad2deg;
+        rslt.lon = rslt.lon * geoConversion.rad2deg;
+        return rslt;
+    }
+
+
+
     static geod_tm(tm, lt, ln) {
 
         var rslt = { e: 0.0, n: 0.0 };
@@ -125,9 +239,22 @@ class geoConversion {
         return geoConversion.geod_tm(tm, latdeg, londeg);
     }
 
+    static nztm_geod(e, n) {
+        let tm = new tmProjection(NZTM);
+        return geoConversion.tm_geod(tm, e, n);
+    }
+
+
+
+
     static test() {
+
+        console.log("Testin lat/lon -41.344071, 174.742869");
         let rslt = geoConversion.geod_nztm(-41.344071, 174.742869);
         console.log("Results = Easting " + rslt.e + "Northing " + rslt.n);
         console.log("Should be: 1745816.0	5421581.3");
+        console.log("Convert back");
+        rslt = geoConversion.nztm_geod(rslt.e, rslt.n);
+        console.log("Results = lat " + rslt.lat + "lon " + rslt.lon);
     }
 }
