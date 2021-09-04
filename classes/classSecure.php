@@ -349,6 +349,7 @@ class Secure
             {
                 error_log("Error in sec_decryptParamPart iv wrong length, backtrace follows");
                 Secure::var_error_log(debug_backtrace(),"backtrace");
+                return null;
             }
 
             $de =  openssl_decrypt($encrypted_data, 'aes-256-cbc', $encryption_key, 0, $iv);
