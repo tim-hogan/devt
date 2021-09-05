@@ -28,9 +28,18 @@ class classMail
 {
     private $_from;
     private $_template;
+    private $_api_key;
 
-    function __construct()
+    function __construct($apikey='')
     {
+        if (strlen($apikey) > 0)
+            $this->_api_key = $apikey;
+        else
+        {
+            $v = getenv('SENDGRID_API_KEY');
+            if ($v && strlen($v) > 0)
+                $this->_api_key = $v;
+        }
     }
 
     public function SendMail($to,$from,$subject,$message,$msseage_mime = null)
@@ -45,9 +54,9 @@ class classMail
         $email->setSubject($subject);
         $email->addContent($mime,$message);
 
-        $apikey = getenv('SENDGRID_API_KEY');
+        //$this->_api_key = getenv('SENDGRID_API_KEY');
 
-        $sendgrid = new \SendGrid($apikey);
+        $sendgrid = new \SendGrid($this->_api_key);
         try {
                 $response = $sendgrid->send($email);
                 if ($response->statusCode() == 202)
