@@ -560,4 +560,57 @@ class classTimeHelpers
     }
 
 }
+
+class DateMonth
+{
+    private $_start;
+    private $_end;
+
+    function __construct($year=0,$month=0)
+    {
+        $this->create($year=0,$month=0);
+    }
+
+    private function pad($v,$n)
+    {
+        return sprintf("%0{$n}d",$v);
+    }
+
+    private function create($year=0,$month=0)
+    {
+        if ($year >0 && $month > 0)
+        {
+            $m = $this->pad(intval($month),2);
+            $this->_start = new DateTime("{$year}-{$m}-01 00:00:00");
+        }
+        else
+        {
+            $this->_start = new DateTime((new DateTime())->format("Y-m-01 00:00:00"));
+        }
+        $this->_end = new DateTime($this->_start->format("Y-m-d H:i:s"));
+        $this->_end->add(new DateInterval("P1M"));
+        $this->_end->sub(new DateInterval("P1D"));
+        $this->_end = new DateTime($this->_end->format("Y-m-d 23:59:59"));
+
+    }
+
+    public function createLastMonth()
+    {
+        $dt = new DateTime();
+        $dt->sub(new DateInterval("P1M"));
+        $this->create($dt->format("Y"),$dt->format("m"));
+    }
+
+    public function Start()
+    {
+        return $this->_start->format("Y-m-d H:i:s");
+    }
+
+    public function End()
+    {
+        return $this->_end->format("Y-m-d H:i:s");
+    }
+}
+
+
 ?>
