@@ -1,4 +1,5 @@
 <?php
+use Componere\Value;
 //Version 2.0
 class SQLPlus extends mysqli
 {
@@ -298,6 +299,7 @@ class SQLPlus extends mysqli
 
     public function p_update_from_array($table,$a,$whereclause)
     {
+
         $bstart = true;
         $q = "update " . $table . " set ";
 
@@ -310,48 +312,59 @@ class SQLPlus extends mysqli
         {
             if (!is_numeric($keys[$idx]) )
             {
-                if (isset($a[$keys[$idx]]))
+
+                if (!$bstart)
+                    $q .= ",";
+
+                if (gettype($a[$keys[$idx]]) == 'boolean')
                 {
-                    if (!$bstart)
-                        $q .= ",";
-                    if (gettype($a[$keys[$idx]]) == 'boolean')
+                    $q .= $keys[$idx] . " = ";
+                    if ($a[$keys[$idx]])
+                        $q .= "true";
+                    else
+                        $q .= "false";
+                    $cnt++;
+                }
+                else
+                {
+                    $q .=  $keys[$idx] . " = ?";
+
+                    if (null === $a[$keys[$idx]])
                     {
-                        $q .= $keys[$idx] . " = ";
-                        if ($a[$keys[$idx]])
-                            $q .= "true";
-                        else
-                            $q .= "false";
+                        $val[$cnt] = null;
+                        $types .= "i";
+                        $cnt++;
                     }
                     else
-                        $q .=  $keys[$idx] . " = ?";
-                    switch (gettype($a[$keys[$idx]]))
                     {
-                        case "double":
-                            $types .= "d";
-                            $val[$cnt] = floatval($a[$keys[$idx]]);
-                            $cnt++;
-                            break;
-                        case "integer":
-                            $types .= "i";
-                            $val[$cnt] = intval($a[$keys[$idx]]);
-                            $cnt++;
-                            break;
-                        case "string":
-                            $types .= "s";
-                            $val[$cnt] = $this->real_escape_string($a[$keys[$idx]]);
-                            $cnt++;
-                            break;
-                        case "boolean":
-                            break;
-                        default:
-                            $types .= "s";
-                            $val[$cnt] = $this->real_escape_string($a[$keys[$idx]]);
-                            $cnt++;
-                            break;
+                        switch (gettype($a[$keys[$idx]]))
+                        {
+                            case "double":
+                                $types .= "d";
+                                $val[$cnt] = floatval($a[$keys[$idx]]);
+                                $cnt++;
+                                break;
+                            case "integer":
+                                $types .= "i";
+                                $val[$cnt] = intval($a[$keys[$idx]]);
+                                $cnt++;
+                                break;
+                            case "string":
+                                $types .= "s";
+                                $val[$cnt] = $this->real_escape_string($a[$keys[$idx]]);
+                                $cnt++;
+                                break;
+                            case "boolean":
+                                break;
+                            default:
+                                $types .= "s";
+                                $val[$cnt] = $this->real_escape_string($a[$keys[$idx]]);
+                                $cnt++;
+                                break;
+                        }
                     }
-
-                    $bstart = false;
                 }
+                $bstart = false;
             }
         }
 
