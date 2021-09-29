@@ -323,7 +323,6 @@ class SQLPlus extends mysqli
                         $q .= "true";
                     else
                         $q .= "false";
-                    $cnt++;
                 }
                 else
                 {
