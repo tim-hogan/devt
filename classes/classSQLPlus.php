@@ -3,6 +3,7 @@ use Componere\Value;
 //Version 2.0
 class SQLPlus extends mysqli
 {
+    private $_open = false;
     private $_sqlerr;
     private $_params;
     public $version = 1.0;
@@ -27,12 +28,21 @@ class SQLPlus extends mysqli
             else
                 $connected = true;
         }
-
+        $this->_open = true;
     }
 
     function __destruct()
     {
         $this->close();
+    }
+
+    public function close()
+    {
+        if ($this->_open)
+        {
+            parent::close();
+            $this->_open = false;
+        }
     }
 
     private function p_var_error_log( $object=null ,$additionaltext='')
