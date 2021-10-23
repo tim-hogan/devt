@@ -826,6 +826,27 @@ class WordDoc
         return null;
     }
 
+    public function insertMultiParaClonedFromBefore($clonedfrom,$before,$newtext='')
+    {
+        //This version looks for the lf character and splits to multiple.
+        //Replace text if set is the text to reaplcae with newtext.
+        //Newtext on its own creates new text for para
+        if ($clonedfrom)
+        {
+            $lines = explode("\n",$newtext);
+            foreach($lines as $line)
+            {
+                $p1 = $clonedfrom->cloneNode(true);
+                if (strlen($line) > 0)
+                    $this->newText($p1,$line);
+                else
+                    $this->newText($p1," ");
+                $this->insertParagraphBefore($p1,$before);
+            }
+        }
+        return null;
+    }
+
     /*******************************************************************
         Relationships
      */
