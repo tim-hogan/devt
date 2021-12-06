@@ -33,25 +33,26 @@ class TableRow
                             return new ParseText($this->_values[$name]);
                         else
                             return new ParseText("");
-                        break;
                     case "int";
                         if (isset($this->_values[$name]) && $this->_values[$name] !== null)
                             return intval($this->_values[$name]);
                         else
                             return null;
-                        break;
                     case "double";
                         if (isset($this->_values[$name]) && $this->_values[$name] !== null)
                             return floatval($this->_values[$name]);
                         else
                             return null;
-                        break;
                     case "boolean";
                         if (isset($this->_values[$name]) && $this->_values[$name] !== null)
                             return boolval($this->_values[$name]);
                         else
                             return null;
-                        break;
+                    case "datetime":
+                        if (isset($this->_values[$name]) && $this->_values[$name] !== null)
+                            return $this->_values[$name];
+                        else
+                            return null;
                     default:
                         if (isset($this->_values[$name]) && $this->_values[$name] !== null)
                             return $this->_values[$name];

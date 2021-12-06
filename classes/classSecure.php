@@ -422,18 +422,22 @@ class CookieJar
 
     public function encode($data,$seconds=3600)
     {
-        $v = urlencode($data);
-        $encoded = Secure::sec_encryptParam($data,base64_encode($this->_key));
+        $encoded = Secure::sec_encryptParam(urlencode($data),base64_encode($this->_key));
         $options['expires'] = time() + $seconds;
         $options['path'] = "/";
         $options['secure'] = true;
         $options['httponly'] = true;
         $options['samesite'] = "Strict";
 
+        Secure::var_error_log($options,"options");
+        Secure::var_error_log($encoded,"encoded");
+
+
         setcookie($this->_name, $encoded, $options);
 
     }
 
+    //This function is depricated
     public function deocde()
     {
         if (isset($_COOKIE[$this->_name]))
@@ -444,6 +448,18 @@ class CookieJar
             return $a;
         }
     }
+
+    public function decode()
+    {
+        if (isset($_COOKIE[$this->_name]))
+        {
+            $s = Secure::sec_decryptParamPart(urldecode($_COOKIE[$this->_name]),base64_encode($this->_key));
+            $a = array();
+            parse_str(urldecode($s),$a);
+            return $a;
+        }
+    }
+
 
 }
 
