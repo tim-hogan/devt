@@ -1,0 +1,84 @@
+#!/bin/bash
+START=0
+LINESPER=250
+DELAY=90
+WIDTH=0
+HEIGHT=0
+SCALE=1.0
+THREADS=4
+function usage()
+{
+	echo "Useage $0 -w <width> -h <height> -x <scale> [-s <start num>] [-l <lines per itteration>] [-d <delay minures>] [-t <threads>]"
+}
+
+while getopts ":d:h:l:s:t:w:x:" o; do
+    case "${o}" in
+	d)
+	    DELAY=${OPTARG}
+	    ;;
+	l)
+	    LINESPER=${OPTARG}
+	    ;;
+        s)
+            START=${OPTARG}
+	    ;;
+	h)
+	    HEIGHT=${OPTARG}
+	    ;;
+	t)
+	    THREADS=${OPTARG}
+            ;;
+	w)
+	    WIDTH=${OPTARG}
+	    ;;
+	x)
+	    SCALE=${OPTARG}
+	    ;;
+        *)
+            usage
+            exit 1
+            ;;
+    esac
+done
+
+if [ $WIDTH -eq 0 ]; then
+	echo "Width must be specified with -w"
+	exit 1
+fi
+
+if [ $HEIGHT -eq 0 ]; then
+	echo "Height must be specified with -h "
+	exit 1
+fi
+
+if [ $SCALE -eq 0.0 ]; then
+	echo "Scale cannot be zero use -x "
+	exit 1
+fi
+
+echo "Render for width ${WIDTH} , height ${HEIGHT} scale ${SCALE}"
+
+ITTERATIONS=$(( HEIGHT / LINESPER  ))
+E=$(( ITTERATIONS - 1 ))
+for i in $(seq $START $E)
+do
+LINESTART=$((LINESPER*i))
+LINEEND=$(( (LINESPER*(i+1))-1 ))
+echo "Render for Smoothe${i}.bmp ${LINESTART}:${LINEEND}"
+./Render.php -f scene.json -o Smoothe${i}.bmp -p [-500,0,0] -w ${WIDTH} -h ${HEIGHT} -s ${SCALE} -l ${LINESTART}:${LINEEND} -m &
+if [ $(( i % THREADS )) -eq $(( THREADS - 1 )) ]; then
+	echo "Sleep ${DELAY}m"
+	sleep ${DELAY}m
+fi
+done
+
+NEXT = $(( START + 1))
+./BitmapUtil.php merge Smoothe${START}.bmp Smoothe${NEXT}.bmp
+
+NEXT=$(( START + 2 ))
+
+for i in $(seq $NEXT $E)
+do
+	./BitmapUtil.php merge Full.bmp Smoothe${i}.bmp
+done
+
