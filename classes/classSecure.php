@@ -160,7 +160,6 @@ class Secure
     static public function SigninAndRedirect()
     {
         $_SESSION['SinginRedirect'] = basename($_SERVER["REQUEST_URI"]);
-        //$_SESSION['SinginRedirect'] = urlencode($_SERVER["REQUEST_URI"]);
         header('Location: Signin.php');
     }
 
@@ -196,7 +195,10 @@ class Secure
         if (!Secure::isHTTPS())
             exit();
         if (!Secure::isSignedIn())
+        {
             Secure::SigninAndRedirect();
+            exit();
+        }
         if (!Secure::CheckSecurity($seclevel))
         {
             header("Location: {$error_page}");
