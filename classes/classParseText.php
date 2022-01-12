@@ -28,6 +28,13 @@ class ParseText
             return 0;
     }
 
+    public function empty()
+    {
+        if ($this->text && strlen($this->text) > 0)
+            return true;
+        return false;
+    }
+
     public function raw()
     {
         return $this->text;
