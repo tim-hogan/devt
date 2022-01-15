@@ -31,8 +31,8 @@ class ParseText
     public function empty()
     {
         if ($this->text && strlen($this->text) > 0)
-            return true;
-        return false;
+            return false;
+        return true;
     }
 
     public function raw()
