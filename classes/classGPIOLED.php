@@ -64,7 +64,6 @@ class Led implements LedInterface
      */
     public function __destruct()
     {
-        $this->async_stop();
     }
 
     public function exportPins()
@@ -166,10 +165,10 @@ class Led implements LedInterface
     {
         switch ($this->_type)
         {
-            case LED_TYPE_SINGLE:
+            case LedInterface::LED_TYPE_SINGLE:
                 $this->singleled(true);
                 break;
-            case LED_TYPE_TRICOLOUR:
+            case LedInterface::LED_TYPE_TRICOLOUR:
                 $this->multiled($colour,true);
                 break;
         }
@@ -179,10 +178,10 @@ class Led implements LedInterface
     {
         switch ($this->_type)
         {
-            case LED_TYPE_SINGLE:
+            case LedInterface::LED_TYPE_SINGLE:
                 $this->singleled(true);
                 break;
-            case LED_TYPE_TRICOLOUR:
+            case LedInterface::LED_TYPE_TRICOLOUR:
                 $this->singleled(false);
                 break;
         }
