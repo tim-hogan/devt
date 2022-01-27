@@ -1,6 +1,7 @@
 <?php
 namespace devt\GPIOLed;
 use  devt\GPIO\GPIO;
+use  devt\GPIO\GPIO\getOutputPin;
 use  devt\GPIO\PinInterface;
 
 require dirname(__FILE__) . "/classGPIO.php";
@@ -179,10 +180,10 @@ class Led implements LedInterface
         switch ($this->_type)
         {
             case LedInterface::LED_TYPE_SINGLE:
-                $this->singleled(true);
+                $this->singleled(false);
                 break;
             case LedInterface::LED_TYPE_TRICOLOUR:
-                $this->singleled(false);
+                $this->multiled(null,false);
                 break;
         }
     }
