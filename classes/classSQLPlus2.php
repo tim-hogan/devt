@@ -82,6 +82,7 @@ class SQLPlus extends mysqli
     private $_sqlerr;
     private $_params;
     public $version = 1.0;
+    public $lasterrno = 0;
 
     function __construct($params)
     {
@@ -132,7 +133,7 @@ class SQLPlus extends mysqli
     protected function sqlError($q)
     {
         $this->_sqlerr = true;
-        error_log("SQL Error in class SQLPlus: " . $this->error .  " Q: " . $q);
+        error_log("SQL Error in class SQLPlus: " . $this->error .  " [{$this->errno}] " . "Q: " . $q);
     }
 
     protected function sqlPrepareError($q)
@@ -235,6 +236,7 @@ class SQLPlus extends mysqli
 
     public function p_create($q,$types,...$params)
     {
+        $this->lasterrno = 0;
         if($s = $this->prepare($q))
         {
             $rslt = true;
@@ -244,6 +246,7 @@ class SQLPlus extends mysqli
             {
                 if (!$s->execute() )
                 {
+                    $this->lasterrno = $this->errno;
                     $this->sqlError($q);
                     return null;
                 }
