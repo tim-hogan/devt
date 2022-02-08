@@ -5,6 +5,9 @@ require dirname(__FILE__) . "/includes/classGPIOLED.php";
 use devt\GPIOLed\Led;
 use devt\GPIOLed\LedInterface;
 
+//This is a deamon so set no time limit
+set_time_limit(0);
+
 $address = "127.0.0.1";
 $port = 2207;
 $iaction = 0;
@@ -111,7 +114,7 @@ while (true)
             $continue = $duration_seconds > 0 ? ($atime-$start_time) < $duration_seconds : true;
             if ($continue)
             {
-                
+
                 $wait_time = $mod ? $waitime_on : $waitime_off;
                 if (($atime - $last_action) > $wait_time)
                 {
