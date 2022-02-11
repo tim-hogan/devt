@@ -2,10 +2,12 @@
 class option
 {
     private $_o;
+    private $_variables;
 
     function __construct()
     {
         $this->_o = 0;
+        $this->_variables = array();
     }
 
     public function set(int $what)
@@ -25,7 +27,7 @@ class option
 
     public function setstate(int $what,bool $state)
     {
-        if ($state)   
+        if ($state)
             $this->set($what);
         else
             $this->reset($what);
@@ -34,6 +36,17 @@ class option
     public function same(int $what,bool $value)
     {
         return boolval(($this->isset($what) == $value));
+    }
+
+    public function __get(string $name)
+    {
+        if(isset($this->_variables[$name]) )
+            return $this->_variables[$name];
+    }
+
+    public function __set(string $name,$to)
+    {
+        $this->_variables[$name] = $to;
     }
 }
 ?>
