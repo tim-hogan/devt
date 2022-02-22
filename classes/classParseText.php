@@ -35,6 +35,12 @@ class ParseText
         return true;
     }
 
+    public function setMaxLength($l)
+    {
+        if ($this->length() > $l)
+            $this->text = substr($this->text,$l);
+    }
+
     public function raw()
     {
         return $this->text;
