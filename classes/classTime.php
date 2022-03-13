@@ -444,6 +444,24 @@ class classTimeHelpers
        }
     }
 
+    public static function smartDay($strTime,$strTimeZone=null)
+    {
+       if ($strTimeZone==null || strlen($strTimeZone)==0)
+            $strTimeZone = 'UTC';
+
+       $dt = new DateTime('now');
+       $dt->setTimezone(new DateTimeZone($strTimeZone));
+
+       if (classTimeHelpers::timeFormat($strTime,'Y-m-d',$strTimeZone) == $dt->format('Y-m-d'))
+       {
+            return "Today";
+       }
+       else
+       {
+           return classTimeHelpers::timeFormat($strTime,'D jS M Y',$strTimeZone);
+       }
+    }
+
     public static function smartTimeDiff($dt)
     {
         $diff = abs((new DateTime('now'))->getTimestamp() - $dt->getTimestamp());
