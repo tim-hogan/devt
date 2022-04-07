@@ -129,6 +129,14 @@ class Secure
         return bin2hex(openssl_random_pseudo_bytes(32));
     }
 
+    public function createHashAndSalt($pw)
+    {
+        $ret = array();
+        $ret["salt"] = self::createSalt();
+        $ret['hash'] = $this->passwordHash($pw,$ret["salt"]);
+        return $ret;
+    }
+
     public function createsecondfactor($length,$salt)
     {
         $val = '';
