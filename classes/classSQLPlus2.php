@@ -49,6 +49,7 @@ class TableRow
                         else
                             return null;
                     case "datetime":
+                    case "date":
                         if (isset($this->_values[$name]) && $this->_values[$name] !== null)
                             return $this->_values[$name];
                         else
