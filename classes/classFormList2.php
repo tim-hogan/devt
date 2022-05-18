@@ -10,7 +10,7 @@ class FormList
             $this->config = $params;
     }
 
-    private function var_error_log( $object=null,$text='')
+    static public function var_error_log( $object=null,$text='')
     {
         ob_start();
         var_dump( $object );
@@ -1498,7 +1498,9 @@ class FormList
 
         $global = $this->config['global'];
         $table = $global['table'];
-        $pk = $global['primary_key'];
+        $pk = null;
+        if (isset($global['primary_key']))
+            $pk = $global['primary_key'];
         $rec = $DB->getFromTable($table,$pk,$recid);
 
         $fields = $this->config['fields'];
@@ -1712,6 +1714,17 @@ class FormList
         $v = FormList::encryptParam("table={$table}&action=create");
         echo "<form method='GET' action='{$selff}'><input type='hidden' name='v' value='{$v}'/><button>CREATE</button></form>";
         echo "<button id='del{$table}' class='listDelete' disabled>DELETE</button>";
+
+        //Any additional actions
+        if (isset($list['additional_actions']))
+        {
+            foreach($list["additional_actions"] as $action)
+            {
+                if (isset($action["title"]) && isset($action["href"]) )
+                    echo "<button type='button' onclick='window.location=\"{$action["href"]}\"'>{$action["title"]}</button>";
+            }
+        }
+
         echo "</div>";
 
         echo "<div class='_list1'>";
@@ -2040,6 +2053,72 @@ class FormList
             FormList::buildForm($DB,$data,$t,$formdata,$pageData);
         }
 
+    }
+
+    static public function handleGet(&$pageData)
+    {
+        if (isset($_GET['v']))
+        {
+            $a = self::decryptParamRaw($_GET['v']);
+
+            if (isset($a['action']))
+            {
+                switch ($a['action'])
+                {
+                    case "create":
+                        $pageData ['select'] = $a['table'];
+                        $pageData ['form'] ['display'] = true;
+                        $pageData ['form'] ['mode'] = "create";
+                        break;
+                    case "edit":
+                        $pageData ['select'] = $a['table'];
+                        $pageData ['form'] ['display'] = true;
+                        $pageData ['form'] ['mode'] = "edit";
+                        if (isset($a['onerec']))
+                            $pageData ['form'] ['recid'] = -99;
+                        else
+                            $pageData ['form'] ['recid'] = $a['id'];
+                        break;
+                    case "actionit":
+                        if (function_exists($a['call']) )
+                        {
+                            $callwho = $a['call'];
+                            $callwho($a['table'],$a['id']);
+                        }
+                        break;
+                }
+            }
+        }
+    }
+
+    static public function handlePost($DB,$formdata,&$pageData)
+    {
+        if (isset($_POST['v']))
+        {
+            $a = FormList::decryptParamRaw($_POST['v']);
+            if (isset($a['table']) && isset($a['action']))
+            {
+                $FL = new FormList($formdata[$a['table']]);
+                $valid = $FL->getFormInputFields();
+                if (!$valid)
+                {
+                    $e = $FL->fieldsWithError();
+                    error_log("Form entry had errors dump of error array follows:");
+                    FormList::var_error_log($e,"Form errors");
+                }
+                if ($valid && $a['action'] == 'change')
+                {
+                    $FL->ModifyRecord($DB,$a['recid']);
+                    $pageData ['form'] ['display'] = false;
+                }
+                if ($valid && $a['action'] == 'create')
+                {
+                    $FL->AddRecord($DB);
+                    $pageData ['form'] ['display'] = false;
+                }
+                $pageData ['select'] = $a['table'];
+            }
+        }
     }
 
     static public function encryptParam($v)

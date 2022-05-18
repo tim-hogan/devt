@@ -1,4 +1,5 @@
 <?php
+use Vtiful\Kernel\Format;
 //Version 3.0
 require_once dirname(__FILE__) . '/classParseText.php';
 
@@ -77,9 +78,229 @@ class TableRow
     }
 }
 
+class UndoAction
+{
+    private $_action;
+
+    function __construct($action,$table=null,$field=null,$value=null)
+    {
+        if (gettype($action) == "array")
+            $this->_action = $action;
+        else
+            $this->_action = ["a" => $action, "t" => $table, "f" => $field, "v" => $value];
+    }
+
+    private function getValueType($v)
+    {
+        $b = null;
+        switch (gettype($v))
+        {
+            case "boolean":
+            case "integer":
+                $b = "i";
+                break;
+            case "string":
+                $b = "s";
+                break;
+            case "double":
+                $b = "d";
+                break;
+            case "default":
+                $b = "s";
+        }
+        return $b;
+    }
+
+    public function apply($DB)
+    {
+        $b = null;
+        $b = $this->getValueType($this->_action["v"]);
+        switch (strtolower($this->_action["a"]))
+        {
+            case "delete":
+                $v = $this->_action['v'];
+                return $DB->p_delete("delete from {$this->_action['t']} where {$this->_action['f']} = ?",$b,$v);
+                break;
+        }
+    }
+
+    public function dump()
+    {
+        $ret = "";
+        $b = $this->getValueType($this->_action["v"]);
+        switch (strtolower($this->_action["a"]))
+        {
+            case "delete":
+                $ret = "delete from {$this->_action["t"]} where {$this->_action["f"]} = ";
+                if ($b == "s")
+                    $ret .= "\"{$this->_action['v']}\"\n";
+                else
+                    $ret .= "{$this->_action['v']}\n";
+                break;
+            default:
+                break;
+        }
+        return $ret;
+    }
+
+    public function serialise()
+    {
+        return $this->_action;
+    }
+}
+
+class Undo
+{
+    private $_title;
+    private $_timestamp;
+    private $_actions;
+
+    function __construct($title,UndoAction $action = null)
+    {
+        $this->_title = $title;
+        $this->_timestamp = new DateTime();
+        $this->_actions = array();
+        if ($action)
+            $this->_actions[] = $action;
+    }
+
+    function add(UndoAction $action )
+    {
+        $this->_actions[] = $action;
+    }
+
+    public function undo($DB)
+    {
+        $DB->BeginTransaction();
+        $cnt = count($this->_actions);
+        for ($i = 0; $i < $cnt; $i++ )
+            (array_pop($this->_actions))->apply($DB);
+        return $DB->EndTransaction();
+    }
+
+    public function timestamp()
+    {
+        return $this->_timestamp;
+    }
+
+    public function title()
+    {
+        return $this->_title;
+    }
+
+    public function setTimestamp($ts)
+    {
+        $this->_timestamp = new DateTime();
+        $this->_timestamp->setTimestamp($ts);
+    }
+
+    public function dump()
+    {
+        $ret = "Undo dump for {$this->_title}\n";
+        $ret .= " [{$this->_timestamp->format('Y-m-d H:i:s')}\n";
+        for ($i = 0; $i < count($this->_actions); $i++ )
+        {
+            $ret .= (array_pop($this->_actions))->dump();
+        }
+        return $ret;
+    }
+
+    static public function fromArray($a)
+    {
+        $undo = new Undo($a["title"]);
+        $undo->setTimestamp($a["ts"]);
+        foreach($a["actions"] as $u)
+            $undo->add(new UndoAction($u));
+        return $undo;
+    }
+
+    public function serialise()
+    {
+        $s = array();
+        $s["title"] = $this->_title;
+        $s["ts"] = $this->_timestamp->getTimestamp();
+        $actions = array();
+        foreach($this->_actions as $a)
+        {
+            $actions[] = $a->serialise();
+        }
+        $s["actions"] = $actions;
+        return $s;
+    }
+}
+
+class UndoList
+{
+    private $_list = array();
+
+    function __construct($strJSON = null)
+    {
+        if ($strJSON)
+        {
+            $list = json_decode($strJSON,true);
+            foreach($list as $l)
+                $this->push(Undo::fromArray($l));
+        }
+    }
+
+    public function push(Undo $undo)
+    {
+        $this->_list[] = $undo;
+    }
+
+    public function pop()
+    {
+        return array_pop($this->_list);
+    }
+
+    public function removeOldTime($seconds)
+    {
+        //Removes for list those itmes that were created more than $seconds earlier
+        $tsNow = (new DateTime())->getTimestamp();
+        for($i = 0; $i < count($this->_list);$i++)
+        {
+            if ( $tsNow - ($this->_list[$i]->timestamp())->getTimestamp() > $seconds)
+                array_splice($this->_list, $i, 1);
+        }
+    }
+
+    public function removeOldCount($count)
+    {
+        //Removes from list older items so the count is less or equal to count
+        while (count($this->_list) > $count)
+            array_pop($this->_list);
+    }
+
+    public function count()
+    {
+        return count($this->_list);
+    }
+
+    public function titles()
+    {
+        //These need to be in reveres order as it is a stack
+        $ret = array();
+        for ($i = count($this->_list)-1; $i >= 0; $i--)
+        {
+            $ret[] = $this->_list[$i]->title();
+        }
+        return $ret;
+    }
+
+    public function toJSON()
+    {
+        $a = array();
+        foreach($this->_list as $l)
+            $a[] = $l->serialise();
+        return json_encode($a);
+    }
+
+}
+
 class SQLPlus extends mysqli
 {
     private $_open = false;
+    private $_inTransaction = false;
     private $_sqlerr;
     private $_params;
     public $version = 1.0;
@@ -134,7 +355,11 @@ class SQLPlus extends mysqli
     protected function sqlError($q)
     {
         $this->_sqlerr = true;
-        error_log("SQL Error in class SQLPlus: " . $this->error .  " [{$this->errno}] " . "Q: " . $q);
+        $strBacktrace = "";
+        $backtrace = debug_backtrace();
+        foreach($backtrace as $b)
+            $strBacktrace .= "{$b['function']} [{$b["line"]}] {$b["file"]};";
+        error_log("SQL Error in class SQLPlus: " . $this->error .  " [{$this->errno}] " . "Q: " . $q . " BACKTRACE: " . $strBacktrace);
     }
 
     protected function sqlPrepareError($q)
@@ -168,7 +393,7 @@ class SQLPlus extends mysqli
             {
                 $s->execute();
                 $r = $s->get_result();
-                if (!$r) {$this->sqlError($q); return null;}
+                if (!$r) {$this->sqlError($q);return null;}
                 return $r;
             }
             else
@@ -380,7 +605,7 @@ class SQLPlus extends mysqli
         if ($key && strlen($key) > 0)
             return $this->p_singlequery("select * from {$table} where {$key} = ?","i",$id);
         else
-            return $this->singlequery("select * from {$table}");
+            return $this->p_singlequery("select * from {$table}",null,null);
     }
 
     public function deleteFromTable($table,$key,$id)
@@ -531,6 +756,7 @@ class SQLPlus extends mysqli
         if (!$s = $this->prepare($q))
         {
             error_log("classSQLPlus ERROR in p_update_from_array Prepare error Q: {$q}");
+            $this->sqlPrepareError($q);
             return false;
         }
 
@@ -745,8 +971,12 @@ class SQLPlus extends mysqli
 
     public function BeginTransaction()
     {
-        $this->_sqlerr = false;
-        $this->autocommit(false);
+        if (! $this->_inTransaction)
+        {
+            $this->_inTransaction = true;
+            $this->_sqlerr = false;
+            $this->autocommit(false);
+        }
     }
 
     public function TransactionError()
@@ -756,13 +986,19 @@ class SQLPlus extends mysqli
 
     public function EndTransaction()
     {
-        if (!$this->_sqlerr)
-            $this->commit();
-        else
-            $this->rollback();
+        if ($this->_inTransaction)
+        {
+            $err = $this->_sqlerr;
+            if (!$err)
+                $this->commit();
+            else
+                $this->rollback();
 
-        $this->autocommit(true);
-        $this->_sqlerr = false;
+            $this->autocommit(true);
+            $this->_sqlerr = false;
+            return $err ? false : true;
+        }
+        return false;
     }
 
     public function isTransactionError()

@@ -433,15 +433,14 @@ class CookieJar
     public function encode($data,$seconds=3600)
     {
         $encoded = Secure::sec_encryptParam(urlencode($data),base64_encode($this->_key));
-        $options['expires'] = time() + $seconds;
+        if ($seconds == 0)
+            $options['expires'] = 0;
+        else
+            $options['expires'] = time() + $seconds;
         $options['path'] = "/";
         $options['secure'] = true;
         $options['httponly'] = true;
         $options['samesite'] = "Strict";
-
-        Secure::var_error_log($options,"options");
-        Secure::var_error_log($encoded,"encoded");
-
 
         setcookie($this->_name, $encoded, $options);
 
@@ -468,9 +467,193 @@ class CookieJar
             parse_str(urldecode($s),$a);
             return $a;
         }
+        return null;
     }
 
+    public function delete()
+    {
+        $options['expires'] = time() - 300;
+        $options['path'] = "/";
+        $options['secure'] = true;
+        $options['httponly'] = true;
+        $options['samesite'] = "Strict";
 
+        setcookie($this->_name, $encoded, $options);
+    }
 }
 
+class Session
+{
+    private $_id;
+    private $_cookie;
+    private $_data;
+    private $_callbackclass;
+    private $_getter;
+    private $_setter;
+    private $_persistant;
+
+    /**
+     * Summary of __construct
+     * @param class $callbackclass
+     * @param string $getter
+     * @param string $setter
+     * @param boolean $persistant
+     * Create a session.  The call backs are used to get and session the data.
+     * If persistant is set then the cookie used to target the session wil pbe persistant for 1 year.
+     */
+    function __construct($callbackclass,$getter,$setter,$persistant=false)
+    {
+        $this->_id = null;
+        $this->_data = null;
+        $this->_callbackclass = $callbackclass;
+        $this->_getter = $getter;
+        $this->_setter = $setter;
+        $this->_persistant = $persistant;
+
+        $this->_cookie = new CookieJar("DEVTSE");
+        if ($cookie = $this->_cookie->decode())
+        {
+            if (isset($cookie['u']))
+            {
+                $this->_id = $cookie['u'];
+            }
+            if (isset($cookie['p']) && intval($cookie['p']) == 1)
+                $this->_persistant = true;
+        }
+        if ($this->_id)
+        {
+            if ($this->_callbackclass)
+            {
+                $this->_data = call_user_func(array($this->_callbackclass, $this->_getter),$this->_id);
+            }
+            else
+            {
+                $this->_data = $this->_getter($this->_id);
+            }
+
+        }
+    }
+
+    function __destruct()
+    {
+        $this->save();
+    }
+
+    public function isAvailable()
+    {
+        return ($this->_id) ? true : false;
+    }
+
+    public function Id()
+    {
+        return $this->_id;
+    }
+
+    public function setPersistent($v=true)
+    {
+        $this->_persistant = boolval($v);
+        $seconds = 0;
+        if ($this->_persistant)
+            $seconds = (3600*24*366);
+        $strP = ($this->_persistant) ? "1" : "0";
+        if ($this->_id)
+            $this->_cookie->encode("u={$this->_id}&p={$strP}",$seconds);
+    }
+
+    public function create($id)
+    {
+        $seconds = 0;
+        if ($this->_persistant)
+            $seconds = (3600*24*366);
+        if (! $this->_id || $this->_id != $id)
+        {
+            $this->_id = $id;
+            $strP = ($this->_persistant) ? "1" : "0";
+            $this->_cookie->encode("u={$id}&p={$strP}",$seconds);
+            if ($this->_callbackclass)
+            {
+                $this->_data = call_user_func(array($this->_callbackclass, $this->_getter),$this->_id);
+            }
+            else
+            {
+                $this->_data = $this->_getter($this->_id);
+            }
+
+        }
+    }
+
+    public function unsetAll()
+    {
+        $this->_data = null;
+    }
+
+    public function save()
+    {
+        if ($this->_id)
+        {
+            if ($this->_callbackclass)
+            {
+                call_user_func(array($this->_callbackclass, $this->_setter),$this->_id,$this->_data);
+            }
+            else
+            {
+                $this->_setter($this->_id,$this->_data);
+            }
+        }
+    }
+
+    public function delete()
+    {
+        $this->_data = null;
+        $this->save();
+        $this->_cookie->delete();
+    }
+
+    public function createNewCSRF()
+    {
+        $this->csrf_key = base64_encode(openssl_random_pseudo_bytes(32));
+        $_SESSION["csrf_key"] = $this->csrf_key;
+    }
+
+    public function checkCSRF()
+    {
+        if ($this->csrf_key)
+        {
+            if (isset($_POST["formtoken"]))
+                return $_POST["formtoken"] == $this->csrf_key;
+            if (isset($_GET["formtoken"]))
+                return $_GET["formtoken"] == $this->csrf_key;
+        }
+        return false;
+    }
+
+    public function push($stackname,$value)
+    {
+        if (isset($this->_data[$stackname]))
+            $this->_data[$stackname] = array();
+        $this->_data[$stackname] [] = $value;
+    }
+
+    public function pop($stackname)
+    {
+        if (isset($this->_data[$stackname]))
+        {
+            if (count($this->_data[$stackname]) > 0)
+                return array_pop($this->_data[$stackname]);
+        }
+        return null;
+    }
+
+    public function __set($name,$value)
+    {
+        $this->_data[$name] = $value;
+    }
+
+    public function __get($name)
+    {
+        if (isset($this->_data[$name]))
+            return $this->_data[$name];
+        return null;
+    }
+}
 ?>
