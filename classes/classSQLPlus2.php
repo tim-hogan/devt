@@ -78,6 +78,223 @@ class TableRow
     }
 }
 
+
+class LinkList extends TableRow
+{
+    private $_DB;
+    private $_table;
+    private $_listnum;
+    private $_objectname;
+
+    function __construct($DB,$listnum,$table=null,$object=null)
+    {
+        $this->_DB = $DB;
+        $this->_listnum = $listnum;
+        $this->_table = $table;
+        $this->_objectname = $object;
+
+        parent::__construct(
+            [
+            "id" => ["type" => "int"],
+            "list" => ["type" => "int"],
+            "prev" => ["type" => "int"],
+            "next" => ["type" => "int"],
+            "object" => ["type" => "int"]
+            ]
+            );
+
+    }
+
+    public function copy($o)
+    {
+        foreach (get_object_vars($o) as $key => $name)
+            $this->$key = $name;
+    }
+
+    public function castAs($newClass) {
+        $obj = new $newClass;
+        foreach (get_object_vars($this) as $key => $name) {
+            $obj->$key = $name;
+        }
+        return $obj;
+    }
+
+    public function getLink($id)
+    {
+        $r = $this->_DB->p_query("select * from {$this->_table} where list = ? and id = ?","ii",$this->_listnum,$id);
+        if ($r)
+            return $r->fetch_object(get_class($this),[$this->_DB,$this->_listnum]);
+    }
+
+    public function getObject()
+    {
+        if ($this->object > 0)
+        {
+            return $this->_DB->o_singlequery("{$this->_objectname}","select * from {$this->_objectname} where id{$this->_objectname} = ?","i",$this->object);
+        }
+        return null;
+    }
+    public function getHead()
+    {
+        $r = $this->_DB->p_query("select * from {$this->_table} where list = ? and prev is null","i",$this->_listnum);
+        if ($r)
+        {
+            $v = $r->fetch_object(get_class($this),[$this->_DB,$this->_listnum]);
+            $this->copy($v);
+            return $v;
+        }
+    }
+
+    public function getHeadObject()
+    {
+        $v = $this->getHead();
+        if ($v)
+            return $v->getObject();
+        return null;
+    }
+
+    public function getTail()
+    {
+        $r = $this->_DB->p_query("select * from {$this->_table} where list = ? and next is null","i",$this->_listnum);
+        if ($r)
+        {
+            $v = $r->fetch_object(get_class($this),[$this->_DB,$this->_listnum]);
+            $this->copy($v);
+            return $v;
+        }
+    }
+
+    public function getTailObject()
+    {
+        $v = $this->getTail();
+        if ($v)
+            return $v->getObject();
+        return null;
+    }
+
+    public function getNext()
+    {
+        if ($this->next)
+        {
+            $v = $this->getLink($this->next);
+            $this->copy($v);
+            return $v;
+        }
+        return null;
+    }
+
+    public function getNextObject()
+    {
+        $v = $this->getNext();
+        if ($v)
+            return $v->getObject();
+        return null;
+    }
+
+    public function getPrev()
+    {
+        if ($this->prev)
+        {
+            $v = $this->getLink($this->prev);
+            $this->copy($v);
+            return $v;
+        }
+        return null;
+    }
+
+    public function getPrevObject()
+    {
+        $v = $this->getPrev();
+        if ($v)
+            return $v->getObject();
+        return null;
+    }
+
+    public function insertTail($object_id)
+    {
+        $newid = null;
+        $r = $this->_DB->p_query("select * from {$this->_table} where list = ? and next is null","i",$this->_listnum);
+        if ($r)
+        {
+            if ($r->num_rows > 1)
+                throw (new Exception("LinkList: More than one tail detected for list {$this->_listnum}"));
+
+            $a = $r->fetch_assoc();
+
+            //Now create a new one
+            $this->_DB->BeginTransaction();
+            if ($a)
+            {
+                echo " Inserting at end of last\n";
+                $r = $this->_DB->p_create("insert into {$this->_table} (list,prev,next,object) values (?,?,?,?)","iiii",$this->_listnum,$a["id"],null,$object_id);
+                if ($r)
+                {
+                    $newid = $this->_DB->insert_id;
+                    $this->_DB->p_update("update {$this->_table} set next = ? where id=?","ii",$newid,$a["id"]);
+                }
+                else
+                    TransactionError();
+            }
+            else
+            {
+                echo " No existing inserting new\n";
+                $r = $this->_DB->p_create("insert into {$this->_table} (list,prev,next,object) values (?,?,?,?)","iiii",$this->_listnum,null,null,$object_id);
+                if ($r)
+                    $newid = $this->_DB->insert_id;
+                else
+                    $this->_DB->TransactionError();
+            }
+            $this->_DB->EndTransaction();
+        }
+
+        if ($newid)
+            return $this->getLink($newid);
+
+        return null;
+    }
+
+    public function allObjects()
+    {
+        $ret = array();
+        $o = $this->getHeadObject();
+        while ($o)
+        {
+            $ret[] = $o;
+            $o = $this->getNextObject();
+        }
+
+        //Reset the list back to the head.
+        $this->getHead();
+        return $ret;
+    }
+
+    public function isObejctIdInList($id)
+    {
+        return ($this->_DB->p_singlequery("select * from list where list = ? & object = ?","ii",$this->_listnum,$id) ) ? true : false;
+    }
+
+    public static function getNewListNumber($DB,$table)
+    {
+        $rec = $DB->p_singlequery("select list from {$table} order by list desc limit 1",null,null);
+        if ($rec)
+            return intval($rec["list"]) + 1;
+        else
+            return 0;
+    }
+
+    public static function enumLists($DB,$table)
+    {
+        $ret = array();
+        $r = $DB->p_query("select list from {$table} group by list order by list",null,null);
+        if ($r)
+        {
+            while ($rec = $r->fetch_assoc())
+                $ret[] = $rec["list"];
+        }
+        return $ret;
+    }
+}
+
 class UndoAction
 {
     private $_action;
@@ -579,7 +796,7 @@ class SQLPlus extends mysqli
 
     public function alter($q)
     {
-        $r = $this->query($q);
+        $r = $this->query($q,MYSQLI_USE_RESULT);
         if (!$r) {$this->sqlError($q); return false;}
         return true;
     }
@@ -1004,6 +1221,14 @@ class SQLPlus extends mysqli
     public function isTransactionError()
     {
         return $this->_sqlerr;
+    }
+
+    public function hasTableIndexOnField($table,$field)
+    {
+        $r = $this->p_query("show index from {$table} where column_name = '{$field}'",null,null);
+        if ($r->num_rows > 0)
+            return true;
+        return false;
     }
 
     public function BackupToFile($dir)

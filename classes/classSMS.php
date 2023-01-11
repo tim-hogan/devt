@@ -183,7 +183,13 @@ class classSMS
                 }
             }
             else
+            {
                 error_log("Not text source you need to define in database a text source");
+                $ret_result = array();
+                $ret_result['status'] = false;
+                $ret_result['errortext'] = "The api has been disabled as your IP address and or key is not valid";
+                return $ret_result;
+            }
         }
         return 0;
     }
