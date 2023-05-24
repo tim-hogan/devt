@@ -687,8 +687,16 @@ class SQLPlus extends mysqli
                 $rslt = $s->bind_param($types,...$params);
             if( $rslt )
             {
-                if (!$s->execute() )
-                {
+                try {
+                    if (!$s->execute() )
+                    {
+                        $this->lasterrno = $this->errno;
+                        $this->sqlError($q);
+                        return null;
+                    }
+                }
+                catch (Exception $e) {
+                    echo "classSQLPlus2 exception [".__LINE__."] {$e->getMessage()} \n";
                     $this->lasterrno = $this->errno;
                     $this->sqlError($q);
                     return null;
@@ -857,6 +865,21 @@ class SQLPlus extends mysqli
         return null;
     }
 
+    public function p_every($table,$where='',$order='',$mask,...$params)
+    {
+        $q = "select * from {$table}";
+        if (strlen($where) > 0)
+            $q .= " {$where}";
+        if (strlen($order) > 0)
+            $q .= " {$order}";
+
+        $r = $this->p_query($q,$mask,...$params);
+
+        if (!$r) {$this->sqlError($q); return null;}
+        if ($r->num_rows > 0)
+            return $r->fetch_all(MYSQLI_ASSOC);
+        return null;
+    }
     public function update_from_array($table,$a,$whereclause)
     {
         $bstart = true;

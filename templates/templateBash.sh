@@ -105,6 +105,11 @@ if [ "$v" == "y" ] ; then
     echo "String is eql y"
 fi
 
+#string is not eql value
+if [ "$v" != "y" ] ; then
+    echo "String is not eql y"
+fi
+
 #check if a service is running
 if systemctl is-active --quiet <service name> ; then
 fi

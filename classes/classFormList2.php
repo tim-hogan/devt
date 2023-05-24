@@ -91,6 +91,20 @@ class FormList
         return $data;
     }
 
+    static public function getIndexField($f,$idx,$trimit=true)
+    {
+        $data = null;
+        if (isset($_POST[$f]) && isset($_POST[$f] [$idx]))
+        {
+            $data = $_POST[$f] [$idx];
+            if ($trimit)
+                $data = trim($data);
+            $data = stripslashes($data);
+            $data = strip_tags(htmlspecialchars_decode($data));
+        }
+        return $data;
+    }
+
     static public function getIntegerField($f,$trimit=true)
     {
         $data = null;
@@ -1647,7 +1661,7 @@ class FormList
         echo "<input type='hidden' name='formtoken' value='{$_SESSION['csrf_key']}'>";
     }
 
-    public function buildList($DB,$data=null)
+    public function buildList($DB,$data=null,$where=null)
     {
         if (! $this->config)
             throw new Exception(__FILE__ . "[" . __LINE__ ."] FormList has not been constructed with list parameters" );
@@ -1672,15 +1686,19 @@ class FormList
         $selff = trim($_SERVER["PHP_SELF"],"/");
 
         //Check number in records in table
-        $where = '';
         $order = '';
         if ($this->haveParameterText($list,'default_order') )
             $order = $list['default_order'];
-        if ($this->haveParameterText($list,'default_where') )
+
+        if ($where == null)
         {
-            $where = $list['default_where'];
-            if ($data)
-                $where = $this->parseVariable($where,$data);
+            $where = '';
+            if ($this->haveParameterText($list,'default_where') )
+            {
+                $where = $list['default_where'];
+                if ($data)
+                    $where = $this->parseVariable($where,$data);
+            }
         }
 
         //Check session list variables
@@ -1784,6 +1802,7 @@ class FormList
                 }
                 else
                 {
+
                     if (isset($d[$global['primary_key']]))
                     {
                         $recid = FormList::encryptParam("table={$table}&id={$d[$global['primary_key']]}&action=edit");
