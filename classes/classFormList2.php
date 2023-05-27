@@ -149,6 +149,19 @@ class FormList
         return $data;
     }
 
+    static public function getIndexedCurrencyField($f,$idx,$trimit=true,$symbol="$")
+    {
+        $data = null;
+        if (isset($_POST[$f] [$idx]))
+        {
+            $data = FormList::getIndexField($f,$idx,$trimit);
+            $data = str_replace($symbol,"",$data);
+            $data = str_replace(",","",$data);
+            $data = floatval($data);
+        }
+        return $data;
+    }
+
     static public function getDateField($f,$trimit=true)
     {
         //Uses $_SESSION['tz'] or $_SESSION['timezone']
