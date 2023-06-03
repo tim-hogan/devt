@@ -35,6 +35,8 @@ class AccountDate
         [0,1,1,1,1,1,1,1,1,1,1,1]
     ];
 
+    private static $_months = ["JAN","FEB","MAR","APR","MAY","JUN","JUL","AUG","SEP","OCT","NOV","DEC"];
+
     function __construct($yearendmonth)
     {
         $this->_yearEndMonth = $yearendmonth;
@@ -59,6 +61,54 @@ class AccountDate
         $end->setTimestamp($start->getTimestamp() - (3600*24));
         $end = new DateTime("{$y2}-{$em}-{$end->format("d")}");
         return [$start,$end];
+    }
+
+    public static function addMonths($month,$addition)
+    {
+        return ((($month -1) + $addition) % 12) + 1;
+    }
+
+    public static function subMonths($month,$subtraction)
+    {
+        $m = ((($month -1) - $subtraction) % 12) + 1;
+        if ($m <= 0)
+            $m += 12;
+        return $m;
+    }
+
+    public static function cadenceRangeMonths($year,$month,$cadance,$monthisfirst=true)
+    {
+        $y = sprintf("%04d",$year);
+        $m = sprintf("%02d",$month);
+
+        if ($monthisfirst)
+        {
+            $start = new DateTime("{$y}{$m}01 00:00:00");
+            $m2 = sprintf("%02d",AccountDate::addMonths($month,$cadance));
+            $end = new DateTime("{$y}{$m2}01 23:59:59");
+            $end = $end->sub(new DateInterval("P1D"));
+        }
+        else
+        {
+            $m2 = sprintf("%02d",self::subMonths($month,$cadance-1));
+            error_log("Month {$month} m2 {$m2}");
+            $start = new DateTime("{$y}{$m2}01 00:00:00");
+            $end = new DateTime("{$y}{$m}01 23:59:59");
+        }
+        return [$start->format("Y-m-d H:i:s"),$end->format("Y-m-d H:i:s")];
+    }
+
+    public static function cadenceMonths($cadance,$first)
+    {
+        $months = array();
+        $next = self::subMonths($first,1);
+        for ($c=0;$c < 12/$cadance;$c++)
+        {
+            $months[$next] = self::$_months[$next-1];
+            $next = self::addMonths($next,$cadance);
+        }
+        ksort($months);
+        return $months;
     }
 }
 
