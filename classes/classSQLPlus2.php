@@ -8,12 +8,18 @@ class TableRow
     protected $_values;
     protected $_tabledata;
 
-    function __construct($tabledata=null)
+    private $_DB;
+
+    private $_result;
+
+    function __construct($tabledata=null,$DB=null)
     {
         if ($tabledata)
             $this->_tabledata = $tabledata;
         else
             $this->_tabledata = array();
+        $this->_DB = $DB;
+        $this->_result = null;
     }
 
     public function __get($name)
@@ -76,8 +82,56 @@ class TableRow
             $this->_values = array();
         $this->_values[$name] = $v;
     }
-}
 
+    public function setDatabase($DB)
+    {
+        $this->_DB = $DB;
+        $this->_result = null;
+    }
+
+    public function whoami()
+    {
+        return get_class($this);
+    }
+
+    public function position_head()
+    {
+        $this->_result = null;
+    }
+
+    public function first()
+    {
+        if (!$this->_DB)
+            throw (new Exception("No database object assigend"));
+
+        $tablename = $this->whoami();
+        //Do we have the primary keys
+        $keys = $this->_DB->getPrimaryKeysForTable($tablename);
+        $q = "select * from {$tablename} order by ";
+        foreach($keys as $key)
+            $q .= "{$key},";
+        $q = trim($q,",");
+        $this->_result = $this->_DB->p_query($q,null,null);
+        if ($this->_result)
+            $this->_values = $this->_result->fetch_assoc();
+        else
+            $this->_values = null;
+        return $this->_values;
+    }
+
+    public function next()
+    {
+        if (!$this->_DB)
+            throw (new Exception("No database object assigend"));
+
+        if ($this->_result)
+            $this->_values = $this->_result->fetch_assoc();
+        else
+            $this->_values = $this->first();
+        return $this->_values;
+    }
+
+}
 
 class LinkList extends TableRow
 {
@@ -1165,6 +1219,18 @@ class SQLPlus extends mysqli
         }
 
         return true;
+    }
+
+    //Keys
+    public function getPrimaryKeysForTable($table)
+    {
+        $ret = array();
+        $r = $this->p_query("SHOW KEYS FROM {$table} WHERE Key_name = 'PRIMARY'",null,null);
+        while ($row = $r->fetch_assoc())
+        {
+            $ret[] = $row["Column_name"];
+        }
+        return $ret;
     }
 
     //Fields

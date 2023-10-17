@@ -54,6 +54,7 @@ function usage()
 function fieldsFromTable($table)
 {
     global $DB;
+    echo "Getting fields from table {$table}\n";
     $r = $DB->query("select * from {$table} limit 1");
     if ($r)
         return $r->fetch_fields();
@@ -81,9 +82,15 @@ function buildDefault()
         $global['table'] = $table[0];
         $global['single_record'] = true;
         $global['selector_text'] = $table[0];
+        $global['page_title'] = $table[0];
 
         $form['heading'] = "{$table[0]} Heading";
-        $form['introduction'] = "";
+        $form['introduction1'] = "";
+        $form['introduction2'] = "";
+        $form['introduction3'] = "";
+        $form['security'] ['create'] = 0;
+        $form["security"] ["modify"] = 0;
+        $form["security"] ["delete"] = 0;
 
         $classes = array();
 
@@ -121,6 +128,7 @@ function buildDefault()
         $list['introduction'] = "";
         $list['default_order'] = "";
         $list['default_where'] = "where {$table[0]}_deleted = 0";
+        $list['items_per_page'] = 50;
 
         $fields = array();
 

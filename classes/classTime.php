@@ -299,6 +299,10 @@ class classTimeHelpers
         "com",
     ];
 
+    const shortMonths =
+    [
+        "","JAN","FEB","MAR","APR","MAY","JUN","JUL","AUG","SEP","OCT","NOV","DEC",
+    ];
     public function getTLD($strName)
     {
         foreach ($this->tdllist as $d)
@@ -395,6 +399,11 @@ class classTimeHelpers
     public static function  timeFormatDateTimeLocal($time,$strTimeZone=null)
     {
         return classTimeHelpers::timeFormat($time,"Y-m-d\TH:i:s",$strTimeZone);
+    }
+
+    public static function timeFormatMilliToHHMM($time,$strTimeZone=null)
+    {
+        return classTimeHelpers::timeFormat((new DateTime())->setTimestamp(round($time / 1000.0)),"H:i",$strTimeZone);
     }
 
     public static function timeFormatISO8601($Time,$strTimeZone=null)

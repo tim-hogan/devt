@@ -26,6 +26,16 @@ class FormList
         return null;
     }
 
+    public function getForm()
+    {
+        if ($this->config)
+        {
+            if (isset($this->config["form"]))
+                return $this->config["form"];
+        }
+        return null;
+    }
+
     private function isVariable($v)
     {
         $s = trim($v);
@@ -165,17 +175,32 @@ class FormList
     static public function getDateField($f,$trimit=true)
     {
         //Uses $_SESSION['tz'] or $_SESSION['timezone']
-        $tz = 'UTC';
-        if (isset($_SESSION['tz']))
-            $tz = $_SESSION['tz'];
-        elseif (isset($_SESSION['timezone']))
-            $tz = $_SESSION['timezone'];
+        //$tz = 'UTC';
+        //if (isset($_SESSION['tz']))
+        //    $tz = $_SESSION['tz'];
+        //elseif (isset($_SESSION['timezone']))
+        //    $tz = $_SESSION['timezone'];
         if (isset($_POST[$f]))
         {
             $data = FormList::getField($f,$trimit);
-            $date = new DateTime($data,new DateTimeZone($tz));
-            $date->setTimezone(new DateTimeZone('UTC'));
-            return $date->format('Y-m-d H:i:s');
+            $data = substr($data, 0, 10);
+            $date = new DateTime($data ."00:00:00");
+            return $date->format('Y-m-d');
+        }
+        return null;
+    }
+
+    static public function getDateFieldWithTimezone($f, $tz='UTC', $trimit = true)
+    {
+        if (isset($_POST[$f]))
+        {
+            $data = FormList::getField($f, $trimit);
+            if (strlen($data) > 0)
+            {
+                $date = new DateTime($data);
+                $date->setTimezone(new DateTimeZone($tz));
+                return $date->format('Y-m-d H:i:s');
+            }
         }
         return null;
     }
@@ -419,9 +444,45 @@ class FormList
             {
                 if (isset($field['value']))
                     $row[$name] = $field['value'];
+                if ($field["type"] == "fk" && $field['value'] == 0)
+                    $row[$name] = null;
             }
         }
+
         return $DB->p_create_from_array($this->config['global'] ['table'],$row);
+    }
+
+    public function DeleteRecord($DB,$id)
+    {
+
+        if (! $this->config)
+            throw new Exception(__FILE__ . "[" . __LINE__ ."] FormList has not been constructed with list parameters" );
+
+        if (! isset ($this->config['fields']) )
+            throw new Exception(__FILE__ . "[" . __LINE__ ."] No fields are sepcified in parameters" );
+
+        if (!isset($this->config['global']))
+            throw new Exception(__FILE__ . "[" . __LINE__ ."] No globals sepcified in parameters" );
+
+        if (!isset($this->config['global'] ['table'] ))
+            throw new Exception(__FILE__ . "[" . __LINE__ ."] No table sepcified in global section of parameters" );
+
+        if (!isset($this->config['global'] ['primary_key'] ))
+            throw new Exception(__FILE__ . "[" . __LINE__ ."] No primary ket set for table" );
+
+        $table = $this->config['global'] ['table'];
+        $fields = $this->config['fields'];
+        $pk = $this->config['global'] ['primary_key'];
+
+        if (isset($fields["{$table}_deleted"]))
+        {
+            return $DB->p_update("update {$table} set {$table}_deleted = 1 where {$pk} = ?","i",$id );
+        }
+        else
+        {
+            return $DB->p_delete("delete from {$table} where {$pk} = ?","i",$id );
+        }
+
     }
 
     public function ModifyRecord($DB,$id)
@@ -447,10 +508,14 @@ class FormList
             {
                 if (isset($field['value']))
                 {
-                    $row[$name] = $field['value'];
+                    if ($field["type"] == "fk" && intval($field['value']) == 0)
+                        $row[$name] = null;
+                    else
+                        $row[$name] = $field['value'];
                 }
             }
         }
+
         if ($id == -99)
             return $DB->p_update_from_array($this->config['global'] ['table'],$row,"");
         else
@@ -1270,6 +1335,7 @@ class FormList
                    $cnt = 0;
                    foreach ($choice as $radio)
                    {
+                       echo "<div>";
                        echo "<input id='{$fid}_{$cnt}' class='{$classid}' type='radio' name='{$fname}' value='{$radio['value']}'";
 
 
@@ -1286,6 +1352,7 @@ class FormList
                        }
                        echo " />";
                        echo "<span>{$radio['text']}</span><br />";
+                    echo "</div>";
                        $cnt++;
                    }
                 }
@@ -1674,7 +1741,27 @@ class FormList
         echo "<input type='hidden' name='formtoken' value='{$_SESSION['csrf_key']}'>";
     }
 
-    public function buildList($DB,$data=null,$where=null)
+    private function buildRecordSelector($list,$n,$table)
+    {
+        if ($list["record_selector"])
+        {
+            echo "<div class='record_selector'>";
+            $start = intval($_SESSION["liststate"]["start"]) + 1;
+            $end = min($n, $_SESSION["liststate"]["start"] + $_SESSION["liststate"]["view_length"]);
+            $selfff = trim($_SERVER["PHP_SELF"], "/");
+            $v2 = FormList::encryptParam("table={$table}&action=rec_select");
+            echo "<span>RECORDS <input type='text' class='record_selector' name='rec_from' value='{$start}' size='3' onchange='record_selector(this,\"{$v2}\",\"{$selfff}\",\"{$_SESSION['csrf_key']}\")' /> TO {$end} OF {$n}</span>";
+            $prev_disabled = $start <= 1 ? "disabled" : "";
+            $next_disabled = $end >= $n ? "disabled" : "";
+
+
+            echo "<button class='record_selector' onclick='record_selector_prev(this,\"{$v2}\",\"{$selfff}\",\"{$_SESSION['csrf_key']}\")' {$prev_disabled}>PREV</button>";
+            echo "<button class='record_selector' onclick='record_selector_next(this,\"{$v2}\",\"{$selfff}\",\"{$_SESSION['csrf_key']}\")' {$next_disabled} >NEXT</button>";
+            echo "</div>";
+        }
+    }
+
+    public function buildList($DB,$data=null,$where=null,$complexparams=null,$DBfunction=null,$DBparameters=null)
     {
         if (! $this->config)
             throw new Exception(__FILE__ . "[" . __LINE__ ."] FormList has not been constructed with list parameters" );
@@ -1714,6 +1801,16 @@ class FormList
             }
         }
 
+        $n = 0;
+        if (null != $complexparams)
+        {
+            $countFuncion = $complexparams["functions"] ["count"];
+            $params = $complexparams["params"];
+            $n = $DB->$countFuncion($params);
+        }
+        else
+            $n = $DB->rows_in_table($table,$where);
+
         //Check session list variables
         if (! isset($_SESSION["liststate"]))
         {
@@ -1722,6 +1819,19 @@ class FormList
             $_SESSION["liststate"] ["start"] = 0;
             $_SESSION["liststate"] ["view_length"] = 50;
         }
+
+        if ($this->haveParameterText($list, 'items_per_page'))
+        {
+            $ipp = max(1, intval($list['items_per_page']));
+            $_SESSION["liststate"]["view_length"] = $ipp;
+        }
+
+
+        if ($_SESSION["liststate"] ["start"] < 0)
+            $_SESSION["liststate"] ["start"] = 0;
+
+        if ($_SESSION["liststate"] ["start"] > ($n-1))
+            $_SESSION["liststate"] ["start"] = max(0,$n-1);
 
         $limit = "limit {$_SESSION["liststate"] ["start"]}, {$_SESSION["liststate"] ["view_length"]}";
 
@@ -1743,9 +1853,9 @@ class FormList
         //We need to build a menu of actions
         echo "<div class='listactions'>";
         $v = FormList::encryptParam("table={$table}&action=create");
-        echo "<form method='GET' action='{$selff}'><input type='hidden' name='v' value='{$v}'/><button>CREATE</button></form>";
-        echo "<button id='del{$table}' class='listDelete' disabled>DELETE</button>";
-
+        echo "<form method='GET' action='{$selff}'><input type='hidden' name='v' value='{$v}'/><button>CREATE</button>";
+        echo "<button id='del{$table}' class='listDelete' form='_list1form' disabled>DELETE</button>";
+        echo "</form>";
         //Any additional actions
         if (isset($list['additional_actions']))
         {
@@ -1758,18 +1868,50 @@ class FormList
 
         echo "</div>";
 
+        $this->buildRecordSelector($list,$n,$table);
+
+        //Record selector
+        //if ($list["record_selector"])
+        //{
+        //    echo "<div id='list_record_selector' class='record_selector'>";
+        //    $start = intval($_SESSION["liststate"] ["start"]) + 1;
+        //    $end = min($n,$_SESSION["liststate"] ["start"] + $_SESSION["liststate"] ["view_length"]);
+        //    $selfff = trim($_SERVER["PHP_SELF"],"/");
+        //    $v2 = FormList::encryptParam("table={$table}&action=rec_select");
+        //    echo "<span>RECORDS <input type='text' class='record_selector' name='rec_from' value='{$start}' size='3' onchange='record_selector(this,\"{$v2}\",\"{$selfff}\",\"{$_SESSION['csrf_key']}\")' /> TO {$end} OF {$n}</span>";
+        //    $prev_disabled = $start <= 1 ? "disabled" : "";
+        //    $next_disabled = $end >= $n ? "disabled" : "";
+
+
+        //    echo "<button class='record_selector' onclick='record_selector_prev(this,\"{$v2}\",\"{$selfff}\",\"{$_SESSION['csrf_key']}\")' {$prev_disabled}>PREV</button>";
+        //    echo "<button class='record_selector' onclick='record_selector_next(this,\"{$v2}\",\"{$selfff}\",\"{$_SESSION['csrf_key']}\")' {$next_disabled} >NEXT</button>";
+        //    echo "</div>";
+        //}
+
         echo "<div class='_list1'>";
 
+        $r = null;
+        if (null != $complexparams) {
+            $listFuncion = $complexparams["functions"]["list"];
+            $params = $complexparams["params"];
+            $params[] = $order;
+            $params[] = $limit;
 
-        $n = $DB->rows_in_table($table,$where);
+            $r = $DB->$listFuncion($params);
+        }
+        else
+        {
+
+            $r = $DB->allFromTable($table, $where, $order, $limit);
+        }
         if ($n == 0)
         {
             echo "<p class='norecord'>NO RECORDS</p>";
         }
         else
         {
+            echo "<form id='_list1form' method='POST' action='{$selff}'>";
 
-            $r = $DB->allFromTable($table,$where,$order,$limit);
             echo "<table>";
 
             //Create the tabel headings
@@ -1805,7 +1947,7 @@ class FormList
             }
 
             echo "</tr>";
-
+            $display_count = $r->num_rows;
             while ($d = $r->fetch_array(MYSQLI_ASSOC))
             {
                 $recid="";
@@ -1823,11 +1965,10 @@ class FormList
                 }
                 echo "<tr>";
                 if ($this->haveParameterText($list,'type') && $list['type'] == "checkbox")
-                    echo "<td><input type='checkbox' class='listcheck{$table}' value='{$recid}' onchange='deleteButtonChange(\"{$table}\")'/></td>";
+                    echo "<td><input type='checkbox' class='listcheck{$table}' name='li[]' value='{$recid}' onchange='deleteButtonChange(\"{$table}\")'/></td>";
 
                 foreach($fields as $name => $field)
                 {
-
 
                     $tdClass='';
                     switch ($field['type'])
@@ -1837,6 +1978,9 @@ class FormList
                         case 'currency':
                         case 'percent':
                             $tdClass = "r";
+                            break;
+                        case 'boolean':
+                            $tdClass = "c";
                             break;
                         default:
                             break;
@@ -1865,6 +2009,20 @@ class FormList
                             {
                                 case 'text':
                                     $strData = htmlspecialchars($d[$name]);
+                                    break;
+                                case 'boolean':
+                                    switch ($list_attr["displayoption"])
+                                    {
+                                        case "tick":
+                                            if ($d[$name])
+                                                $strData = "&check;";
+                                            else
+                                                $strData = "";
+                                            break;
+                                        default:
+                                            $strData = htmlspecialchars($d[$name]);
+                                            break;
+                                    }
                                     break;
                                 case 'integer':
                                     $strData = htmlspecialchars(intval($d[$name]));
@@ -1899,6 +2057,7 @@ class FormList
                                         $tz = $_SESSION['tz'];
                                     elseif (isset($_SESSION['timezone']))
                                         $tz = $_SESSION['timezone'];
+
                                     $strData = classTimeHelpers::timeFormatnthDate($d[$name],$tz);
                                     break;
                                 case 'datetime':
@@ -1908,6 +2067,14 @@ class FormList
                                     elseif (isset($_SESSION['timezone']))
                                         $tz = $_SESSION['timezone'];
                                     $strData = classTimeHelpers::timeFormatnthDateTime1($d[$name],$tz);
+                                    break;
+                                case 'timemilli':
+                                    $tz = 'UTC';
+                                    if (isset($_SESSION['tz']))
+                                        $tz = $_SESSION['tz'];
+                                    elseif (isset($_SESSION['timezone']))
+                                        $tz = $_SESSION['timezone'];
+                                    $strData = classTimeHelpers::timeFormatMilliToHHMM($$d[$name],$tz);
                                     break;
                                 case 'fk':
                                     $v = intval($d[$name]);
@@ -1943,6 +2110,9 @@ class FormList
                             }
                         }
 
+                        if (strlen($strData) == 0 && $this->haveParameterBoolean($list_attr, 'anchor'))
+                            $strData = "[BLANK]";
+
                         echo $strData;
 
                         if ($this->haveParameterBoolean($list_attr,'anchor'))
@@ -1961,7 +2131,7 @@ class FormList
                     foreach($list['actions'] as $name => $action)
                     {
                         $actionvalue = urlencode(FormList::encryptParam("table={$table}&id={$d[$global['primary_key']]}&action=actionit&call={$action['action']}"));
-                        echo "<td><button value='{$actionvalue}' onclick='actionStations(this)'>{$action['display']}</button></td>";
+                        echo "<td><button type='button' value='{$actionvalue}' onclick='actionStations(this)'>{$action['display']}</button></td>";
                     }
                 }
 
@@ -1973,12 +2143,27 @@ class FormList
                 echo "</tr>";
             }
             echo "</table>";
+            $v = FormList::encryptParam("table={$table}&action=delete");
+            echo "<input type='hidden' name='v' value='{$v}'/>";
+            echo "<input type='hidden' name='formtoken' value='{$_SESSION['csrf_key']}'>";
+            echo "</form>";
         }
 
         echo "</div>";
 
+        if ($display_count > 10)
+            $this->buildRecordSelector($list,$n,$table);
+
+
         echo "</div>";
 
+    }
+
+    static function getPageTitle($formdata,$tablename)
+    {
+        if (isset($formdata[$tablename] ['global'] ['page_title'] ) )
+            return htmlspecialchars($formdata[$tablename] ['global'] ['page_title']);
+        return "";
     }
 
     static function buildSelectEntry($tablename,$formdata)
@@ -2123,32 +2308,93 @@ class FormList
         }
     }
 
-    static public function handlePost($DB,$formdata,&$pageData)
+    static public function handlePost($DB,$formdata,&$pageData,$security=null)
     {
+
         if (isset($_POST['v']))
         {
             $a = FormList::decryptParamRaw($_POST['v']);
+
             if (isset($a['table']) && isset($a['action']))
             {
-                $FL = new FormList($formdata[$a['table']]);
-                $valid = $FL->getFormInputFields();
-                if (!$valid)
+                if ($a['action'] == 'delete')
                 {
-                    $e = $FL->fieldsWithError();
-                    error_log("Form entry had errors dump of error array follows:");
-                    FormList::var_error_log($e,"Form errors");
+
+                    $FL = new FormList($formdata[$a['table']]);
+                    $form =$FL->getForm();
+
+                    if ($form)
+                    {
+                        //Check security
+                        $can_delete = 1;
+                        if ($security !== null && isset($form["security"]) && isset($form["security"] ["delete"]) && $form["security"] ["delete"] > 0)
+                        {
+                            $can_delete = intval($security) & intval($form["security"] ["delete"]);
+                        }
+
+                        if ($can_delete)
+                        {
+                            if (isset($_POST["li"]))
+                            {
+                                foreach($_POST["li"] as $f)
+                                {
+                                    $b = FormList::decryptParamRaw($f);
+                                    $rslt = $FL->DeleteRecord($DB,$b["id"]);
+                                }
+                            }
+                        }
+                    }
                 }
-                if ($valid && $a['action'] == 'change')
+                elseif ($a['action'] == 'rec_select')
                 {
-                    $FL->ModifyRecord($DB,$a['recid']);
-                    $pageData ['form'] ['display'] = false;
+
+                    $FL = new FormList($formdata[$a['table']]);
+                    $list = $formdata[$a['table']] ["list"];
+
+                    if (!isset($_SESSION["liststate"]))
+                         $_SESSION["liststate"] = array();
+
+                    if (isset($_POST["next"]) )
+                    {
+                        $_SESSION["liststate"] ["start"] = $_SESSION["liststate"] ["start"] + $_SESSION["liststate"] ["view_length"];
+                    }
+                    elseif (isset($_POST["prev"]) )
+                    {
+                        $_SESSION["liststate"] ["start"] = $_SESSION["liststate"] ["start"] - $_SESSION["liststate"] ["view_length"];
+                    }
+                    else
+                    {
+                        $_SESSION["liststate"] ["start"] = intval($_POST["rec"]) - 1 ;
+                        $_SESSION["liststate"] ["view_length"] = 50;
+                        if (isset($list['items_per_page']) )
+                        {
+                            $ipp = max(1,intval($list['items_per_page']));
+                            $_SESSION["liststate"] ["view_length"] = $ipp;
+                        }
+                    }
                 }
-                if ($valid && $a['action'] == 'create')
+                else
                 {
-                    $FL->AddRecord($DB);
-                    $pageData ['form'] ['display'] = false;
+                    $FL = new FormList($formdata[$a['table']]);
+                    $valid = $FL->getFormInputFields();
+                    if (!$valid)
+                    {
+                        $e = $FL->fieldsWithError();
+                        error_log("Form entry had errors dump of error array follows:");
+                        FormList::var_error_log($e,"Form errors");
+                    }
+                    if ($valid && $a['action'] == 'change')
+                    {
+                        $FL->ModifyRecord($DB,$a['recid']);
+                        $pageData ['form'] ['display'] = false;
+                    }
+                    if ($valid && $a['action'] == 'create')
+                    {
+                        $FL->AddRecord($DB);
+                        $pageData ['form'] ['display'] = false;
+                    }
+                    $pageData ['select'] = $a['table'];
                 }
-                $pageData ['select'] = $a['table'];
             }
         }
     }
@@ -2170,8 +2416,7 @@ class FormList
             $result = base64_encode($encrypted . '::' . $iv);
             return $result;
         }
-        else
-            return null;
+        return null;
     }
 
     static public function decryptParamRaw($data)

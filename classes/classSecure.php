@@ -106,7 +106,7 @@ class Secure
                 $errtxt .= ", Password must include at least 1 upper case letter ";
         }
 
-        if ($numNonAlphaNum > 0 && strlen(preg_replace('![0-9a-zA-Z]+!', '', $str)) < $numNonAlphaNum)
+        if ($numNonAlphaNum > 0 && strlen(preg_replace('![0-9a-zA-Z]+!', '', $pwd)) < $numNonAlphaNum)
         {
             if ($numNonAlphaNum > 1)
                 $errtxt .= ", Password must include at least {$numNonAlphaNum} non alphanumeric character ";
@@ -192,7 +192,9 @@ class Secure
     {
         if ($user)
         {
-            if (intval($user['user_security']) & intval($seclevel))
+            if (gettype($user) == 'array' && intval($user['user_security']) & intval($seclevel))
+                return true;
+            if (gettype($user) == 'object' && intval($user->user_security) & intval($seclevel))
                 return true;
         }
         return false;
@@ -478,7 +480,7 @@ class CookieJar
         $options['httponly'] = true;
         $options['samesite'] = "Strict";
 
-        setcookie($this->_name, $encoded, $options);
+        setcookie($this->_name, "", $options);
     }
 }
 
@@ -617,6 +619,8 @@ class Session
 
     public function checkCSRF()
     {
+        //error_log("Check CSRF Key this->csrf_key = {$this->csrf_key} post formtoken = {$_POST["formtoken"]} get formtoken = {$_GET["formtoken"]}");
+
         if ($this->csrf_key)
         {
             if (isset($_POST["formtoken"]))

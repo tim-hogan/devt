@@ -238,6 +238,9 @@ else
                         $toNZ = $exch['record_value'];
 
 
+                        if (!$user)
+                            error_log ("User is null");
+
                         $r = $DB->allPortFolio($user['iduser']);
                         while ($stock = $r->fetch_array())
                         {

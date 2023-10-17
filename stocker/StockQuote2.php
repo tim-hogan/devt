@@ -14,25 +14,36 @@ function getData()
     $ch = curl_init($url);
     curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'GET');
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-    $header = ["user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.82 Safari/537.36",
-               "accept-encoding: identity",
-               "cache-control: no-cache",
-               "pragma: no-cache",
-               "sec-ch-ua: \"Google Chrome\";v=\"89\", \"Chromium\";v=\"89\", \";Not A Brand\";v=\"99\"",
-               "sec-ch-ua-mobile: ?0",
-               "sec-fetch-dest: document",
-               "sec-fetch-mode: navigate",
-               "sec-fetch-site: none",
-               "sec-fetch-user: ?1",
-               "upgrade-insecure-requests: 1",
-               "accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
-               ":authority: www.nzx.com",
-               ":method: GET",
-               ":path: /markets/NZSX",
-               ":scheme: https"
-        ];
-    curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
+    
+    
+    //$header = ["user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.82 Safari/537.36",
+    //           "accept-encoding: identity",
+    //           "cache-control: no-cache",
+    //           "pragma: no-cache",
+    //           "sec-ch-ua: \"Google Chrome\";v=\"89\", \"Chromium\";v=\"89\", \";Not A Brand\";v=\"99\"",
+    //           "sec-ch-ua-mobile: ?0",
+    //           "sec-fetch-dest: document",
+    //           "sec-fetch-mode: navigate",
+    //           "sec-fetch-site: none",
+    //           "sec-fetch-user: ?1",
+    //           "upgrade-insecure-requests: 1",
+    //           "accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
+    //           ":authority: www.nzx.com",
+    //           ":method: GET",
+    //           ":path: /markets/NZSX",
+    //           ":scheme: https"
+    //    ];
+    //curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
+
     $result = curl_exec($ch);
+
+    if ($result === false)
+    {
+        echo "Failed called to {$url}\n";
+        $strError = curl_error($ch);
+        echo " Error {$strError}\n";
+        exit(1);
+    }
 
     $doc = new DOMDocument();
     $doc->loadHTML($result);
@@ -116,7 +127,7 @@ foreach($lookupcodes as $code)
             {
                 echo "Have watch BELOW BT\n";
                 $msg = "Stock: {$dt->format('H:i')} {$stock['stcok_code']} Has gone UNDER {$watch['watch_below']} to {$value}";
-                
+
                 if ($phone && strlen($phone) > 0)
                 {
                     $textmessage = new devt\TextMsg\TextMessage();

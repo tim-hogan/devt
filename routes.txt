@@ -1,0 +1,31 @@
+﻿route_id,agency_id,route_short_name,route_long_name,route_desc,route_type,route_url,route_color,route_text_color
+100_36_3,Metro Canterbury,100,Wigram/The Palms,,3,,88807E,3B3C1D
+107_71_3,Metro Canterbury,107,Styx Mill/Northlands,,3,,46A299,3B3C1D
+120_42_3,Metro Canterbury,120,Burnside/Spreydon,,3,,FAA61A,3B3C1D
+125_05_3,Metro Canterbury,125,Redwood/Westlake,,3,,5F9937,3B3C1D
+130_73_3,Metro Canterbury,130,Hei Hei/Avonhead,,3,,9F3925,3B3C1D
+135_63_3,Metro Canterbury,135,The Palms/New Brighton,,3,,0DB14B,3B3C1D
+140_00_3,Metro Canterbury,140,Russley/Mt Pleasant,,3,,00929E,3B3C1D
+155_80_3,Metro Canterbury,155,Eastgate/Lyttelton,,3,,9D6DA9,3B3C1D
+1_62_3,Metro Canterbury,1,Rangiora/Cashmere,,3,,3EBCED,3B3C1D
+27_17_3,Metro Canterbury,27,Northwood/Huntsbury,,3,,F5834E,4A0D1D
+29_04_3,Metro Canterbury,29,Airport/City via Fendalton,,3,,00539F,3B3C1D
+3_67_3,Metro Canterbury,3,Airport/Sumner,,3,,554588,3B3C1D
+44_01_3,Metro Canterbury,44,Shirley/Westmorland,,3,,0074AD,3B3C1D
+5_14_3,Metro Canterbury,5,Rolleston/New Brighton,,3,,FFC20E,3B3C1D
+60_66_3,Metro Canterbury,60,Hillmorton/Southshore,,3,,DA6FAB,3B3C1D
+7_77_3,Metro Canterbury,7,Halswell/Queenspark,,3,,F37021,3B3C1D
+80_61_3,Metro Canterbury,80,Lincoln/Parklands,,3,,717DBD,3B3C1D
+81_25_3,Metro Canterbury,81,Lincoln/City direct,,3,,F05B7C,3B3C1D
+820_74_3,Metro Canterbury,820,Burnham/Lincoln via Rolleston,,3,,46BA7C,3B3C1D
+85_45_3,Metro Canterbury,85,Rolleston/City direct,,3,,F05A4E,3B3C1D
+86_09_3,Metro Canterbury,86,Darfield/City,,3,,CBDB2A,3B3C1D
+87_80_3,Metro Canterbury,87,Southbridge/Lincoln,,3,,C34074,22043E
+8_44_3,Metro Canterbury,8,Airport/Lyttelton,,3,,EC008C,263909
+91_29_3,Metro Canterbury,91,Rangiora/City direct,,3,,008644,3B3C1D
+92_90_3,Metro Canterbury,92,Kaiapoi/City direct,,3,,946338,3B3C1D
+95_26_3,Metro Canterbury,95,City/Pegasus and Waikuku,,3,,C41039,3B3C1D
+97_72_3,Metro Canterbury,97,Rangiora/Pegasus,,3,,906FA1,3B3C1D
+F_94_4,Metro Canterbury,F,Diamond Harbour Ferry,,4,,005899,3B3C1D
+Oa_36_3,Metro Canterbury,Oa,Orbiter,,3,,79BC43,FFFFFF
+Oc_36_3,Metro Canterbury,Oc,Orbiter,,3,,79BC43,3B3C1D

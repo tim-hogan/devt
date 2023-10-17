@@ -367,10 +367,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
             $g_table = $_POST['table'];
             updateTextrec($g_def[$g_table] ['global'] ['primary_key'],'primary_key');
             updateTextrec($g_def[$g_table] ['global'] ['selector_text'],'selector_text');
+            updateTextrec($g_def[$g_table] ['global'] ['page_title'],'page_title');
             updateBoolanrec($g_def[$g_table] ['global'] ['single_record'],'single_record');
 
             updateTextrec($g_def[$g_table] ['form'] ['heading'],'formheading');
-            updateTextrec($g_def[$g_table] ['form'] ['introduction'],'formintroduction');
+            updateTextrec($g_def[$g_table] ['form'] ['introduction1'],'formintroduction1');
+            updateTextrec($g_def[$g_table] ['form'] ['introduction2'],'formintroduction2');
+            updateTextrec($g_def[$g_table] ['form'] ['introduction3'],'formintroduction3');
+            updateTextrec($g_def[$g_table] ['form'] ['security'] ['create'],'form_security_create');
+            updateTextrec($g_def[$g_table] ['form'] ['security'] ['modify'],'form_security_modify');
+            updateTextrec($g_def[$g_table] ['form'] ['security'] ['delete'],'form_security_delete');
 
             updateTextrec($g_def[$g_table] ['form'] ['classes'] ['div'] ['inputtext'],'form_inputtext');
             updateTextrec($g_def[$g_table] ['form'] ['classes'] ['div'] ['emailtext'],'form_emailtext');
@@ -412,6 +418,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
             updateTextrec($g_def[$g_table] ['list'] ['introduction'] ,'list_introduction');
             updateTextrec($g_def[$g_table] ['list'] ['default_order'] ,'list_default_order');
             updateTextrec($g_def[$g_table] ['list'] ['default_where'] ,'list_default_where');
+            updateTextrec($g_def[$g_table] ['list'] ['items_per_page'] ,'list_items_per_page');
 
             foreach($g_def[$g_table] ['list'] ['actions'] as $name => $action)
             {
@@ -546,6 +553,42 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
             }
         }
 
+    }
+
+    //Create some fields that may not exist.
+    foreach ($g_def as $tname => $t )
+    {
+        //Security
+        if (!isset($t["form"] ["security"]))
+        {
+            $g_def[$tname] ["form"] ["security"] = array();
+        }
+
+        if (!isset($g_def[$tname] ["form"] ["security"] ["create"]))
+        {
+            $g_def[$tname] ["form"] ["security"] ["create"] = 0;
+        }
+        if (!isset($g_def[$tname] ["form"] ["security"] ["modify"]))
+        {
+            $g_def[$tname] ["form"] ["security"] ["modify"] = 0;
+        }
+        if (!isset($g_def[$tname] ["form"] ["security"] ["delete"]))
+        {
+            $g_def[$tname] ["form"] ["security"] ["delete"] = 0;
+        }
+
+        //Introductions
+        if (!isset($g_def[$tname] ["form"] ["introduction"]))
+            unset($g_def[$tname] ["form"] ["introduction"]);
+        if (!isset($g_def[$tname] ["form"] ["introduction1"]))
+             $g_def[$tname] ["form"] ["introduction1"] = "";
+        if (!isset($g_def[$tname] ["form"] ["introduction2"]))
+             $g_def[$tname] ["form"] ["introduction2"] = "";
+        if (!isset($g_def[$tname] ["form"] ["introduction3"]))
+             $g_def[$tname] ["form"] ["introduction3"] = "";
+
+        if (!isset($g_def[$tname] ["list"] ["items_per_page"]) )
+            $g_def[$tname] ["list"] ["items_per_page"] = 50;
     }
 
     $_SESSION['def'] = $g_def;
@@ -712,6 +755,7 @@ if (isset($_SESSION['filename']))
                                         $prim_key = $global['primary_key'];
                                     bTF('primary_key','primary_key',$prim_key);
                                     bTF('selector_text','selector_text',$global['selector_text']);
+                                    btF('page_title','page_title',$global['page_title']);
                                     bBF('single_record','single_record',$global['single_record']);
                                     echo "</table>";
                                 echo "</div>";
@@ -719,7 +763,12 @@ if (isset($_SESSION['filename']))
                                     echo "<p class='secheading'>FORM</p>";
                                     echo "<table>";
                                     bTF('heading','formheading',$form['heading'],40);
-                                    bTF('introduction','formintroduction',$form['introduction'],50);
+                                    bTF('Introduction Line 1','formintroduction1',$form['introduction1'],50);
+                                    bTF('  Line 2','formintroduction2',$form['introduction2'],50);
+                                    bTF('  Line 3','formintroduction3',$form['introduction3'],50);
+                                    bTF('Form Security Create','form_security_create',$form['security'] ['create'],3);
+                                    bTF('Form Security Modify','form_security_modify',$form['security'] ['modify'],3);
+                                    bTF('Form Security Delete','form_security_delete',$form['security'] ['delete'],3);
                                     echo "</table>";
                                     echo "<div class='section'>";
                                         echo "<p class='secheading'>CLASSES</p>";
@@ -768,6 +817,7 @@ if (isset($_SESSION['filename']))
                                 bTF('introduction',"list_introduction",$list['introduction'],30);
                                 bTF('default_order',"list_default_order",$list['default_order']);
                                 bTF('default_where',"list_default_where",$list['default_where']);
+                                bTF('Items per Page',"list_items_per_page",$list['items_per_page'],4);
                                 echo "</table>";
 
                                 echo "<div class='section'>";
