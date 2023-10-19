@@ -25,7 +25,7 @@ class CSVRec
 				if (empty($this->_keys))
 				{
 					$this->_keys = $row;
-					$this->_keys[0] = removeUnicodeString($this->_keys[0]);
+					$this->_keys[0] = $this->removeUnicodeString($this->_keys[0]);
 					$this->_keys[] = "__idx__";
 					continue;
 				}
