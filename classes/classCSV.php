@@ -100,7 +100,7 @@ class CSVRec
 		return $this->_keys;
 	}
 
-	public function addColumn($key,$value)
+	public function addColumn($key,$value=null)
 	{
 		if (array_search($key, $this->_keys) === false)
 		{
@@ -111,7 +111,7 @@ class CSVRec
 				$this->_records[$idx][$key] = null;
 		}
 
-		if ($this->_idx >= 0)
+		if ($this->_idx >= 0 && $value !== null)
 		{
 			$this->_records[$this->_idx] [$key] = $value;
 			return $this->_records[$this->_idx];
@@ -124,7 +124,7 @@ class CSVRec
 		$this->_idx = -1;
 	}
 
-	public function first()
+	public function &first()
 	{
 		$this->_idx = 0;
 		if ($this->_idx < count($this->_records))
@@ -132,13 +132,24 @@ class CSVRec
 		return null;
 	}
 
-	public function next($current_idx=null)
+	public function &next($current_idx=null)
 	{
 		if ($current_idx !== null)
-			$this->_idx = $current_idx+1;
+			$this->_idx = $current_idx + 1;
 		else
 			$this->_idx++;
 		if ($this->_idx < count($this->_records))
+			return $this->_records[$this->_idx];
+		return null;
+	}
+
+	public function &prev($current_idx=null)
+	{
+		if ($current_idx !== null)
+			$this->_idx = $current_idx-1;
+		else
+			$this->_idx--;
+		if ($this->_idx >= 0 )
 			return $this->_records[$this->_idx];
 		return null;
 	}
@@ -148,17 +159,16 @@ class CSVRec
 		return $this->_records;
 	}
 
-	public function find($column,$value)
+	public function &find($column,$value)
 	{
 		$idx = 0;
-		foreach ($this->_records as $rec)
+		for ($idx = 0; $idx < count($this->_records),$idx++)
 		{
-			if (isset($rec[$column]) && $rec[$column] == $value)
+			if (isset($this->_records[$idx] [$column]) && $this->_records[$idx] [$column] == $value)
 			{
 				$this->_idx = $idx;
-				return $rec;
+				return $this->_records[$idx];
 			}
-			$idx++;
 		}
 		return null;
 	}
