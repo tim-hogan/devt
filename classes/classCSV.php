@@ -7,6 +7,8 @@ class CSVRec
 
 	private $_idx = -1;
 
+	private $_null = null;
+
 	public function __construct($filename = null,$subsetname=null,$subsetvalue=null)
 	{
 		if ($filename)
@@ -129,7 +131,7 @@ class CSVRec
 		$this->_idx = 0;
 		if ($this->_idx < count($this->_records))
 			return $this->_records[$this->_idx];
-		return null;
+		return $this->_null;
 	}
 
 	public function &last()
@@ -137,7 +139,7 @@ class CSVRec
 		$this->_idx = count($this->_records) -1;
 		if ($this->_idx >= 0)
 			return $this->_records[$this->_idx];
-		return null;
+		return $this->_null;
 	}
 
 	public function &next($current_idx=null)
@@ -148,7 +150,7 @@ class CSVRec
 			$this->_idx++;
 		if ($this->_idx < count($this->_records))
 			return $this->_records[$this->_idx];
-		return null;
+		return $this->_null;
 	}
 
 	public function &prev($current_idx=null)
@@ -159,7 +161,7 @@ class CSVRec
 			$this->_idx--;
 		if ($this->_idx >= 0 )
 			return $this->_records[$this->_idx];
-		return null;
+		return $this->_null;
 	}
 
 	public function every()
@@ -170,7 +172,7 @@ class CSVRec
 	public function &find($column,$value)
 	{
 		$idx = 0;
-		for ($idx = 0; $idx < count($this->_records),$idx++)
+		for ($idx = 0; $idx < count($this->_records);$idx++)
 		{
 			if (isset($this->_records[$idx] [$column]) && $this->_records[$idx] [$column] == $value)
 			{
@@ -178,7 +180,7 @@ class CSVRec
 				return $this->_records[$idx];
 			}
 		}
-		return null;
+		return $this->_null;
 	}
 
 	public function blend($csvrecs,$key,$items)
