@@ -132,6 +132,14 @@ class CSVRec
 		return null;
 	}
 
+	public function &last()
+	{
+		$this->_idx = count($this->_records) -1;
+		if ($this->_idx >= 0)
+			return $this->_records[$this->_idx];
+		return null;
+	}
+
 	public function &next($current_idx=null)
 	{
 		if ($current_idx !== null)
