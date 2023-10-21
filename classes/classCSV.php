@@ -126,6 +126,13 @@ class CSVRec
 		$this->_idx = -1;
 	}
 
+	public function &getRecord($idx)
+	{
+		if ($idx >= 0 && $idx < count($this->_records))
+			return $this->_records[$idx];
+		return $this->_null;
+	}
+
 	public function &first()
 	{
 		$this->_idx = 0;
