@@ -90,6 +90,29 @@ class CSocket
 		return false;
 	}
 
+	public function select()
+	{
+		if ($this->_type != CSOCKET_SERVER)
+			throw new Exception("CSocket::accept - socket is not of type  CSOCKET_SERVER");
+		if ($this->_listen_socket === null)
+			throw new Exception("CSocket::accept - not a valid listening socket");
+		$read = [$this->_listen_socket];
+		$w = null;
+		$e = null;
+		if (socket_select($read, $w, $e, 0))
+			return true;
+		return false;
+	}
+
+	public function select_and_accept()
+	{
+		if ($this->select()) 
+		{
+			return $this->accept();
+		}
+		return false;
+	}
+
 	public function write($data)
 	{
 		if ($this->_connected)

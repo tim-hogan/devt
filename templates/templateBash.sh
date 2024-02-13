@@ -96,8 +96,12 @@ if  [[ -z $var ]] ; then
     echo "Variable is zero length"
 fi
 
+#string is not null or space
+if [ ! -z "$str" -a "$str"!=" " ]; then
+        echo "Str is not null or space"
+fi
 //test string length
-if [ $(#var) eq 10] ; then
+if [ ${#var} -eq 10] ; then
     echo "${var} string length is eql 10"
 fi
 #string is eql value

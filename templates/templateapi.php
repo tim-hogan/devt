@@ -68,7 +68,6 @@ function returnError($req,$code,$desc)
 {
    $rslt = array();
    $meta = newErrorMetaHdr($req,$code,$desc);
-   $data = array();
    $rslt['meta'] = $meta;
    $rslt['data'] = array();
    echo json_encode($rslt);

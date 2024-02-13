@@ -10,6 +10,7 @@ class TableRow
 
 	private $_DB;
 
+	private $_primary_key;
 	private $_result;
 
 	function __construct($tabledata=null,$DB=null)
@@ -20,6 +21,12 @@ class TableRow
 			$this->_tabledata = array();
 		$this->_DB = $DB;
 		$this->_result = null;
+		$this->_primary_key = null;
+		foreach($this->_tabledata as $fieldname => $f)
+		{
+			if (isset($f["pk"]) && $f["pk"])
+				$this->_primary_key = $fieldname;
+		}
 	}
 
 	public function __get($name)
@@ -87,6 +94,42 @@ class TableRow
 	{
 		$this->_DB = $DB;
 		$this->_result = null;
+	}
+
+	public function create($DB=null)
+	{
+		//Creates a new tablerow class record
+		if ($DB)
+			$this->_DB = $DB;
+		if (!$this->_DB)
+			throw (new Exception("No database object assigend"));
+		if (!$this->_values)
+			throw (new Exception("No record"));
+		if (!$this->_primary_key)
+			throw (new Exception("No primary key declared in tabledata"));
+		$tablename = $this->whoami();
+		unset($this->_values[$this->_primary_key]);
+		if ($this->_DB->p_create_from_array($tablename, $this->_values) )
+		{
+			return $this->_DB->o_singlequery($tablename, "select * from {$tablename} where {$this->_primary_key} = ?", "i", $this->_DB->insert_id);
+		}
+		return null;
+	}
+
+	public function update($DB=null)
+	{
+		if ($DB)
+			$this->_DB = $DB;
+		if (!$this->_DB)
+			throw (new Exception("No database object assigend"));
+		if (!$this->_values)
+			throw (new Exception("No record"));
+		if (!$this->_primary_key)
+			throw (new Exception("No primary key declared in tabledata"));
+		$tablename = $this->whoami();
+		if ($this->_DB->p_update_from_array($tablename, $this->_values, "where {$this->_primary_key} = {$this->_values[$this->_primary_key]}"))
+			return true;
+		return false;
 	}
 
 	public function whoami()
