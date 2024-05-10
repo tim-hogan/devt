@@ -938,7 +938,8 @@ class SQLPlus extends mysqli
 
 	public function fieldsFromTable($table)
 	{
-		$r = $this->query("select * from {$table} limit 1");
+		$q = "select * from {$table} limit 1";
+		$r = $this->p_query($q,null,null);
 		if (!$r) {$this->sqlError($q); return false;}
 		return $r->fetch_fields();
 	}
