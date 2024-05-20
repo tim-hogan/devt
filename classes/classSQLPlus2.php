@@ -68,6 +68,11 @@ class TableRow
 							return $this->_values[$name];
 						else
 							return null;
+					case "enum":
+						if (isset($this->_values[$name]) && $this->_values[$name] !== null)
+							return $this->_values[$name];
+						else
+							return null;
 					default:
 						if (isset($this->_values[$name]) && $this->_values[$name] !== null)
 							return $this->_values[$name];
