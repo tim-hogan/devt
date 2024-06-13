@@ -31,11 +31,11 @@ class TableRow
 
 	public function __get($name)
 	{
-		if (array_key_exists($name,$this->_tabledata) )
+		if (array_key_exists($name, $this->_tabledata)) 
 		{
-			if (isset($this->_tabledata[$name] ["type"]))
+			if (isset($this->_tabledata[$name]["type"])) 
 			{
-				switch ($this->_tabledata[$name] ["type"])
+				switch ($this->_tabledata[$name]["type"]) 
 				{
 					case "varchar":
 					case "char":
@@ -85,7 +85,12 @@ class TableRow
 				return $this->_values[$name];
 		}
 		else
-			throw (new Exception("Invalid variable {$name}"));
+		{
+			if (array_key_exists($name, $this->_values))
+				return $this->_values[$name];
+			else
+				throw (new Exception("Invalid variable {$name}"));
+		}
 	}
 
 	public function __set($name,$v)
