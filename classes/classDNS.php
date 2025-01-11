@@ -24,6 +24,7 @@ class dns
 
     private function curl($url,$type,$params=null)
     {
+        error_log("dns::curl In curl");
         $method = strtoupper($type);
         $str = "";
         if ($method != "GET" && $method != "POST" )
@@ -45,8 +46,13 @@ class dns
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($ch, CURLOPT_HTTPHEADER, array("Content-Type: application/json"));
 
+        error_log("dns::curl About to send");
 
         $result = curl_exec($ch);
+
+        error_log("dns::curl result follows");
+        $this->var_error_log($result, "result");
+
         if ($result)
             $result = json_decode($result,true);
         return $result;
@@ -123,6 +129,8 @@ class dns
             $rslt['error'] = "dns::addArecord [__LINE__] Exception thrown: {$e}";
             return $rslt;
         }
+
+        $this->var_error_log($r,"r");
 
         if (!$r || !isset($r['meta']) || !isset($r['meta'] ['status']) )
         {

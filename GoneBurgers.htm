@@ -1,0 +1,67 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+	<meta name="viewport" content="initial-scale=1.0" />
+
+    <title>GONE BURGERS</title>
+    <script>
+        const date_end = new Date('December 8, 2024 23:59:59');
+        const secs_per_hour = 3600;
+        const secs_per_day = 86400;
+        function pad(num, size)
+		{
+			var s = num+"";
+			while (s.length < size) s = "0" + s;
+			return s;
+		}
+
+        function now() {
+            let date_now = new Date();
+            let diff = Math.floor((date_end.getTime() - date_now.getTime()) / 1000);
+            let sec = Math.floor(diff % 60);
+            let days = Math.floor(diff /secs_per_day);
+            let days_seconds = days * secs_per_day;
+            let hours = Math.floor((diff - days_seconds) / secs_per_hour);
+            let mins = Math.floor(((diff - days_seconds) / 60) % 60);
+            let ts = document.getElementById("ts");
+            let str = "";
+            if (days > 0)
+                str = days + " Days ";
+            str += hours + ":" + pad(mins, 2) + ":" + pad(sec, 2);
+            ts.innerHTML = str;
+            let weeks = diff / (3600 * 24 * 7);
+            let ts2 = document.getElementById("ts2");
+            let strWeeks = Math.floor(weeks * 100) / 100;
+            ts2.innerHTML = strWeeks + " weeks";
+            let minstogo = Math.floor(diff / 60);
+            let ts3 = document.getElementById("ts3");
+            ts3.innerHTML = minstogo + " minutes";
+
+        }
+
+        function start() {
+            setInterval(now, 1000);
+        }
+    </script>
+    <style>
+        body {margin: 0;font-family: Arial, Helvetica, sans-serif;font-size: 10pt;background-color: black;}
+        p.p1 {font-size: 18pt; color: darkorange;text-align: center;}
+        #ts {color: yellow; text-align: center;font-size: 24pt;}
+        #ts2 {color: lawngreen; text-align: center;font-size: 24pt;}
+        #ts3 {color: #00cbfc; text-align: center;font-size: 24pt;}
+    </style>
+</head>
+<body onload="start()">
+    <div id="container">
+        <div id="main">
+            <p class="p1">GONE BURGERS IN</p>
+            <p id="ts"></p>
+            <p id="ts2"></p>
+            <p id="ts3"></p>
+        </div>
+    </div>
+</body>
+</html>
