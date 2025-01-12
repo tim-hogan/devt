@@ -443,9 +443,9 @@ class classTimeHelpers
 		'ain' => 'Ainu',
 		'aka' => 'Akan',
 		'akk' => 'Akkadian',
-		'ale' => 'Aleut'
-		'alg' => 'Algonquian languages'
-		'alt' => 'Southern Altai'
+		'ale' => 'Aleut',
+		'alg' => 'Algonquian languages',
+		'alt' => 'Southern Altai',
 		'sqi' => 'Albanian',
 		'amh' => 'Amharic',
 		'ang' => 'English, Old',
