@@ -135,7 +135,7 @@ class LedgerAmount
 	public function _createFromGoss($gross,$taxrate)
 	{
 		$this->_gross = $gross;
-		$this->_net = round($gross / (1+$taxrate),2);
+		$this->_net = round($gross / (1+$taxrate),2,PHP_ROUND_HALF_DOWN);
 		$this->_tax = $this->_gross - $this->_net;
 	}
 
@@ -149,7 +149,7 @@ class LedgerAmount
 	public function _createFromNet($net,$taxrate)
 	{
 		$this->_net = $net;
-		$this->_tax = round($net * $taxrate,2);
+		$this->_tax = round($net * $taxrate,2,PHP_ROUND_HALF_DOWN);
 		$this->_gross = $this->_net + $this->_tax;
 	}
 
@@ -211,7 +211,7 @@ class Money
 	/**
 	 * Summary of getInputAmount
 	 * Returns amount as a float from an string input field.
-	 * @param string $str 
+	 * @param string $str
 	 * @return float
 	 */
 	public static function getInputAmount($str)
