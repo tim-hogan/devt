@@ -117,6 +117,15 @@ class AccountDate
 		ksort($months);
 		return $months;
 	}
+
+	public static function startEndForDate($date,$cadence,$startmonth)
+	{
+		$dt = new DateTime($date);
+		$year = intval($dt->format("Y"));
+		$month = intval($dt->format("m"));
+
+		return AccountDate::cadenceRangeMonths($year, $month, $cadence, false);
+	}
 }
 
 class LedgerAmount

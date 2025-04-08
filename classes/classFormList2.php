@@ -135,7 +135,11 @@ class FormList
 	{
 		$data = null;
 		if (isset($_POST[$f]))
-			$data = floatval(FormList::getField($f,$trimit));
+		{
+			$data = FormList::getField($f,$trimit);
+			$data = str_replace(",", "", $data);
+			$data = floatval($data);
+		}
 		return $data;
 	}
 

@@ -114,6 +114,10 @@ if [ "$v" != "y" ] ; then
     echo "String is not eql y"
 fi
 
+#check if previous ran OK
+if [[ $? -eq 0 ]]; then
+    echo "Process ran fine"
+fi
 #check if a service is running
 if systemctl is-active --quiet <service name> ; then
 fi
