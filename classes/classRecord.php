@@ -36,7 +36,7 @@ class CRecord
     public function uint64_t(int $v)
     {
         $t = hex2bin(str_pad(dechex($v), 16, "0", STR_PAD_LEFT));
-        return substr($t, 7, 1) . substr($t, 6, 1) . substr($t, 5, 1) . substr($t, 4, 1) . substr($t, 3, 1) . substr($t, 2, 1) . substr($t, 1, 1) . . substr($t, 0, 1);
+        return substr($t, 7, 1) . substr($t, 6, 1) . substr($t, 5, 1) . substr($t, 4, 1) . substr($t, 3, 1) . substr($t, 2, 1) . substr($t, 1, 1) . substr($t, 0, 1);
     }
 
     public function char(string $v, $l)
