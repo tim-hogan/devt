@@ -116,7 +116,6 @@ class CRecord
 
 	public function parse($str)
 	{
-		echo "parse str " . bin2hex($str) . "\n";
 
 		foreach($this->_fields as $field)
 		{
