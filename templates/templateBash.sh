@@ -100,7 +100,7 @@ fi
 if [ ! -z "$str" -a "$str"!=" " ]; then
         echo "Str is not null or space"
 fi
-//test string length
+#test string length
 if [ ${#var} -eq 10] ; then
     echo "${var} string length is eql 10"
 fi

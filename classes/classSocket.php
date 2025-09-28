@@ -106,7 +106,7 @@ class CSocket
 
 	public function select_and_accept()
 	{
-		if ($this->select()) 
+		if ($this->select())
 		{
 			return $this->accept();
 		}
@@ -143,14 +143,18 @@ class CSocket
 		return true;
 	}
 
-	public function readBinary()
+	public function readBinary($length=0)
 	{
+		//Reads binary data from socket for length
+		//If length thne keeps reading until EOF.
 		if ($this->_connected)
 		{
 			$str = "";
 			while ($d = socket_read($this->_socket, 1000))
 			{
 				$str .= $d;
+				if ($length > 0 && strlen($str) >= $length)
+					return $str;
 			}
 			return $str;
 		}

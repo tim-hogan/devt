@@ -69,9 +69,9 @@ class CRecord
 
     private function strto_uint64_t(string $v)
     {
-        return
-		($this->strto_uint32_t(substr($v,4,4)) * 4294967296) +
-		 hexdec(bin2hex(substr($v, 0, 1))) + (hexdec(bin2hex(substr($v, 1, 1))) * 256) + (hexdec(bin2hex(substr($v, 2, 1))) * 65536) + (hexdec(bin2hex(substr($v, 3, 1))) * 16777216);
+        return hexdec(bin2hex(substr($v, 0, 1))) + (hexdec(bin2hex(substr($v, 1, 1))) * 256) + (hexdec(bin2hex(substr($v, 2, 1))) * 65536) + (hexdec(bin2hex(substr($v, 3, 1))) * 16777216) +
+            (hexdec(bin2hex(substr($v, 4, 1))) * (16777216 * 256)) + (hexdec(bin2hex(substr($v, 5, 1))) * (16777216 * 65536)) + (hexdec(bin2hex(substr($v, 6 ,1))) * (16777216 * 16777216)) + 
+			(hexdec(bin2hex(substr($v, 7, 1))) * (16777216 * 16777216 * 256));
     }
 
     private function strto_char(string $v)
@@ -123,22 +123,18 @@ class CRecord
 			{
 				case "uint8_t":
 
-					echo "parse uint8_t of " . bin2hex(substr($str, 0, 1)) . "\n";
 					$this->_data[$field["name"]] = $this->strto_uint8_t(substr($str, 0, 1));
                     $str = substr($str, 1);
 					break;
 				case "uint16_t":
-					echo "parse uint16_t of " . bin2hex(substr($str, 0, 2)) . "\n";
 					$this->_data[$field["name"]] = $this->strto_uint16_t(substr($str, 0, 2));
 					$str = substr($str, 2);
 					break;
                 case "uint32_t":
-                    echo "parse uint32_t of " . bin2hex(substr($str, 0, 4)) . "\n";
                     $this->_data[$field["name"]] = $this->strto_uint32_t(substr($str, 0, 4));
                     $str = substr($str, 4);
                     break;
                 case "uint64_t":
-                    echo "parse uint32_t of " . bin2hex(substr($str, 0, 8)) . "\n";
                     $this->_data[$field["name"]] = $this->strto_uint64_t(substr($str, 0, 8));
                     $str = substr($str, 4);
                     break;
@@ -149,6 +145,16 @@ class CRecord
             }
 		}
 	}
+
+	public function sizeof()
+    {
+        $sum = 0;
+		foreach($this->_fields as $field)
+        {
+            $sum += $field["length"];
+        }
+        return $sum;
+    }
 
 	public function __get($name)
 	{
